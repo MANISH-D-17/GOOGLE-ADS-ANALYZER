@@ -4,7 +4,7 @@ import SummaryCards from '../components/SummaryCards';
 import FilterBar from '../components/FilterBar';
 import SKUTable from '../components/SKUTable';
 import PageHeader from '../components/PageHeader';
-import { SKU, SKUState } from '../data/mockData';
+import { SKUState } from '../data/mockData';
 import { getActualSKUs, ActualSKU } from '../data/actualDataLoader';
 import { getScaleMultiplier } from '../lib/dataUtils';
 
@@ -70,7 +70,7 @@ const SKUDashboard: React.FC<SKUDashboardProps> = ({ dateRange }) => {
       });
   }, [actualSKUData, activeState, category, availability, sort, search]);
 
-  const handleRowClick = (sku: SKU) => {
+  const handleRowClick = (sku: ActualSKU) => {
     // Preserve filters in navigation
     navigate(`/sku/${sku.id}?${searchParams.toString()}`);
   };

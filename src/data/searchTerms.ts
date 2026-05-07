@@ -1,4 +1,4 @@
-import { SKU } from './mockData';
+import { ActualSKU } from './actualDataLoader';
 import { CampaignMapping } from './campaignSkuMap';
 
 export type KeywordIntent = 'branded' | 'generic_high' | 'generic_low' | 'competitor' | 'negative' | 'on_brand';
@@ -110,7 +110,7 @@ export const SEARCH_TERMS_TB_KU_COR_XL_1018: SearchTermsData = {
   ]
 };
 
-export function generateSyntheticSearchTerms(sku: SKU, mapping: CampaignMapping): SearchTermsData {
+export function generateSyntheticSearchTerms(sku: ActualSKU, mapping: CampaignMapping): SearchTermsData {
   const words = sku.name.toLowerCase().split(' ').filter(w => w.length > 3);
   const coreTerm = words.slice(0, 2).join(' ');
   
@@ -155,7 +155,7 @@ export function generateSyntheticSearchTerms(sku: SKU, mapping: CampaignMapping)
   };
 }
 
-export function getSearchTermsForSku(sku: SKU, mapping: CampaignMapping): SearchTermsData {
+export function getSearchTermsForSku(sku: ActualSKU, mapping: CampaignMapping): SearchTermsData {
   if (sku.id === 'TB-CAL-BLK-M') return SEARCH_TERMS_TB_CAL_BLK_M;
   if (sku.id === 'TB-SS-BGE-M') return SEARCH_TERMS_TB_SS_BGE_M;
   if (sku.id === 'TB-KU-COR-XL-1018') return SEARCH_TERMS_TB_KU_COR_XL_1018;

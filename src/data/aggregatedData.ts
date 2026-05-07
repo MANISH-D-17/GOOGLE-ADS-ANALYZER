@@ -1,4 +1,4 @@
-import { SKU_DATA } from './mockData';
+import { getActualSKUs } from './actualDataLoader';
 import { getSearchTermsForSku, SearchTerm } from './searchTerms';
 import { CAMPAIGN_SKU_MAP } from './campaignSkuMap';
 import { ASSET_GROUP_LEGGINGS_CORE, AssetGroup } from './assetGroups';
@@ -12,9 +12,7 @@ export interface AccountKeywordsSummary {
 }
 
 export function getAccountKeywordsSummary(): AccountKeywordsSummary {
-  // In a real app, this would be an API call. 
-  // Here we aggregate from our top SKUs.
-  const topSkus = SKU_DATA.slice(0, 5);
+  const topSkus = getActualSKUs().slice(0, 5);
   let allTerms: SearchTerm[] = [];
   
   topSkus.forEach(sku => {

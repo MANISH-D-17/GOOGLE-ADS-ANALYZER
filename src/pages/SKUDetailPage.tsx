@@ -6,8 +6,7 @@ import {
   ArrowLeft, Download, ExternalLink, Activity, Target,
   ImageIcon, ShoppingBag
 } from 'lucide-react';
-import { SKU } from '../data/mockData';
-import { getActualSKUs } from '../data/actualDataLoader';
+import { getActualSKUs, ActualSKU } from '../data/actualDataLoader';
 import { CAMPAIGN_SKU_MAP } from '../data/campaignSkuMap';
 import { getSearchTermsForSku } from '../data/searchTerms';
 import { getAssetGroupForSku, getCreativeHealthForSku } from '../data/assetGroups';

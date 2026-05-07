@@ -7,10 +7,11 @@ import {
   CartesianGrid, Tooltip as RechartsTooltip
 } from 'recharts';
 import { SKU, DEFAULT_SKU_DETAIL } from '../../data/mockData';
+import { ActualSKU } from '../../data/actualDataLoader';
 import SectionHeader from '../SectionHeader';
 
 interface OverviewTabProps {
-  sku: SKU;
+  sku: ActualSKU;
 }
 
 const OverviewTab: React.FC<OverviewTabProps> = ({ sku }) => {

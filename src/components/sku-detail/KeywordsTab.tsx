@@ -4,14 +4,14 @@ import {
   Filter, ArrowUpRight, AlertCircle, Eye, Zap, Plus, X, Target,
   IndianRupee, Activity
 } from 'lucide-react';
-import { SKU } from '../../data/mockData';
+import { ActualSKU } from '../../data/actualDataLoader';
 import { CampaignMapping } from '../../data/campaignSkuMap';
 import { SearchTermsData, KeywordIntent } from '../../data/searchTerms';
 import { formatRupees, cn } from '../../lib/utils';
 import SectionHeader from '../SectionHeader';
 
 interface KeywordsTabProps {
-  sku: SKU;
+  sku: ActualSKU;
   mapping: CampaignMapping;
   data: SearchTermsData;
 }
