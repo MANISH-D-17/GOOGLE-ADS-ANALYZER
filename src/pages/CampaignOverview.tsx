@@ -3,12 +3,16 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, Cell 
 } from 'recharts';
-import { CAMPAIGN_DATA, GA4_FUNNEL, TRAFFIC_SOURCES, LTV_DATA, SKU, SKUState } from '../data/mockData';
+import { getActualCampaigns, ActualCampaign } from '../data/actualDataLoader';
+import { getScaleMultiplier, getDateRangeString, scaleMetrics } from '../lib/dataUtils';
 import { cn, formatRupees } from '../lib/utils';
 import { ShoppingBag, Users, Zap, MousePointer2, CreditCard, Activity, Search, Filter } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
+import SectionHeader from '../components/SectionHeader';
+import MetricCard from '../components/MetricCard';
 import SummaryCards from '../components/SummaryCards';
 import PageHeader from '../components/PageHeader';
+import { SKU, SKUState } from '../data/mockData';
 
 interface CampaignOverviewProps {
   dateRange: string;
@@ -26,23 +30,11 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ dateRange }) => {
     setSearchParams(nextParams);
   };
   
-  // Scaling logic (same as Dashboard)
-  const getScaleMultiplier = (range: string) => {
-    switch (range) {
-      case 'Today': return 0.034;
-      case 'Yesterday': return 0.031;
-      case 'Last 7d': return 0.23;
-      case 'Last 30d': return 1;
-      case 'Last 90d': return 2.85;
-      default: return 1;
-    }
-  };
-
   const multiplier = getScaleMultiplier(dateRange);
 
   // Scaled Data
   const scaledCampaigns = useMemo(() => {
-    return CAMPAIGN_DATA.map(c => {
+    return getActualCampaigns().map(c => {
       const spend = Math.round(c.spend * multiplier);
       const revenue = Math.round(c.revenue * multiplier);
       const roas = revenue / (Math.max(1, spend));
@@ -66,21 +58,6 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ dateRange }) => {
       return matchesSearch && matchesStrategy;
     });
   }, [scaledCampaigns, searchQuery, activeStrategy]);
-
-  const scaledFunnel = useMemo(() => {
-    return GA4_FUNNEL.map(step => ({
-      ...step,
-      count: Math.round(step.count * multiplier)
-    }));
-  }, [multiplier]);
-
-  const scaledTraffic = useMemo(() => {
-    return TRAFFIC_SOURCES.map(source => ({
-      ...source,
-      sessions: Math.round(source.sessions * multiplier),
-      revenue: Math.round(source.revenue * multiplier)
-    }));
-  }, [multiplier]);
 
   // Map campaigns to SKU-like objects for SummaryCards compatibility
   const campaignSummaryData = useMemo((): SKU[] => {
@@ -111,8 +88,8 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ dateRange }) => {
   return (
     <div className="space-y-12 animate-in fade-in duration-500 pb-20">
       <PageHeader 
-        title="Campaign Dashboard" 
-        dateRange="01-May-2026 to 31-May-2026" 
+        title="Campaign Intelligence" 
+        dateRange={getDateRangeString(dateRange)} 
       />
 
       {/* 1. Metrics Overview Section */}

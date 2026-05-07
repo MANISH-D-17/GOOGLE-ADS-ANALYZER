@@ -9,6 +9,7 @@ import SectionHeader from '../components/SectionHeader';
 import MetricCard from '../components/MetricCard';
 import { formatRupees, cn } from '../lib/utils';
 import { getActualSKUs } from '../data/actualDataLoader';
+import { getDateRangeString } from '../lib/dataUtils';
 
 import { useSearchParams } from 'react-router-dom';
 import { Search, Filter } from 'lucide-react';
@@ -63,7 +64,10 @@ const FeedHealthDashboard: React.FC<{ dateRange: string }> = ({ dateRange }) => 
 
   return (
     <div className="space-y-12 animate-in fade-in duration-700">
-      <PageHeader title="Merchant Center Feed Health" dateRange={dateRange} />
+      <PageHeader 
+        title="Feed Intelligence" 
+        dateRange={getDateRangeString(dateRange)} 
+      />
 
       <div className="space-y-6">
         <SectionHeader title="Global Feed Status" />

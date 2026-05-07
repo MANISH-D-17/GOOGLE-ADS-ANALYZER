@@ -8,8 +8,8 @@ import PageHeader from '../components/PageHeader';
 import SectionHeader from '../components/SectionHeader';
 import MetricCard from '../components/MetricCard';
 import { formatRupees, cn } from '../lib/utils';
-import { getActualSearchTerms } from '../data/actualDataLoader';
-import { getScaleMultiplier } from '../lib/dataUtils';
+import { getAccountKeywordsSummary } from '../data/aggregatedData';
+import { getScaleMultiplier, getDateRangeString, scaleMetrics } from '../lib/dataUtils';
 
 const intentColors: Record<string, { bg: string; text: string; label: string; border: string }> = {
   branded:      { bg: 'bg-blue-50', text: 'text-blue-700', label: 'Branded', border: 'border-blue-200' },
@@ -80,9 +80,10 @@ const KeywordsDashboard: React.FC<{ dateRange: string }> = ({ dateRange }) => {
 
   return (
     <div className="space-y-12 animate-in fade-in duration-700">
-      <PageHeader title="Keywords Intelligence" dateRange={dateRange} />
-
-      <div className="space-y-6">
+      <PageHeader 
+        title="Keyword Intelligence" 
+        dateRange={getDateRangeString(dateRange)} 
+      /><div className="space-y-6">
         <SectionHeader title="Metrics Overview" />
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

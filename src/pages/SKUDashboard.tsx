@@ -4,9 +4,10 @@ import SummaryCards from '../components/SummaryCards';
 import FilterBar from '../components/FilterBar';
 import SKUTable from '../components/SKUTable';
 import PageHeader from '../components/PageHeader';
+import IntelligenceInsights from '../components/IntelligenceInsights';
 import { SKUState } from '../data/mockData';
 import { getActualSKUs, ActualSKU } from '../data/actualDataLoader';
-import { getScaleMultiplier } from '../lib/dataUtils';
+import { getScaleMultiplier, getDateRangeString } from '../lib/dataUtils';
 
 interface SKUDashboardProps {
   dateRange: string;
@@ -78,11 +79,13 @@ const SKUDashboard: React.FC<SKUDashboardProps> = ({ dateRange }) => {
   return (
     <div className="space-y-12 animate-in fade-in duration-500">
       <PageHeader 
-        title="Overall Dashboard" 
-        dateRange="01-May-2026 to 31-May-2026" 
+        title="SKU Intelligence" 
+        dateRange={getDateRangeString(dateRange)} 
       />
       
       <SummaryCards skus={actualSKUData as any} />
+
+      <IntelligenceInsights />
 
       <div className="space-y-6">
         <div className="flex items-center gap-3">

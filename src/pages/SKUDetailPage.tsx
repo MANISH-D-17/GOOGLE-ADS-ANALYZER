@@ -7,6 +7,7 @@ import {
   ImageIcon, ShoppingBag
 } from 'lucide-react';
 import { getActualSKUs, ActualSKU } from '../data/actualDataLoader';
+import { getScaleMultiplier, getDateRangeString, scaleMetrics } from '../lib/dataUtils';
 import { CAMPAIGN_SKU_MAP } from '../data/campaignSkuMap';
 import { getSearchTermsForSku } from '../data/searchTerms';
 import { getAssetGroupForSku, getCreativeHealthForSku } from '../data/assetGroups';

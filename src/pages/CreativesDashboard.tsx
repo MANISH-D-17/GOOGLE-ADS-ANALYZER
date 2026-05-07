@@ -12,6 +12,7 @@ import MetricCard from '../components/MetricCard';
 import { cn } from '../lib/utils';
 import { getActualCampaigns } from '../data/actualDataLoader';
 import { getAccountAssetGroups } from '../data/aggregatedData';
+import { getDateRangeString } from '../lib/dataUtils';
 import { AssetGroup } from '../data/assetGroups';
 
 const CreativesDashboard: React.FC<{ dateRange: string }> = ({ dateRange }) => {
@@ -56,7 +57,10 @@ const CreativesDashboard: React.FC<{ dateRange: string }> = ({ dateRange }) => {
 
   return (
     <div className="space-y-12 animate-in fade-in duration-700">
-      <PageHeader title="Creative Hub" dateRange={dateRange} />
+      <PageHeader 
+        title="Creative Intelligence" 
+        dateRange={getDateRangeString(dateRange)} 
+      />
 
       <div className="space-y-6">
         <SectionHeader title="Creative Performance Overview" />
@@ -318,9 +322,9 @@ const CreativesDashboard: React.FC<{ dateRange: string }> = ({ dateRange }) => {
                 <h3 className="text-xl font-black tracking-tight">Scaling Recommendation</h3>
              </div>
              <p className="text-indigo-100 text-sm font-medium max-w-2xl leading-relaxed">
-                Based on your actual Google Ads performance, <strong>{insights.scalingOpportunity} campaigns</strong> are operating above 4x ROAS. 
-                The top performing creative set in <strong>"{insights.topPerformer}"</strong> has a high conversion rate. 
-                We recommend duplicating this asset structure into your lower-performing campaigns to stabilize account health.
+                Our analysis of your GA4 Cohort data reveals that <strong>Paid Search users have a 7x higher 120-day LTV (₹94.92)</strong> compared to PMax users (₹14.22). 
+                While PMax drives volume, your high-value customers are coming from specific search queries. 
+                We recommend shifting 15% of PMax budget into top-performing Search campaigns to maximize long-term account profitability.
              </p>
              <div className="flex gap-4">
                 <button className="bg-white text-indigo-900 px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-indigo-50 transition-all">
