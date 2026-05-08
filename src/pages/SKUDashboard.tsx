@@ -5,8 +5,7 @@ import FilterBar from '../components/FilterBar';
 import SKUTable from '../components/SKUTable';
 import PageHeader from '../components/PageHeader';
 import IntelligenceInsights from '../components/IntelligenceInsights';
-import { SKUState } from '../data/mockData';
-import { getActualSKUs, ActualSKU, getActualSummary } from '../data/actualDataLoader';
+import { getActualSKUs, ActualSKU, getActualSummary, SKUState } from '../data/actualDataLoader';
 import { getScaleMultiplier, getDateRangeString } from '../lib/dataUtils';
 
 interface SKUDashboardProps {

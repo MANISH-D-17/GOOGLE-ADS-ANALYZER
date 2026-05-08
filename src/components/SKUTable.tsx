@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronRight, AlertCircle, ChevronLeft, ChevronRight as ChevronRightIcon } from 'lucide-react';
-import { SKU, SKUState } from '../data/mockData';
+import { SKUState, ActualSKU } from '../data/actualDataLoader';
 import { cn, formatRupees, formatImpressions, stateBadgeColor } from '../lib/utils';
 
 interface SKUTableProps {
@@ -8,7 +8,7 @@ interface SKUTableProps {
   onRowClick: (sku: any) => void;
 }
 
-const ITEMS_PER_PAGE = 25;
+const ITEMS_PER_PAGE = 10;
 
 const SKUTable: React.FC<SKUTableProps> = ({ skus, onRowClick }) => {
   const [currentPage, setCurrentPage] = useState(1);

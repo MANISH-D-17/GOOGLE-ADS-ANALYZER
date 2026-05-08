@@ -12,7 +12,7 @@ import SectionHeader from '../components/SectionHeader';
 import MetricCard from '../components/MetricCard';
 import SummaryCards from '../components/SummaryCards';
 import PageHeader from '../components/PageHeader';
-import { SKU, SKUState, GA4_FUNNEL, TRAFFIC_SOURCES, LTV_DATA } from '../data/mockData';
+import { ActualSKU, SKUState, GA4_FUNNEL, TRAFFIC_SOURCES, LTV_DATA } from '../data/actualDataLoader';
 
 interface CampaignOverviewProps {
   dateRange: string;
@@ -75,7 +75,7 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ dateRange }) => {
   }, [multiplier]);
 
   // Map campaigns to SKU-like objects for SummaryCards compatibility
-  const campaignSummaryData = useMemo((): SKU[] => {
+  const campaignSummaryData = useMemo((): ActualSKU[] => {
     return scaledCampaigns.map((c, i) => {
       let state: SKUState = 'stable';
       if (c.roas > 4) state = 'winner';
@@ -95,8 +95,12 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ dateRange }) => {
         conversions: c.conversions,
         cvr: 0,
         revenue: c.revenue,
-        roas: c.roas
-      };
+        roas: c.roas,
+        status: 'active',
+        clicks: 0,
+        price: '0',
+        attributes: []
+      } as ActualSKU;
     });
   }, [scaledCampaigns]);
 

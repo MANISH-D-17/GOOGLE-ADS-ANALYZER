@@ -1,336 +1,404 @@
-import React, { useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
-  Plus, AlertCircle, 
-  Layout, ExternalLink, Play, Target,
-  ArrowRight, Activity, Zap, ImageIcon, Video, Type,
-  Search, Filter, List, Grid
+  AlertCircle, Video, ImageIcon, 
+  Type, Layout, ExternalLink, Play,
+  Activity, Zap, Search, Filter,
+  ChevronLeft, ChevronRight, Link as LinkIcon
 } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import PageHeader from '../components/PageHeader';
 import SectionHeader from '../components/SectionHeader';
-import MetricCard from '../components/MetricCard';
 import { cn } from '../lib/utils';
-import { getActualCampaigns } from '../data/actualDataLoader';
 import { getAccountAssetGroups } from '../data/aggregatedData';
 import { getDateRangeString } from '../lib/dataUtils';
-import { AssetGroup } from '../data/assetGroups';
+import { AssetGroup, AssetItem } from '../data/assetGroups';
+
+const performanceColors = {
+  BEST:    'bg-green-50 text-green-700 border-green-200',
+  GOOD:    'bg-blue-50 text-blue-700 border-blue-200',
+  LOW:     'bg-red-50 text-red-700 border-red-200',
+  PENDING: 'bg-gray-50 text-gray-500 border-gray-200',
+  UNRATED: 'bg-gray-50 text-gray-400 border-gray-100',
+};
+
+const PAGE_SIZE = 10;
+const MEDIA_PAGE_SIZE = 10; // Can adjust if needed for grids
+
+// Helper Component for Pagination Controls
+const PaginationControls = ({ page, totalPages, setPage }: { page: number, totalPages: number, setPage: (p: number) => void }) => {
+  return (
+    <div className="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-between mt-auto">
+      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+        Page {page} of {Math.max(1, totalPages)}
+      </span>
+      <div className="flex gap-2">
+        <button 
+          onClick={() => setPage(Math.max(1, page - 1))}
+          disabled={page <= 1}
+          className="p-2 rounded-lg bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+        >
+          <ChevronLeft size={14} />
+        </button>
+        <button 
+          onClick={() => setPage(Math.min(totalPages, page + 1))}
+          disabled={page >= totalPages || totalPages === 0}
+          className="p-2 rounded-lg bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+        >
+          <ChevronRight size={14} />
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const CreativesDashboard: React.FC<{ dateRange: string }> = ({ dateRange }) => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const activeHealth = searchParams.get('health') || 'all';
-  const searchQuery = searchParams.get('search') || '';
-  const viewMode = searchParams.get('view') || 'grid';
+  const [headlinesPage, setHeadlinesPage] = useState(1);
+  const [descriptionsPage, setDescriptionsPage] = useState(1);
+  const [sitelinksPage, setSitelinksPage] = useState(1);
+  const [imagesPage, setImagesPage] = useState(1);
+  const [videosPage, setVideosPage] = useState(1);
 
   const assetGroups = useMemo(() => getAccountAssetGroups(), []);
-  const campaigns = useMemo(() => getActualCampaigns(), []);
-  
-  const updateFilter = (key: string, value: string) => {
-    const nextParams = new URLSearchParams(searchParams);
-    if (value === 'all') nextParams.delete(key);
-    else nextParams.set(key, value);
-    setSearchParams(nextParams);
-  };
 
-  const filteredAssetGroups = useMemo(() => {
-    return assetGroups.filter(g => {
-      const matchesSearch = g.name.toLowerCase().includes(searchQuery.toLowerCase()) || g.campaignName.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesHealth = activeHealth === 'all' || 
-                           (activeHealth === 'excellent' && g.overallScore >= 80) ||
-                           (activeHealth === 'good' && g.overallScore >= 60 && g.overallScore < 80) ||
-                           (activeHealth === 'poor' && g.overallScore < 60);
-      return matchesSearch && matchesHealth;
-    });
-  }, [assetGroups, searchQuery, activeHealth]);
+  const filteredAssetGroups = assetGroups;
 
   const accountHealth = useMemo(() => {
-    const total = assetGroups.reduce((s: number, g: AssetGroup) => s + g.overallScore, 0);
-    return Math.round(total / (assetGroups.length || 1));
-  }, [assetGroups]);
+    const total = filteredAssetGroups.reduce((s: number, g: AssetGroup) => s + g.overallScore, 0);
+    return filteredAssetGroups.length > 0 ? Math.round(total / filteredAssetGroups.length) : 0;
+  }, [filteredAssetGroups]);
 
-  const insights = useMemo(() => {
-    const topCampaign = campaigns.sort((a, b) => b.revenue - a.revenue)[0];
+  const aggregateMetrics = useMemo(() => {
+    let headlines = 0, descriptions = 0, images = 0, videos = 0, sitelinks = 0;
+    const len = filteredAssetGroups.length;
+    filteredAssetGroups.forEach(g => {
+      headlines += g.headlines?.length || 0;
+      descriptions += g.descriptions?.length || 0;
+      images += g.images?.length || 0;
+      videos += g.videos?.length || 0;
+      sitelinks += g.sitelinks?.length || 0;
+    });
     return {
-      topPerformer: topCampaign?.name || 'None',
-      scalingOpportunity: campaigns.filter(c => c.roas > 4).length
+      headlines, maxHeadlines: len * 15,
+      descriptions, maxDescriptions: len * 5,
+      images, maxImages: len * 20,
+      videos, maxVideos: len * 5,
+      sitelinks, maxSitelinks: len * 10
     };
-  }, [campaigns]);
+  }, [filteredAssetGroups]);
+
+  // Flattened Arrays
+  const allHeadlines = useMemo(() => {
+    const arr: (AssetItem & { groupName: string })[] = [];
+    filteredAssetGroups.forEach(g => g.headlines?.forEach(a => arr.push({ ...a, groupName: g.name })));
+    return arr;
+  }, [filteredAssetGroups]);
+
+  const allDescriptions = useMemo(() => {
+    const arr: (AssetItem & { groupName: string })[] = [];
+    filteredAssetGroups.forEach(g => g.descriptions?.forEach(a => arr.push({ ...a, groupName: g.name })));
+    return arr;
+  }, [filteredAssetGroups]);
+
+  const allSitelinks = useMemo(() => {
+    const arr: (AssetItem & { groupName: string })[] = [];
+    filteredAssetGroups.forEach(g => g.sitelinks?.forEach(a => arr.push({ ...a, groupName: g.name })));
+    return arr;
+  }, [filteredAssetGroups]);
+
+  const allImages = useMemo(() => {
+    const arr: (AssetItem & { groupName: string })[] = [];
+    filteredAssetGroups.forEach(g => g.images?.forEach(a => arr.push({ ...a, groupName: g.name })));
+    return arr;
+  }, [filteredAssetGroups]);
+
+  const allVideos = useMemo(() => {
+    const arr: (AssetItem & { groupName: string })[] = [];
+    filteredAssetGroups.forEach(g => g.videos?.forEach(a => arr.push({ ...a, groupName: g.name })));
+    return arr;
+  }, [filteredAssetGroups]);
+
+  // Paginated Data
+  const getPaginated = (arr: any[], page: number, size: number) => {
+    const start = (page - 1) * size;
+    return arr.slice(start, start + size);
+  };
+
+  const paginatedHeadlines = getPaginated(allHeadlines, headlinesPage, PAGE_SIZE);
+  const paginatedDescriptions = getPaginated(allDescriptions, descriptionsPage, PAGE_SIZE);
+  const paginatedSitelinks = getPaginated(allSitelinks, sitelinksPage, PAGE_SIZE);
+  const paginatedImages = getPaginated(allImages, imagesPage, MEDIA_PAGE_SIZE);
+  const paginatedVideos = getPaginated(allVideos, videosPage, MEDIA_PAGE_SIZE);
+
+  // Page Counts
+  const pagesHeadlines = Math.max(1, Math.ceil(allHeadlines.length / PAGE_SIZE));
+  const pagesDescriptions = Math.max(1, Math.ceil(allDescriptions.length / PAGE_SIZE));
+  const pagesSitelinks = Math.max(1, Math.ceil(allSitelinks.length / PAGE_SIZE));
+  const pagesImages = Math.max(1, Math.ceil(allImages.length / MEDIA_PAGE_SIZE));
+  const pagesVideos = Math.max(1, Math.ceil(allVideos.length / MEDIA_PAGE_SIZE));
+
+  useEffect(() => {
+    if (headlinesPage > pagesHeadlines) setHeadlinesPage(pagesHeadlines);
+    if (descriptionsPage > pagesDescriptions) setDescriptionsPage(pagesDescriptions);
+    if (sitelinksPage > pagesSitelinks) setSitelinksPage(pagesSitelinks);
+    if (imagesPage > pagesImages) setImagesPage(pagesImages);
+    if (videosPage > pagesVideos) setVideosPage(pagesVideos);
+  }, [pagesHeadlines, pagesDescriptions, pagesSitelinks, pagesImages, pagesVideos, 
+      headlinesPage, descriptionsPage, sitelinksPage, imagesPage, videosPage]);
+
+  // Reusable Text List Item
+  const renderTextAsset = (asset: AssetItem & { groupName: string }, i: number) => (
+    <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white border border-gray-100 rounded-xl group hover:shadow-md hover:border-blue-200 transition-all gap-4">
+      <div className="flex items-start sm:items-center gap-3">
+        <span className={cn(
+          "px-2 py-0.5 rounded-[4px] text-[8px] font-black border uppercase tracking-widest flex-shrink-0 mt-0.5 sm:mt-0",
+          performanceColors[asset.performanceLabel as keyof typeof performanceColors] || performanceColors.UNRATED
+        )}>
+          {asset.performanceLabel}
+        </span>
+        <div className="flex flex-col">
+          <span className="text-sm font-bold text-gray-900 leading-snug">{asset.content}</span>
+          <span className="text-[9px] font-bold text-gray-400 uppercase tracking-tight mt-1 truncate max-w-[250px]">{asset.groupName}</span>
+        </div>
+      </div>
+      {asset.impressions !== undefined && (
+        <span className="text-[10px] font-black text-gray-400 group-hover:text-gray-600 uppercase tracking-tight whitespace-nowrap">
+          {asset.impressions.toLocaleString()} Impr.
+        </span>
+      )}
+    </div>
+  );
 
   return (
-    <div className="space-y-12 animate-in fade-in duration-700">
+    <div className="space-y-12 animate-in fade-in duration-700 pb-20">
       <PageHeader 
         title="Creative Intelligence" 
         dateRange={getDateRangeString(dateRange)} 
       />
 
+      {/* Global Creative Health */}
       <div className="space-y-6">
-        <SectionHeader title="Creative Performance Overview" />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <MetricCard 
-            label="Global Creative Health"
-            value={accountHealth + '%'}
-            subtitle="Account Average"
-            color={accountHealth >= 80 ? "#10b981" : accountHealth >= 60 ? "#f59e0b" : "#ef4444"}
-            icon={<Activity />}
-            positive={true}
-            change=""
-          />
-
-          <MetricCard 
-            label="Active Asset Groups"
-            value={assetGroups.length.toString()}
-            subtitle="Syncing Data"
-            color="#3b82f6"
-            icon={<Layout />}
-            positive={true}
-            change=""
-          />
-
-          <MetricCard 
-            label="Top Assets"
-            value="42"
-            subtitle="Rated 'BEST'"
-            color="#10b981"
-            icon={<Zap />}
-            positive={true}
-            change=""
-          />
-
-          <MetricCard 
-            label="Critical Gaps"
-            value="3"
-            subtitle="Missing Video/Images"
-            color="#ef4444"
-            icon={<AlertCircle />}
-            positive={true}
-            change=""
-          />
-        </div>
-      </div>
-
-      <div className="space-y-6">
-        <SectionHeader title="Asset Group Analysis" />
-
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 space-y-6">
-          <div className="space-y-6">
-            <div className="flex flex-wrap items-center justify-between gap-6">
-              <div className="flex items-center p-1 bg-gray-50 border border-gray-100 rounded-xl shadow-inner">
-                {['all', 'excellent', 'good', 'poor'].map((h) => (
-                  <button
-                    key={h}
-                    onClick={() => updateFilter('health', h)}
-                    className={cn(
-                      "px-5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-tight transition-all",
-                      activeHealth === h 
-                        ? "bg-gray-900 text-white shadow-md" 
-                        : "text-gray-400 hover:text-gray-600"
-                    )}
-                  >
-                    {h}
-                  </button>
-                ))}
+        <SectionHeader title="Creative Health" />
+        <div className="bg-white border border-gray-100 rounded-xl p-8 shadow-sm">
+          <div className="flex items-start justify-between mb-8">
+            <div>
+              <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Asset Strength</h3>
+              <p className="text-sm font-black text-gray-900">Google Ads AI assessment of asset group quality</p>
+            </div>
+            <div className="text-right">
+              <div className={cn(
+                "text-4xl font-black tracking-tighter",
+                accountHealth >= 80 ? "text-green-600" : accountHealth >= 50 ? "text-amber-600" : "text-red-600"
+              )}>
+                {accountHealth}%
               </div>
-
-              <div className="relative group">
-                <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-indigo-500 transition-colors" strokeWidth={3} />
-                <input
-                  type="text"
-                  placeholder="Search asset groups..."
-                  value={searchQuery}
-                  onChange={(e) => updateFilter('search', e.target.value)}
-                  className="pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-black text-gray-900 w-80 placeholder:text-gray-400 focus:outline-none focus:ring-4 focus:ring-indigo-50 transition-all border-gray-100 hover:border-gray-200"
-                />
-              </div>
-
-              <div className="flex items-center gap-1 bg-gray-50 border border-gray-100 rounded-xl p-1 ml-auto">
-                <button
-                  onClick={() => updateFilter('view', 'grid')}
-                  className={cn(
-                    "p-2 rounded-lg transition-all",
-                    viewMode === 'grid' ? "bg-white text-gray-900 shadow-sm" : "text-gray-400 hover:text-gray-600"
-                  )}
-                >
-                  <Grid size={16} />
-                </button>
-                <button
-                  onClick={() => updateFilter('view', 'table')}
-                  className={cn(
-                    "p-2 rounded-lg transition-all",
-                    viewMode === 'table' ? "bg-white text-gray-900 shadow-sm" : "text-gray-400 hover:text-gray-600"
-                  )}
-                >
-                  <List size={16} />
-                </button>
-              </div>
+              <div className="text-[10px] font-black uppercase tracking-wider text-gray-400">Strength Score</div>
             </div>
           </div>
 
-          {viewMode === 'grid' ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-6 border-t border-gray-50">
-              {filteredAssetGroups.map((group) => (
-                <div key={group.name} className="bg-white border border-gray-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-all group">
-                  <div className="flex items-start justify-between mb-6">
-                    <div className="space-y-1">
-                      <div className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Asset Group</div>
-                      <h3 className="text-lg font-black text-gray-900 leading-tight">{group.name}</h3>
-                      <div className="flex items-center gap-2 text-xs font-bold text-gray-500">
-                        <Target size={12} className="text-blue-500" />
-                        {group.campaignName}
-                      </div>
-                    </div>
-                    <div className={cn(
-                      "w-10 h-10 rounded-lg flex items-center justify-center font-black text-sm border shadow-sm",
-                      group.overallScore >= 80 ? "bg-green-50 text-green-600 border-green-100" : group.overallScore >= 60 ? "bg-amber-50 text-amber-600 border-amber-100" : "bg-red-50 text-red-600 border-red-100"
-                    )}>
-                      {group.overallScore}%
-                    </div>
-                  </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              { category: 'Headlines', score: aggregateMetrics.headlines, maxScore: aggregateMetrics.maxHeadlines },
+              { category: 'Descriptions', score: aggregateMetrics.descriptions, maxScore: aggregateMetrics.maxDescriptions },
+              { category: 'Images', score: aggregateMetrics.images, maxScore: aggregateMetrics.maxImages },
+              { category: 'Videos', score: aggregateMetrics.videos, maxScore: aggregateMetrics.maxVideos },
+              { category: 'Sitelinks', score: aggregateMetrics.sitelinks, maxScore: aggregateMetrics.maxSitelinks },
+            ].map((item) => {
+               const percentage = item.maxScore > 0 ? (item.score / item.maxScore) * 100 : 0;
+               const status = percentage >= 80 ? 'good' : percentage >= 50 ? 'warning' : 'critical';
+               return (
+                 <div key={item.category} className="space-y-3">
+                   <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-tight">
+                     <span className="text-gray-400">{item.category}</span>
+                     <span className="text-gray-900">{item.score}/{item.maxScore}</span>
+                   </div>
+                   <div className="h-1.5 bg-gray-50 rounded-full overflow-hidden border border-gray-100/50">
+                     <div 
+                       className={cn(
+                         "h-full transition-all duration-1000",
+                         status === 'good' ? "bg-green-500" : status === 'warning' ? "bg-amber-500" : "bg-red-500"
+                       )}
+                       style={{ width: `${percentage}%` }}
+                     />
+                   </div>
+                 </div>
+               );
+            })}
+          </div>
+        </div>
+      </div>
 
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-tight">
-                      <span className="text-gray-400">Asset Strength</span>
-                      <span className="text-gray-900">{group.overallScore >= 80 ? 'Excellent' : group.overallScore >= 60 ? 'Good' : 'Needs Work'}</span>
-                    </div>
-                    <div className="h-1.5 bg-gray-50 rounded-full overflow-hidden">
-                      <div 
-                        className={cn(
-                          "h-full transition-all duration-1000",
-                          group.overallScore >= 80 ? "bg-green-500" : group.overallScore >= 60 ? "bg-amber-500" : "bg-red-500"
-                        )}
-                        style={{ width: `${group.overallScore}%` }}
-                      />
-                    </div>
-                  </div>
+      <div className="space-y-12">
+        {/* Headlines Section */}
+        <div className="space-y-6 flex flex-col">
+          <SectionHeader title="Headlines" />
+          <div className="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm flex flex-col">
+            <div className="p-6 flex-1 space-y-6">
+              <div className="flex items-center justify-between bg-gray-50/50 p-4 rounded-xl border border-gray-100/50">
+                <div className="flex items-center gap-2">
+                  <Type size={16} className="text-blue-600" />
+                  <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                    All Headlines ({allHeadlines.length})
+                  </h3>
+                </div>
+              </div>
+              <div className="space-y-3 px-2">
+                {paginatedHeadlines.map(renderTextAsset)}
+                {paginatedHeadlines.length === 0 && (
+                  <div className="p-8 text-center text-sm font-medium text-gray-400 border-2 border-dashed border-gray-100 rounded-xl">No headlines found.</div>
+                )}
+              </div>
+            </div>
+            <PaginationControls page={headlinesPage} totalPages={pagesHeadlines} setPage={setHeadlinesPage} />
+          </div>
+        </div>
 
-                  <div className="mt-8 space-y-2">
-                    <div className="flex items-center justify-between px-3 py-2 bg-gray-50/50 rounded-lg border border-gray-100/50">
-                      <div className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase">
-                        <Type size={12} /> Headlines
+        {/* Descriptions Section */}
+        <div className="space-y-6 flex flex-col">
+          <SectionHeader title="Descriptions" />
+          <div className="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm flex flex-col">
+            <div className="p-6 flex-1 space-y-6">
+              <div className="flex items-center justify-between bg-gray-50/50 p-4 rounded-xl border border-gray-100/50">
+                <div className="flex items-center gap-2">
+                  <Layout size={16} className="text-blue-600" />
+                  <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                    All Descriptions ({allDescriptions.length})
+                  </h3>
+                </div>
+              </div>
+              <div className="space-y-3 px-2">
+                {paginatedDescriptions.map(renderTextAsset)}
+                {paginatedDescriptions.length === 0 && (
+                  <div className="p-8 text-center text-sm font-medium text-gray-400 border-2 border-dashed border-gray-100 rounded-xl">No descriptions found.</div>
+                )}
+              </div>
+            </div>
+            <PaginationControls page={descriptionsPage} totalPages={pagesDescriptions} setPage={setDescriptionsPage} />
+          </div>
+        </div>
+
+        {/* Sitelinks Section */}
+        <div className="space-y-6 flex flex-col">
+          <SectionHeader title="Sitelinks" />
+          <div className="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm flex flex-col">
+            <div className="p-6 flex-1 space-y-6">
+              <div className="flex items-center justify-between bg-gray-50/50 p-4 rounded-xl border border-gray-100/50">
+                <div className="flex items-center gap-2">
+                  <LinkIcon size={16} className="text-blue-600" />
+                  <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                    All Sitelinks ({allSitelinks.length})
+                  </h3>
+                </div>
+              </div>
+              <div className="space-y-3 px-2">
+                {paginatedSitelinks.map(renderTextAsset)}
+                {paginatedSitelinks.length === 0 && (
+                  <div className="p-8 text-center text-sm font-medium text-gray-400 border-2 border-dashed border-gray-100 rounded-xl">No sitelinks found.</div>
+                )}
+              </div>
+            </div>
+            <PaginationControls page={sitelinksPage} totalPages={pagesSitelinks} setPage={setSitelinksPage} />
+          </div>
+        </div>
+
+        {/* Images Section */}
+        <div className="space-y-6 flex flex-col">
+          <SectionHeader title="Images" />
+          <div className="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm flex flex-col">
+            <div className="p-6 flex-1 space-y-6">
+              <div className="flex items-center justify-between bg-gray-50/50 p-4 rounded-xl border border-gray-100/50">
+                <div className="flex items-center gap-2">
+                  <ImageIcon size={16} className="text-blue-600" />
+                  <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                    All Images ({allImages.length})
+                  </h3>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {paginatedImages.map((asset, i) => (
+                  <div key={i} className="relative group rounded-xl overflow-hidden aspect-square bg-gray-50 border border-gray-200 shadow-sm flex flex-col">
+                    <div className="absolute inset-0 flex items-center justify-center p-4">
+                      <div className="w-full h-full flex flex-col items-center justify-center text-center gap-2">
+                        <ImageIcon size={28} className="text-gray-300" />
+                        <span className="text-[8px] font-bold text-gray-400 line-clamp-3 leading-tight px-2">{asset.content}</span>
                       </div>
-                      <span className="text-xs font-black text-gray-700">{group.headlines.length}/15</span>
                     </div>
-                    <div className="flex items-center justify-between px-3 py-2 bg-gray-50/50 rounded-lg border border-gray-100/50">
-                      <div className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase">
-                        <ImageIcon size={12} /> Images
-                      </div>
-                      <span className="text-xs font-black text-gray-700">{group.images.length}/20</span>
+                    {/* Hover Overlay */}
+                    <div className="absolute inset-0 bg-gray-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3">
+                      <button className="bg-white p-2.5 rounded-full shadow-lg hover:scale-105 transition-transform">
+                        <ExternalLink size={16} className="text-gray-900" />
+                      </button>
+                      <span className="text-[8px] font-black text-white uppercase tracking-widest bg-black/50 px-2 py-0.5 rounded truncate max-w-[80%] text-center">
+                        {asset.groupName}
+                      </span>
                     </div>
-                    <div className="flex items-center justify-between px-3 py-2 bg-gray-50/50 rounded-lg border border-gray-100/50">
-                      <div className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase">
-                        <Video size={12} /> Videos
-                      </div>
-                      <span className={cn("text-xs font-black", group.videos.length === 0 ? "text-red-500" : "text-gray-700")}>
-                        {group.videos.length}/5
+                    <div className="absolute bottom-2 left-2 z-10">
+                      <span className={cn(
+                        "px-1.5 py-0.5 rounded-[4px] text-[8px] font-black border uppercase tracking-widest shadow-sm",
+                        performanceColors[asset.performanceLabel as keyof typeof performanceColors] || performanceColors.UNRATED
+                      )}>
+                        {asset.performanceLabel}
                       </span>
                     </div>
                   </div>
-
-                  {group.missingAssets && group.missingAssets.length > 0 && (
-                    <div className="mt-6 p-4 bg-red-50/50 rounded-xl border border-red-100/50">
-                      <div className="flex items-center gap-2 text-[10px] font-black text-red-500 uppercase mb-2">
-                        <AlertCircle size={12} /> Critical Gaps
-                      </div>
-                      <div className="space-y-1">
-                        {group.missingAssets.slice(0, 2).map((m: string) => (
-                          <div key={m} className="text-[10px] font-bold text-red-400 flex items-center gap-2">
-                            <ArrowRight size={10} /> {m}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <button className="w-full mt-8 py-3 bg-white border border-gray-100 text-gray-700 rounded-xl text-xs font-black hover:bg-gray-50 transition-all flex items-center justify-center gap-2 shadow-sm">
-                    Optimize Group
-                    <ExternalLink size={12} className="text-gray-400" />
-                  </button>
+                ))}
+              </div>
+              
+              {paginatedImages.length === 0 && (
+                <div className="p-8 text-center text-sm font-medium text-gray-400 border-2 border-dashed border-gray-100 rounded-xl h-full flex items-center justify-center">
+                  No images found.
                 </div>
-              ))}
+              )}
+            </div>
+            <PaginationControls page={imagesPage} totalPages={pagesImages} setPage={setImagesPage} />
+          </div>
+        </div>
 
-              <div className="bg-gray-50/30 border-2 border-dashed border-gray-200 rounded-xl p-6 flex flex-col items-center justify-center text-center space-y-4 hover:border-indigo-300 hover:bg-indigo-50/20 transition-all cursor-pointer group">
-                <div className="w-12 h-12 rounded-xl bg-white shadow-sm border border-gray-100 flex items-center justify-center text-gray-400 group-hover:text-indigo-500 transition-colors">
-                  <Plus size={24} />
-                </div>
-                <div>
-                  <h3 className="text-sm font-black text-gray-900">New Asset Group</h3>
-                  <p className="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-tight">Scale Account Reach</p>
+        {/* Videos Section */}
+        <div className="space-y-6 flex flex-col">
+          <SectionHeader title="Videos" />
+          <div className="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm flex flex-col">
+            <div className="p-6 flex-1 space-y-6">
+              <div className="flex items-center justify-between bg-gray-50/50 p-4 rounded-xl border border-gray-100/50">
+                <div className="flex items-center gap-2">
+                  <Video size={16} className="text-red-600" />
+                  <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                    All Videos ({allVideos.length})
+                  </h3>
                 </div>
               </div>
-            </div>
-          ) : (
-            <div className="overflow-x-auto pt-6 border-t border-gray-50">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-gray-100">
-                    <th className="pb-4 text-[10px] font-black uppercase text-gray-400 tracking-widest px-2">Asset Group</th>
-                    <th className="pb-4 text-[10px] font-black uppercase text-gray-400 tracking-widest px-2">Campaign</th>
-                    <th className="pb-4 text-[10px] font-black uppercase text-gray-400 tracking-widest text-center px-2">Headlines</th>
-                    <th className="pb-4 text-[10px] font-black uppercase text-gray-400 tracking-widest text-center px-2">Images</th>
-                    <th className="pb-4 text-[10px] font-black uppercase text-gray-400 tracking-widest text-center px-2">Videos</th>
-                    <th className="pb-4 text-[10px] font-black uppercase text-gray-400 tracking-widest text-right px-2">Score</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {filteredAssetGroups.map((group) => (
-                    <tr key={group.name} className="group hover:bg-gray-50/50 transition-colors">
-                      <td className="py-4 px-2">
-                        <span className="text-sm font-black text-gray-900">{group.name}</span>
-                      </td>
-                      <td className="py-4 px-2">
-                        <span className="text-xs font-bold text-gray-500">{group.campaignName}</span>
-                      </td>
-                      <td className="py-4 px-2 text-center">
-                        <span className="text-xs font-black text-gray-700">{group.headlines.length}/15</span>
-                      </td>
-                      <td className="py-4 px-2 text-center">
-                        <span className="text-xs font-black text-gray-700">{group.images.length}/20</span>
-                      </td>
-                      <td className="py-4 px-2 text-center">
-                        <span className={cn("text-xs font-black", group.videos.length === 0 ? "text-red-500" : "text-gray-700")}>
-                          {group.videos.length}/5
-                        </span>
-                      </td>
-                      <td className="py-4 px-2 text-right">
-                        <span className={cn(
-                          "px-2 py-0.5 rounded text-[10px] font-black uppercase border",
-                          group.overallScore >= 80 ? "bg-green-50 text-green-700 border-green-200" : group.overallScore >= 60 ? "bg-amber-50 text-amber-600 border-amber-100" : "bg-red-50 text-red-700 border-red-200"
-                        )}>
-                          {group.overallScore}%
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Intelligence Analysis */}
-      <div className="space-y-6">
-        <SectionHeader title="Intelligence Insight" />
-        <div className="bg-indigo-900 rounded-xl p-8 text-white shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-12 opacity-10">
-             <Activity size={120} />
-          </div>
-          <div className="relative z-10 space-y-6">
-             <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
-                   <Zap className="text-yellow-400" size={20} strokeWidth={3} />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {paginatedVideos.map((asset, i) => (
+                  <div key={i} className="relative group h-32 rounded-xl overflow-hidden bg-gray-900 border border-white/10 shadow-lg">
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Play size={32} className="text-white/30 group-hover:text-white/80 transition-all group-hover:scale-110" />
+                    </div>
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3">
+                      <span className="text-[8px] font-black text-white uppercase tracking-widest bg-black/50 px-2 py-0.5 rounded truncate max-w-[80%] text-center">
+                        {asset.groupName}
+                      </span>
+                    </div>
+                    <div className="absolute bottom-3 left-3 right-3 flex justify-between items-center">
+                      <span className={cn(
+                        "px-2 py-0.5 rounded-[4px] text-[8px] font-black border uppercase tracking-widest shadow-sm",
+                        performanceColors[asset.performanceLabel as keyof typeof performanceColors] || performanceColors.UNRATED
+                      )}>
+                        {asset.performanceLabel}
+                      </span>
+                      <span className="text-[9px] font-black text-white/50 uppercase tracking-widest">YouTube Shorts</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              {paginatedVideos.length === 0 && (
+                <div className="p-8 text-center text-sm font-medium text-gray-400 border-2 border-dashed border-gray-100 rounded-xl flex items-center justify-center">
+                  No video assets found.
                 </div>
-                <h3 className="text-xl font-black tracking-tight">Scaling Recommendation</h3>
-             </div>
-             <p className="text-indigo-100 text-sm font-medium max-w-2xl leading-relaxed">
-                Our analysis of your GA4 Cohort data reveals that <strong>Paid Search users have a 7x higher 120-day LTV (₹94.92)</strong> compared to PMax users (₹14.22). 
-                While PMax drives volume, your high-value customers are coming from specific search queries. 
-                We recommend shifting 15% of PMax budget into top-performing Search campaigns to maximize long-term account profitability.
-             </p>
-             <div className="flex gap-4">
-                <button className="bg-white text-indigo-900 px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-indigo-50 transition-all">
-                   Generate Scale Plan
-                </button>
-             </div>
+              )}
+            </div>
+            <PaginationControls page={videosPage} totalPages={pagesVideos} setPage={setVideosPage} />
           </div>
         </div>
       </div>

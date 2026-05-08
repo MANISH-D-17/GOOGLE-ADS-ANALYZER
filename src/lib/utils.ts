@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { SKUState } from "../data/mockData"
+import { SKUState } from "../data/actualDataLoader"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

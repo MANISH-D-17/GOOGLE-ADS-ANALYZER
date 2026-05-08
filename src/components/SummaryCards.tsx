@@ -3,14 +3,12 @@ import {
   CreditCard, IndianRupee, Zap, ShoppingBag 
 } from 'lucide-react';
 import { formatRupees } from '../lib/utils';
-import { SKU } from '../data/mockData';
+import { ActualSKU } from '../data/actualDataLoader';
 import MetricCard from './MetricCard';
 import SectionHeader from './SectionHeader';
 
-import { ActualSKU } from '../data/actualDataLoader';
-
 interface SummaryCardsProps {
-  skus: SKU[] | ActualSKU[];
+  skus: ActualSKU[];
   overrideTotals?: {
     totalSpend: number;
     totalRevenue: number;

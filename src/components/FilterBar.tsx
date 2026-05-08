@@ -1,7 +1,7 @@
 import React from 'react';
 import { Search, ChevronDown, Filter } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { SKUState } from '../data/mockData';
+import { SKUState } from '../data/actualDataLoader';
 
 interface FilterBarProps {
   activeState: SKUState | 'all';

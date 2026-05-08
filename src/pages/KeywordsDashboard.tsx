@@ -1,8 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { 
   Target, ArrowUpRight, Eye, Zap, Plus, X, Search,
-  CreditCard, IndianRupee, ShoppingBag, Filter, MousePointer2, Percent
+  CreditCard, IndianRupee, ShoppingBag, Filter, MousePointer2, Percent,
+  ChevronLeft, ChevronRight
 } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import SectionHeader from '../components/SectionHeader';
@@ -21,11 +22,14 @@ const intentColors: Record<string, { bg: string; text: string; label: string; bo
   negative:     { bg: 'bg-red-50', text: 'text-red-700', label: 'Negative', border: 'border-red-200' },
 };
 
+const PAGE_SIZE = 10;
+
 const KeywordsDashboard: React.FC<{ dateRange: string }> = ({ dateRange }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeIntent = searchParams.get('intent') || 'all';
   const searchQuery = searchParams.get('search') || '';
   const multiplier = getScaleMultiplier(dateRange);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const allSearchTerms = useMemo(() => {
     const raw = getActualSearchTerms();
@@ -77,7 +81,14 @@ const KeywordsDashboard: React.FC<{ dateRange: string }> = ({ dateRange }) => {
     if (value === 'all') nextParams.delete(key);
     else nextParams.set(key, value);
     setSearchParams(nextParams);
+    setCurrentPage(1);
   };
+
+  const totalPages = Math.max(1, Math.ceil(filteredTerms.length / PAGE_SIZE));
+  const paginatedTerms = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return filteredTerms.slice(start, start + PAGE_SIZE);
+  }, [filteredTerms, currentPage]);
 
   return (
     <div className="space-y-12 animate-in fade-in duration-700">
@@ -187,7 +198,7 @@ const KeywordsDashboard: React.FC<{ dateRange: string }> = ({ dateRange }) => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {filteredTerms.map((t) => {
+                {paginatedTerms.map((t) => {
                   const intent = intentColors[t.intent] || intentColors.generic_low;
                   return (
                     <tr key={t.term} className="group hover:bg-gray-50/50 transition-colors">
@@ -237,6 +248,34 @@ const KeywordsDashboard: React.FC<{ dateRange: string }> = ({ dateRange }) => {
                 </tr>
               </tfoot>
             </table>
+            
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100 bg-gray-50/30">
+                <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                  Showing {(currentPage - 1) * PAGE_SIZE + 1}-{Math.min(currentPage * PAGE_SIZE, filteredTerms.length)} of {filteredTerms.length}
+                </div>
+                <div className="flex items-center gap-2">
+                  <button 
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage(prev => prev - 1)}
+                    className="p-2 rounded-lg border border-gray-100 bg-white text-gray-400 hover:text-indigo-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                  >
+                    <ChevronLeft size={16} />
+                  </button>
+                  <div className="text-[10px] font-black text-gray-900 uppercase">
+                    Page {currentPage} of {totalPages}
+                  </div>
+                  <button 
+                    disabled={currentPage === totalPages}
+                    onClick={() => setCurrentPage(prev => prev + 1)}
+                    className="p-2 rounded-lg border border-gray-100 bg-white text-gray-400 hover:text-indigo-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                  >
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
