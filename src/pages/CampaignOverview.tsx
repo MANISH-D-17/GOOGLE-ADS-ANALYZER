@@ -3,7 +3,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, Cell 
 } from 'recharts';
-import { getActualCampaigns, ActualCampaign } from '../data/actualDataLoader';
+import { getActualCampaigns } from '../data/actualDataLoader';
 import { getScaleMultiplier, getDateRangeString, scaleMetrics } from '../lib/dataUtils';
 import { cn, formatRupees } from '../lib/utils';
 import { ShoppingBag, Users, Zap, MousePointer2, CreditCard, Activity, Search, Filter } from 'lucide-react';
@@ -12,7 +12,7 @@ import SectionHeader from '../components/SectionHeader';
 import MetricCard from '../components/MetricCard';
 import SummaryCards from '../components/SummaryCards';
 import PageHeader from '../components/PageHeader';
-import { SKU, SKUState } from '../data/mockData';
+import { SKU, SKUState, GA4_FUNNEL, TRAFFIC_SOURCES, LTV_DATA } from '../data/mockData';
 
 interface CampaignOverviewProps {
   dateRange: string;
@@ -58,6 +58,21 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ dateRange }) => {
       return matchesSearch && matchesStrategy;
     });
   }, [scaledCampaigns, searchQuery, activeStrategy]);
+
+  const scaledFunnel = useMemo(() => {
+    return GA4_FUNNEL.map(step => ({
+      ...step,
+      count: Math.round(step.count * multiplier)
+    }));
+  }, [multiplier]);
+
+  const scaledTraffic = useMemo(() => {
+    return TRAFFIC_SOURCES.map(source => ({
+      ...source,
+      sessions: Math.round(source.sessions * multiplier),
+      revenue: Math.round(source.revenue * multiplier)
+    }));
+  }, [multiplier]);
 
   // Map campaigns to SKU-like objects for SummaryCards compatibility
   const campaignSummaryData = useMemo((): SKU[] => {

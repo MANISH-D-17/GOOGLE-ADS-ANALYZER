@@ -10,6 +10,7 @@ import MetricCard from '../components/MetricCard';
 import { formatRupees, cn } from '../lib/utils';
 import { getAccountKeywordsSummary } from '../data/aggregatedData';
 import { getScaleMultiplier, getDateRangeString, scaleMetrics } from '../lib/dataUtils';
+import { getActualSearchTerms } from '../data/actualDataLoader';
 
 const intentColors: Record<string, { bg: string; text: string; label: string; border: string }> = {
   branded:      { bg: 'bg-blue-50', text: 'text-blue-700', label: 'Branded', border: 'border-blue-200' },
