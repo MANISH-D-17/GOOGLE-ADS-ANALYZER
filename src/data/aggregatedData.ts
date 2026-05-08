@@ -78,21 +78,58 @@ export function getAccountAssetGroups(): AssetGroup[] {
 
 export function getAccountFeedHealth() {
   return {
-    totalItems: 1240,
-    approved: 1182,
-    disapproved: 42,
-    excluded: 16,
+    totalItems: 4043,
+    approved: 0,          // ALL products are disapproved
+    disapproved: 4043,    // 100% disapproval rate
+    excluded: 0,
+    inStock: 3516,
+    outOfStock: 527,
+    approvalRate: 0,      // 0% — this is the primary crisis
     topIssues: [
-      { reason: 'Missing GTIN', count: 480, impact: 'High' },
-      { reason: 'Short Titles', count: 320, impact: 'Medium' },
-      { reason: 'Low Resolution Images', count: 12, impact: 'Critical' },
-      { reason: 'Missing Product Type', count: 85, impact: 'Low' },
+      { 
+        reason: 'Missing image_link', 
+        count: 4043, 
+        pct: 100,
+        impact: 'Critical',
+        note: 'ALL products lack image_link. Shopping and PMax ads cannot serve without product images. This is the #1 reason all products are disapproved.'
+      },
+      { 
+        reason: 'Missing product_type', 
+        count: 4043, 
+        pct: 100,
+        impact: 'Critical',
+        note: 'No product_type set on any product. Google cannot categorize products for Shopping placements.'
+      },
+      { 
+        reason: 'Missing GTIN', 
+        count: 4037, 
+        pct: 99.9,
+        impact: 'High',
+        note: 'GTIN missing on nearly all products. Google cannot enrich product data from its catalog. Reduces impression share.'
+      },
+      { 
+        reason: 'Short product titles', 
+        count: 1128, 
+        pct: 27.9,
+        impact: 'Medium',
+        note: '27.9% of titles are under 70 characters. Longer titles with key attributes (color, size, material) improve search match rate.'
+      },
+      { 
+        reason: 'Poor description quality', 
+        count: 318, 
+        pct: 7.9,
+        impact: 'Low',
+        note: '318 products have thin or HTML-tag-only descriptions that hurt ad relevance.'
+      },
     ],
     attributeQuality: [
-      { field: 'Title', score: 82 },
-      { field: 'Description', score: 64 },
-      { field: 'Image', score: 91 },
-      { field: 'Price/Availability', score: 100 },
-    ]
+      { field: 'Title', score: 72, issue: '28% too short' },
+      { field: 'Description', score: 85, issue: '8% poor quality' },
+      { field: 'Image', score: 0, issue: '100% missing — CRITICAL' },
+      { field: 'Price/Availability', score: 100, issue: 'None' },
+      { field: 'Product Type', score: 0, issue: '100% missing — CRITICAL' },
+      { field: 'GTIN', score: 1, issue: '99.9% missing' },
+    ],
+    criticalAlert: 'ALL 4,043 products are disapproved due to missing image_link and product_type. No Shopping or PMax ads can serve until these are fixed. This is likely why campaign spend is concentrated in Search and why ROAS is below target.',
   };
 }

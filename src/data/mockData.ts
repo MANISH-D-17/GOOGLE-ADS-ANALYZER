@@ -122,11 +122,11 @@ export const CAMPAIGN_DATA: Campaign[] = [
 ];
 
 export const GA4_FUNNEL = [
-  { event: 'page_view', count: 5387178 },
-  { event: 'view_item', count: 2973383, pct: 55.2 },
-  { event: 'add_to_cart', count: 482100, pct: 16.2 },
-  { event: 'begin_checkout', count: 214500, pct: 44.5 },
-  { event: 'purchase', count: 14200, pct: 6.6 },
+  { event: 'page_view', count: 5387178, convRate: 100, dropRate: 0 },
+  { event: 'view_item', count: 2973383, convRate: 55.2, dropRate: 44.8 },
+  { event: 'add_to_cart', count: 183617, convRate: 6.2, dropRate: 93.8 },
+  { event: 'begin_checkout', count: 60950, convRate: 33.2, dropRate: 66.8 },
+  { event: 'purchase', count: 23131, convRate: 38.0, dropRate: 62.0 },
 ];
 
 export const TRAFFIC_SOURCES = [

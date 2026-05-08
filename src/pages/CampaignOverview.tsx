@@ -215,20 +215,49 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ dateRange }) => {
               {scaledFunnel.map((step, idx) => (
                 <div key={idx} className="relative">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{step.event.replace('_', ' ')}</span>
+                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{step.event.replace(/_/g, ' ')}</span>
                     <div className="text-right">
                       <div className="text-sm font-black text-gray-900">{step.count.toLocaleString()}</div>
-                      {step.pct && <div className="text-[10px] text-blue-500 font-bold">{step.pct}% drop</div>}
+                      {(step as any).dropRate > 0 && <div className="text-[10px] text-red-500 font-bold">{(step as any).dropRate}% drop</div>}
                     </div>
                   </div>
                   <div className="h-2.5 w-full bg-gray-50 rounded-full overflow-hidden border border-gray-100">
                     <div 
                       className="h-full bg-blue-600 rounded-full" 
-                      style={{ width: `${idx === 0 ? 100 : (step.count / scaledFunnel[0].count) * 100}%` }} 
+                      style={{ width: `${idx === 0 ? 100 : (step.count / scaledFunnel[idx - 1].count) * 100}%` }} 
                     />
                   </div>
                 </div>
               ))}
+            </div>
+            
+            <div className="mt-8 bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm">
+              <p className="text-amber-800 font-medium leading-relaxed">
+                <strong>⚠ view_item → add_to_cart drop is 93.8%</strong> — only 6.2% of product viewers add to cart. Industry benchmark is 8–12%. Priority action: improve product page images, pricing clarity, and size guides. The checkout flow itself is relatively healthy (38% of checkouts complete — close to the 35–40% benchmark).
+              </p>
+            </div>
+
+            <div className="mt-8 pt-8 border-t border-gray-100">
+              <h4 className="text-xs font-black text-gray-900 uppercase tracking-widest mb-4">Full Checkout Path</h4>
+              <div className="space-y-3">
+                {[
+                  { event: 'begin_checkout', count: 60950, note: '' },
+                  { event: 'magic_checkout_requested', count: 57297, note: '94% initiated magic checkout' },
+                  { event: 'add_payment_info', count: 35738, note: '58.6% reach payment info' },
+                  { event: 'pay_now_clicked', count: 34830, note: '97.5% click pay' },
+                  { event: 'payment_successful', count: 20867, note: '59.9% success rate' },
+                  { event: 'payment_failed', count: 2862, note: '8.2% failure rate' },
+                  { event: 'purchase', count: 23131, note: 'confirmed purchases' }
+                ].map((step, i) => (
+                  <div key={i} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+                    <div>
+                      <div className="text-[11px] font-black text-gray-700 uppercase tracking-widest">{step.event.replace(/_/g, ' ')}</div>
+                      {step.note && <div className="text-[10px] text-gray-400 mt-0.5">{step.note}</div>}
+                    </div>
+                    <div className="text-xs font-bold text-gray-900">{Math.round(step.count * multiplier).toLocaleString()}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 

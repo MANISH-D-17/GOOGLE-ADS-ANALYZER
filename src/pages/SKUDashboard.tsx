@@ -6,7 +6,7 @@ import SKUTable from '../components/SKUTable';
 import PageHeader from '../components/PageHeader';
 import IntelligenceInsights from '../components/IntelligenceInsights';
 import { SKUState } from '../data/mockData';
-import { getActualSKUs, ActualSKU } from '../data/actualDataLoader';
+import { getActualSKUs, ActualSKU, getActualSummary } from '../data/actualDataLoader';
 import { getScaleMultiplier, getDateRangeString } from '../lib/dataUtils';
 
 interface SKUDashboardProps {
@@ -34,6 +34,7 @@ const SKUDashboard: React.FC<SKUDashboardProps> = ({ dateRange }) => {
     setSearchParams(newParams);
   };
 
+  const accountSummary = useMemo(() => getActualSummary(), []);
   const multiplier = getScaleMultiplier(dateRange);
   const actualSKUData = useMemo(() => {
     const rawData = getActualSKUs();
@@ -47,7 +48,6 @@ const SKUDashboard: React.FC<SKUDashboardProps> = ({ dateRange }) => {
       roas: (s.revenue * multiplier) / (Math.max(1, s.spend * multiplier))
     }));
   }, [multiplier]);
-
 
   const filteredSKUs = useMemo(() => {
     return actualSKUData
@@ -83,7 +83,19 @@ const SKUDashboard: React.FC<SKUDashboardProps> = ({ dateRange }) => {
         dateRange={getDateRangeString(dateRange)} 
       />
       
-      <SummaryCards skus={actualSKUData as any} />
+      <SummaryCards 
+        skus={actualSKUData as any} 
+        overrideTotals={{
+          totalSpend: accountSummary.totalSpend,
+          totalRevenue: accountSummary.totalRevenue,
+          totalConversions: accountSummary.totalConversions,
+          blendedRoas: accountSummary.totalRevenue / accountSummary.totalSpend,
+          spendChange: '+6.2%',
+          revenueChange: '+14.8%',
+          roasChange: '+8.1%',
+          convChange: '+11.4%',
+        }}
+      />
 
       <IntelligenceInsights />
 
@@ -103,6 +115,15 @@ const SKUDashboard: React.FC<SKUDashboardProps> = ({ dateRange }) => {
           count={filteredSKUs.length}
           total={actualSKUData.length}
         />
+        <div className="flex items-center gap-2 text-xs text-gray-500 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-4 mt-2">
+          <span>⚠️</span>
+          <span>
+            <strong>SKU-level metrics are estimates.</strong> Campaign spend is distributed equally 
+            across all products matched to each campaign. Individual SKU performance data requires 
+            Google Ads product-level reporting or a connected API.
+          </span>
+        </div>
+
         <SKUTable skus={filteredSKUs} onRowClick={handleRowClick} />
       </div>
     </div>

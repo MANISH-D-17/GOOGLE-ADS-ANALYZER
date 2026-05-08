@@ -8,7 +8,7 @@ import PageHeader from '../components/PageHeader';
 import SectionHeader from '../components/SectionHeader';
 import MetricCard from '../components/MetricCard';
 import { formatRupees, cn } from '../lib/utils';
-import { getActualSKUs } from '../data/actualDataLoader';
+import { getAccountFeedHealth } from '../data/aggregatedData';
 import { getDateRangeString } from '../lib/dataUtils';
 
 import { useSearchParams } from 'react-router-dom';
@@ -19,48 +19,14 @@ const FeedHealthDashboard: React.FC<{ dateRange: string }> = ({ dateRange }) => 
   const activeImpact = searchParams.get('impact') || 'all';
   const searchQuery = searchParams.get('search') || '';
 
-  const skus = useMemo(() => getActualSKUs(), []);
-  
   const updateFilter = (key: string, value: string) => {
     const nextParams = new URLSearchParams(searchParams);
     if (value === 'all') nextParams.delete(key);
     else nextParams.set(key, value);
     setSearchParams(nextParams);
   };
-  
-  const stats = useMemo(() => {
-    const totalItems = skus.length;
-    const approved = skus.filter(s => s.status === 'active').length;
-    const disapproved = skus.filter(s => s.status === 'disapproved').length;
-    
-    // Aggregate issues
-    const issueMap: Record<string, number> = {};
-    const attributeQuality: Record<string, { total: number, good: number }> = {};
-    
-    skus.forEach(s => {
-      s.attributes.forEach(a => {
-        if (!attributeQuality[a.field]) attributeQuality[a.field] = { total: 0, good: 0 };
-        attributeQuality[a.field].total++;
-        if (a.quality === 'good') attributeQuality[a.field].good++;
-        
-        if (a.issue) {
-          issueMap[a.issue] = (issueMap[a.issue] || 0) + 1;
-        }
-      });
-    });
 
-    const topIssues = Object.entries(issueMap)
-      .map(([reason, count]) => ({ reason, count, impact: count > 100 ? 'Critical' : 'Medium' }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 5);
-
-    const qualityScores = Object.entries(attributeQuality).map(([field, q]) => ({
-      field,
-      score: Math.round((q.good / q.total) * 100)
-    }));
-
-    return { totalItems, approved, disapproved, excluded: 0, topIssues, qualityScores };
-  }, [skus]);
+  const stats = useMemo(() => getAccountFeedHealth(), []);
 
   return (
     <div className="space-y-12 animate-in fade-in duration-700">
@@ -70,6 +36,31 @@ const FeedHealthDashboard: React.FC<{ dateRange: string }> = ({ dateRange }) => 
       />
 
       <div className="space-y-6">
+        {stats.criticalAlert && (
+          <div className="bg-red-50 border-2 border-red-500 rounded-xl p-6 flex items-start gap-4">
+            <div className="text-red-500 text-3xl">🚨</div>
+            <div>
+              <h2 className="text-red-800 font-black text-lg">Feed Crisis: 100% Disapproval Rate</h2>
+              <p className="text-red-700 mt-1 text-sm">
+                All 4,043 products are disapproved. Root cause: missing <code>image_link</code> and 
+                <code>product_type</code> on every product. No Shopping or PMax ads can serve product 
+                listings until fixed. This is the highest-priority issue in the account.
+              </p>
+              <div className="mt-3 flex gap-3 flex-wrap">
+                <span className="bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded-full">
+                  4,043 products disapproved
+                </span>
+                <span className="bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded-full">
+                  0 approved
+                </span>
+                <span className="bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded-full">
+                  Est. lost impressions: 10M+/month
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
         <SectionHeader title="Global Feed Status" />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -87,9 +78,9 @@ const FeedHealthDashboard: React.FC<{ dateRange: string }> = ({ dateRange }) => 
             label="Approved"
             value={stats.approved.toLocaleString()}
             subtitle={((stats.approved / stats.totalItems) * 100).toFixed(1) + '% of feed'}
-            color="#10b981"
+            color="#ef4444"
             icon={<CheckCircle2 />}
-            positive={true}
+            positive={false}
             change=""
           />
 
@@ -99,7 +90,7 @@ const FeedHealthDashboard: React.FC<{ dateRange: string }> = ({ dateRange }) => 
             subtitle="Immediate Action"
             color="#ef4444"
             icon={<AlertCircle />}
-            positive={true}
+            positive={false}
             change=""
           />
 
@@ -171,6 +162,7 @@ const FeedHealthDashboard: React.FC<{ dateRange: string }> = ({ dateRange }) => 
                     <div>
                       <div className="text-sm font-black text-gray-900">{issue.reason}</div>
                       <div className="text-[10px] font-bold text-gray-400 mt-0.5 uppercase">{issue.count} products affected</div>
+                      {(issue as any).note && <div className="text-xs text-gray-500 mt-1">{(issue as any).note}</div>}
                     </div>
                   </div>
                   <button className="p-2 hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-100 rounded-lg text-gray-400 hover:text-blue-600 transition-all">
@@ -191,7 +183,7 @@ const FeedHealthDashboard: React.FC<{ dateRange: string }> = ({ dateRange }) => 
 
           <div className="bg-white border border-gray-100 rounded-xl p-6 shadow-sm space-y-8">
             <div className="space-y-6">
-               {stats.qualityScores.map((attr) => (
+               {stats.attributeQuality.map((attr) => (
                  <div key={attr.field} className="space-y-2">
                     <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-tight">
                        <span className="text-gray-400">{attr.field}</span>
@@ -223,6 +215,29 @@ const FeedHealthDashboard: React.FC<{ dateRange: string }> = ({ dateRange }) => 
                <button className="mt-4 text-[9px] font-black text-indigo-600 uppercase tracking-widest hover:underline flex items-center gap-1">
                   Get Recommendations <ArrowRight size={10} />
                </button>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 mt-6">
+            <h3 className="font-black text-gray-900 text-lg mb-4">🔧 Fix Priority Order</h3>
+            <div className="space-y-3">
+              {[
+                { step: 1, action: 'Upload product images to Shopify CDN and add image_link to all 4,043 products in the feed', impact: 'Unlocks Shopping + PMax serving', urgency: 'This week' },
+                { step: 2, action: 'Set product_type for all products using category hierarchy (e.g. "Leggings > Cotton > Ankle Length")', impact: 'Enables category targeting in campaigns', urgency: 'This week' },
+                { step: 3, action: 'Add GTIN / set identifier_exists=false for products without barcode', impact: 'Improves impression share by 15-20%', urgency: 'Next 2 weeks' },
+                { step: 4, action: 'Expand short titles to 70+ characters with color, size, material, brand', impact: 'Improves search match rate', urgency: 'Next month' },
+              ].map(item => (
+                <div key={item.step} className="flex gap-4 p-4 bg-gray-50 rounded-lg">
+                  <div className="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center font-black text-sm flex-shrink-0">
+                    {item.step}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900 text-sm">{item.action}</p>
+                    <p className="text-xs text-green-700 mt-1">Impact: {item.impact}</p>
+                    <p className="text-xs text-gray-500">Timeline: {item.urgency}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
