@@ -6,7 +6,7 @@ import {
   ResponsiveContainer, LineChart, Line, XAxis, YAxis, 
   CartesianGrid, Tooltip as RechartsTooltip
 } from 'recharts';
-import { ActualSKU } from '../../data/actualDataLoader';
+import { ActualSKU, DEFAULT_SKU_DETAIL } from '../../data/actualDataLoader';
 import SectionHeader from '../SectionHeader';
 
 interface OverviewTabProps {
@@ -80,7 +80,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ sku }) => {
               <SectionHeader title="Purchase Funnel" />
               <div className="bg-white border border-gray-100 rounded-xl p-6 shadow-sm h-full">
                 <div className="space-y-6">
-                  {detail.funnel.map((step, i) => (
+                  {detail.funnel.map((step: any, i: number) => (
                     <div key={i} className="relative">
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{step.event.replace('_', ' ')}</span>
@@ -107,7 +107,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ sku }) => {
               <SectionHeader title="Traffic Sources" />
               <div className="bg-white border border-gray-100 rounded-xl p-6 shadow-sm h-full">
                 <div className="space-y-6">
-                  {detail.trafficSources.map((source, i) => (
+                  {detail.trafficSources.map((source: any, i: number) => (
                     <div key={i}>
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{source.channel}</span>
