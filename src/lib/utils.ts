@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { SKUState } from "../data/actualDataLoader"
+
+export type SKUState = 'winner' | 'bleeder' | 'sleeper' | 'dead' | 'stable';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

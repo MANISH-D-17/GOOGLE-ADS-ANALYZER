@@ -1,73 +1,69 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
-import * as Tabs from '@radix-ui/react-tabs';
 import { 
   ChevronLeft, ChevronRight, TrendingUp, TrendingDown, 
-  ArrowLeft, Download, ExternalLink, Activity, Target,
-  ImageIcon, ShoppingBag
+  ArrowLeft, Download, ExternalLink, Activity
 } from 'lucide-react';
-import { getActualSKUs, ActualSKU } from '../data/actualDataLoader';
-import { getScaleMultiplier, getDateRangeString, scaleMetrics } from '../lib/dataUtils';
-import { CAMPAIGN_SKU_MAP } from '../data/campaignSkuMap';
-import { getSearchTermsForSku } from '../data/searchTerms';
-import { getAssetGroupForSku, getCreativeHealthForSku } from '../data/assetGroups';
-import { getFeedHealthForSku } from '../data/feedHealth';
-import { formatRupees, cn, getStatusColor } from '../lib/utils';
+import { dataService, ProductData } from '../services/dataService';
+import { formatRupees, cn } from '../lib/utils';
+import { MetricCard } from '../components/cards/MetricCard';
 
-// Tab Components
-import OverviewTab from '../components/sku-detail/OverviewTab';
-import KeywordsTab from '../components/sku-detail/KeywordsTab';
-import CreativesTab from '../components/sku-detail/CreativesTab';
-import FeedHealthTab from '../components/sku-detail/FeedHealthTab';
-
-interface SKUDetailPageProps {
-  dateRange: string;
-}
-
-const SKUDetailPage: React.FC<SKUDetailPageProps> = ({ dateRange }) => {
+const SKUDetailPage: React.FC<{ dateRange: string }> = ({ dateRange }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState('overview');
+  const [skuData, setSkuData] = useState<ProductData | null>(null);
+  const [allSkus, setAllSkus] = useState<ProductData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const allSkus = useMemo(() => getActualSKUs(), []);
-  const sku = useMemo(() => allSkus.find(s => s.id === id), [allSkus, id]);
-  
-  if (!sku) {
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const products = await dataService.loadProductData();
+        setAllSkus(products);
+        const currentSku = products.find(p => p.id === id);
+        if (currentSku) setSkuData(currentSku);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, [id, dateRange]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-[80vh]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
+
+  if (!skuData) {
     return (
       <div className="flex flex-col items-center justify-center h-[80vh]">
-        <h2 className="text-2xl font-black text-gray-900">SKU Not Found</h2>
+        <h2 className="text-2xl font-black text-gray-900">SKU Not Found in Dataset</h2>
         <Link to="/" className="mt-4 text-blue-600 font-bold hover:underline">Back to Dashboard</Link>
       </div>
     );
   }
 
-  const mapping = CAMPAIGN_SKU_MAP[sku.id] || {
-    campaign: 'Performance Max | Generic',
-    campaignType: 'Performance Max',
-    budget: 1500,
-    roas: 2.5,
-    optScore: 75,
-    listingGroup: 'product_type: All',
-    assetGroup: 'Generic Assets'
-  };
-
-  const keywordsData = getSearchTermsForSku(sku, mapping);
-  const assetGroup = getAssetGroupForSku(sku.id);
-  const creativeHealth = getCreativeHealthForSku(sku.id);
-  const feedHealth = getFeedHealthForSku(sku.id);
-
   // Navigation Logic
-  const currentIndex = allSkus.findIndex(s => s.id === sku.id);
+  const currentIndex = allSkus.findIndex(s => s.id === skuData.id);
   const prevSku = allSkus[currentIndex - 1];
   const nextSku = allSkus[currentIndex + 1];
 
   const handleNavigate = (targetId: string) => {
-    navigate(`/sku/${targetId}?${searchParams.toString()}`);
+    navigate(`/sku/${encodeURIComponent(targetId)}?${searchParams.toString()}`);
   };
 
-  const nextWinner = allSkus.slice(currentIndex + 1).find(s => s.state === 'winner') || allSkus.find(s => s.state === 'winner');
-  const nextBleeder = allSkus.slice(currentIndex + 1).find(s => s.state === 'bleeder') || allSkus.find(s => s.state === 'bleeder');
+  const getStatusColor = (availability: string = '') => {
+    return availability.toLowerCase().includes('in stock') ? 'bg-green-100 text-green-800 border-green-200' : 'bg-red-100 text-red-800 border-red-200';
+  };
+
+  const conversionRate = (skuData.itemsViewed || 0) > 0 ? ((skuData.itemsPurchased || 0) / (skuData.itemsViewed || 1)) * 100 : 0;
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -86,20 +82,10 @@ const SKUDetailPage: React.FC<SKUDetailPageProps> = ({ dateRange }) => {
               <ChevronRight size={10} />
               <Link to="/" className="hover:text-gray-600">SKUs</Link>
               <ChevronRight size={10} />
-              <span className="text-gray-900">{sku.name}</span>
+              <span className="text-gray-900">{skuData.title}</span>
             </div>
-            <h1 className="text-3xl font-black text-gray-900 tracking-tight mt-1">{sku.name}</h1>
+            <h1 className="text-3xl font-black text-gray-900 tracking-tight mt-1">{skuData.title}</h1>
           </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-100 rounded-xl text-xs font-black text-gray-600 hover:shadow-sm transition-all">
-            <Download size={16} />
-            Export Data
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-black hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100">
-            <ExternalLink size={16} />
-            View in MC
-          </button>
         </div>
       </div>
 
@@ -108,92 +94,54 @@ const SKUDetailPage: React.FC<SKUDetailPageProps> = ({ dateRange }) => {
         <div className="flex items-center gap-8">
           <div className="flex flex-col">
             <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Product SKU</span>
-            <span className="text-lg font-black text-gray-900">{sku.id}</span>
+            <span className="text-lg font-black text-gray-900">{skuData.id}</span>
           </div>
           <div className="w-px h-10 bg-gray-100" />
           <div className="flex flex-col">
-            <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Status State</span>
-            <span className={cn("px-2 py-0.5 rounded text-[10px] font-black uppercase w-fit mt-1 border", getStatusColor(sku.state))}>
-              {sku.state}
+            <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Availability</span>
+            <span className={cn("px-2 py-0.5 rounded text-[10px] font-black uppercase w-fit mt-1 border", getStatusColor(skuData.availability))}>
+              {skuData.availability || 'Unknown'}
             </span>
           </div>
           <div className="w-px h-10 bg-gray-100" />
           <div className="flex flex-col">
-            <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Category</span>
-            <span className="text-lg font-black text-gray-900">{sku.category}</span>
+            <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Price</span>
+            <span className="text-lg font-black text-gray-900">{skuData.price}</span>
           </div>
-          <div className="w-px h-10 bg-gray-100" />
-          <div className="flex flex-col">
-            <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Campaign</span>
-            <div className="flex items-center gap-2 mt-0.5">
-              <span className="text-sm font-bold text-gray-900">{mapping.campaign}</span>
-              <span className="px-1.5 py-0.5 bg-indigo-50 text-indigo-600 text-[8px] font-black uppercase rounded border border-indigo-100">PMax</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-6 bg-gray-50/50 px-6 py-4 rounded-xl border border-gray-100">
-          {[
-            { label: 'Spend', value: formatRupees(sku.spend), pos: false, change: '12%' },
-            { label: 'Revenue', value: formatRupees(sku.revenue), pos: true, change: '24%' },
-            { label: 'ROAS', value: `${sku.roas.toFixed(2)}x`, pos: sku.roas >= 4, change: '8%' },
-            { label: 'Convs', value: sku.conversions, pos: true, change: '15%' },
-          ].map((stat, i) => (
-            <div key={i} className="flex flex-col">
-              <span className="text-[9px] font-black uppercase text-gray-400 tracking-tight">{stat.label}</span>
-              <div className="flex items-baseline gap-2">
-                <span className="text-xl font-black text-gray-900">{stat.value}</span>
-                <span className={cn("text-[9px] font-black flex items-center gap-0.5 uppercase", stat.pos ? "text-green-600" : "text-red-600")}>
-                  {stat.pos ? <TrendingUp size={10} strokeWidth={3} /> : <TrendingDown size={10} strokeWidth={3} />}
-                  {stat.change}
-                </span>
-              </div>
-            </div>
-          ))}
         </div>
       </div>
 
-      {/* Main Content Tabs */}
-      <Tabs.Root value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-        <Tabs.List className="flex items-center gap-1 p-1 bg-white border border-gray-100 rounded-xl w-fit shadow-sm">
-          {[
-            { id: 'overview', label: 'Overview', icon: Activity },
-            { id: 'keywords', label: 'Keywords', icon: Target },
-            { id: 'creatives', label: 'Creatives', icon: ImageIcon },
-            { id: 'feed', label: 'Feed Health', icon: ShoppingBag },
-          ].map((tab) => (
-            <Tabs.Trigger
-              key={tab.id}
-              value={tab.id}
-              className={cn(
-                "flex items-center gap-2 px-6 py-2.5 rounded-lg text-xs font-black transition-all",
-                activeTab === tab.id 
-                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100" 
-                  : "text-gray-400 hover:text-gray-600 hover:bg-gray-50"
-              )}
-            >
-              <tab.icon size={16} />
-              {tab.label}
-            </Tabs.Trigger>
-          ))}
-        </Tabs.List>
+      {/* Main Content - E-commerce Funnel */}
+      <div className="space-y-6">
+        <div className="flex items-center gap-3">
+          <div className="w-1 h-8 bg-indigo-600 rounded-full shadow-[0_0_10px_rgba(79,70,229,0.5)]" />
+          <h2 className="text-2xl font-black text-gray-900 tracking-tight">E-commerce Funnel</h2>
+        </div>
 
-        <Tabs.Content value="overview" className="focus:outline-none">
-          <OverviewTab sku={sku} />
-        </Tabs.Content>
-
-        <Tabs.Content value="keywords" className="focus:outline-none">
-          <KeywordsTab sku={sku} mapping={mapping} data={keywordsData} />
-        </Tabs.Content>
-
-        <Tabs.Content value="creatives" className="focus:outline-none">
-          <CreativesTab assetGroup={assetGroup} health={creativeHealth} />
-        </Tabs.Content>
-
-        <Tabs.Content value="feed" className="focus:outline-none">
-          <FeedHealthTab data={feedHealth} />
-        </Tabs.Content>
-      </Tabs.Root>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <MetricCard 
+            label="Items Viewed" 
+            value={skuData.itemsViewed?.toLocaleString() || '0'} 
+            icon={<Activity />}
+          />
+          <MetricCard 
+            label="Added to Cart" 
+            value={skuData.itemsAddedToCart?.toLocaleString() || '0'} 
+            icon={<Activity />}
+          />
+          <MetricCard 
+            label="Purchased" 
+            value={skuData.itemsPurchased?.toLocaleString() || '0'} 
+            icon={<Activity />}
+          />
+          <MetricCard 
+            label="Conversion Rate" 
+            value={conversionRate.toFixed(2)} 
+            suffix="%"
+            icon={<Activity />}
+          />
+        </div>
+      </div>
 
       {/* SKU Navigation Footer */}
       <div className="pt-12 border-t border-gray-100 flex items-center justify-between">
@@ -218,23 +166,6 @@ const SKUDetailPage: React.FC<SKUDetailPageProps> = ({ dateRange }) => {
             )}
           >
             Next SKU
-            <ChevronRight size={18} />
-          </button>
-        </div>
-
-        <div className="flex gap-4">
-          <button 
-            onClick={() => nextWinner && handleNavigate(nextWinner.id)}
-            className="flex items-center gap-2 px-6 py-3 bg-green-50/50 text-green-700 rounded-xl text-xs font-black border border-green-100 hover:bg-green-100/50 transition-all shadow-sm"
-          >
-            Next Winner
-            <ChevronRight size={18} />
-          </button>
-          <button 
-            onClick={() => nextBleeder && handleNavigate(nextBleeder.id)}
-            className="flex items-center gap-2 px-6 py-3 bg-red-50/50 text-red-700 rounded-xl text-xs font-black border border-red-100 hover:bg-red-100/50 transition-all shadow-sm"
-          >
-            Next Bleeder
             <ChevronRight size={18} />
           </button>
         </div>
