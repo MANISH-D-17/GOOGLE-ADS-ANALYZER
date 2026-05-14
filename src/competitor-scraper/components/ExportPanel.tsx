@@ -17,100 +17,64 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({ ads, keywords, session
   const downloadBlob = (blob: Blob, filename: string) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
+    a.href = url; a.download = filename; a.click();
     URL.revokeObjectURL(url);
   };
 
   const exportCSV = () => {
-    const headers = ['ID', 'Brand', 'Domain', 'Headline', 'Description', 'CTA', 'Landing URL', 'Ad Format', 'First Seen', 'Last Seen', 'Offer Text', 'Fashion Category'];
-    const rows = ads.map(ad => [
-      ad.id, ad.brand, ad.domain, `"${ad.headline}"`, `"${ad.description}"`,
-      ad.ctaText, ad.landingUrl, ad.adFormat, ad.firstSeen, ad.lastSeen,
-      `"${ad.offerText}"`, ad.fashionCategory,
-    ]);
-    const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
-    return new Blob([csv], { type: 'text/csv' });
+    const headers = ['ID','Brand','Domain','Headline','Description','CTA','Landing URL','Ad Format','First Seen','Last Seen','Offer Text','Fashion Category'];
+    const rows = ads.map(ad => [ad.id, ad.brand, ad.domain, `"${ad.headline}"`, `"${ad.description}"`, ad.ctaText, ad.landingUrl, ad.adFormat, ad.firstSeen, ad.lastSeen, `"${ad.offerText}"`, ad.fashionCategory]);
+    return new Blob([[headers, ...rows].map(r => r.join(',')).join('\n')], { type: 'text/csv' });
   };
-
-  const exportJSON = () => {
-    const payload = { ads, keywords, exportedAt: new Date().toISOString(), totalAds: ads.length };
-    return new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-  };
+  const exportJSON = () => new Blob([JSON.stringify({ ads, keywords, exportedAt: new Date().toISOString() }, null, 2)], { type: 'application/json' });
 
   const handleExport = async (format: ExportFormat) => {
     setExporting(format);
     try {
       let blob: Blob;
       const filename = `competitor_intel_${Date.now()}`;
-
       if (isDemoMode || !sessionId) {
-        if (format === 'csv') blob = exportCSV();
-        else if (format === 'json') blob = exportJSON();
-        else {
-          // For ZIP in demo mode, just export JSON
-          blob = exportJSON();
-          downloadBlob(blob, `${filename}.json`);
-          setExported(format);
-          setTimeout(() => setExported(null), 3000);
-          return;
-        }
+        blob = format === 'csv' ? exportCSV() : exportJSON();
       } else {
         blob = await scraperApiService.exportData(sessionId, format);
       }
-
-      downloadBlob(blob, `${filename}.${format}`);
+      downloadBlob(blob, `${filename}.${format === 'zip' ? 'json' : format}`);
       setExported(format);
       setTimeout(() => setExported(null), 3000);
-    } catch (err) {
-      console.error('Export error:', err);
-    } finally {
-      setExporting(null);
-    }
+    } catch (err) { console.error('Export error:', err); }
+    finally { setExporting(null); }
   };
 
   const buttons = [
-    { format: 'csv' as ExportFormat, label: 'Export CSV', icon: <FileText size={16} />, color: '#34d399' },
-    { format: 'json' as ExportFormat, label: 'Export JSON', icon: <FileJson size={16} />, color: '#60a5fa' },
-    { format: 'zip' as ExportFormat, label: 'Export Media ZIP', icon: <Archive size={16} />, color: '#a78bfa' },
+    { format: 'csv' as ExportFormat, label: 'Export CSV',       icon: <FileText size={15} />,  bg: '#f0fdf4', color: '#15803d', border: '#bbf7d0' },
+    { format: 'json' as ExportFormat, label: 'Export JSON',     icon: <FileJson size={15} />,   bg: '#eff6ff', color: '#1d4ed8', border: '#bfdbfe' },
+    { format: 'zip' as ExportFormat,  label: 'Export Media ZIP', icon: <Archive size={15} />,   bg: '#f5f3ff', color: '#6d28d9', border: '#ddd6fe' },
   ];
 
   return (
     <div className="scraper-glass p-6 space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-black uppercase tracking-widest text-gray-300">Export Data</h3>
-        <span className="text-xs text-gray-500 font-bold">{ads.length} ads ready</span>
+        <h3 className="text-sm font-black text-gray-900 uppercase tracking-tight">Export Data</h3>
+        <span className="text-xs text-gray-400 font-bold">{ads.length} ads ready</span>
       </div>
       <div className="grid grid-cols-3 gap-3">
-        {buttons.map(({ format, label, icon, color }) => {
+        {buttons.map(({ format, label, icon, bg, color, border }) => {
           const isExporting = exporting === format;
           const isExported = exported === format;
           return (
-            <button key={format}
-              onClick={() => handleExport(format)}
+            <button key={format} onClick={() => handleExport(format)}
               disabled={isExporting || ads.length === 0}
-              className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all"
-              style={{
-                background: `${color}12`,
-                color: isExported ? '#34d399' : color,
-                border: `1px solid ${isExported ? '#34d399' : color}30`,
-                opacity: ads.length === 0 ? 0.4 : 1,
-              }}>
-              {isExporting ? (
-                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-              ) : isExported ? (
-                <CheckCircle size={16} />
-              ) : (
-                icon
-              )}
-              <span>{isExported ? 'Downloaded!' : isExporting ? 'Exporting...' : label}</span>
+              className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all border"
+              style={{ background: isExported ? '#f0fdf4' : bg, color: isExported ? '#15803d' : color, borderColor: isExported ? '#bbf7d0' : border, opacity: ads.length === 0 ? 0.4 : 1 }}>
+              {isExporting ? <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" /> :
+               isExported  ? <CheckCircle size={15} /> : icon}
+              {isExported ? 'Downloaded!' : isExporting ? 'Exporting...' : label}
             </button>
           );
         })}
       </div>
       {ads.length === 0 && (
-        <p className="text-center text-xs text-gray-600 font-bold">Start a scraping session to enable exports.</p>
+        <p className="text-center text-xs text-gray-400 font-bold">Start a scraping session to enable exports.</p>
       )}
     </div>
   );
