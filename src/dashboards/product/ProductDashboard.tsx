@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { dataService, ProductData } from '../../services/dataService';
 import { DataTable, Column } from '../../components/tables/DataTable';
 import { MetricCard } from '../../components/cards/MetricCard';
-import { Package, Activity, DollarSign, TrendingUp } from 'lucide-react';
+import { Package, Activity, DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend } from 'recharts';
 import { cn } from '../../lib/utils';
 
 import { useNavigate } from 'react-router-dom';
@@ -28,10 +29,23 @@ export const ProductDashboard: React.FC<{ dateRange: string }> = ({ dateRange })
     fetchData();
   }, [dateRange]);
 
+  const calculateSkuState = (sku: ProductData): string => {
+    const views = sku.itemsViewed || 0;
+    const purchases = sku.itemsPurchased || 0;
+    if (views === 0) return 'sleeper';
+    const cvr = (purchases / views) * 100;
+    if (cvr >= 2.5) return 'winner';
+    if (cvr < 0.8 && views > 50) return 'bleeder';
+    return 'stable';
+  };
+
   const activeCount = data.filter(p => p.availability?.includes('in stock')).length;
   const totalRevenue = data.reduce((sum, item) => sum + (item.itemRevenue || 0), 0);
   const totalPurchases = data.reduce((sum, item) => sum + (item.itemsPurchased || 0), 0);
   const avgRoas = totalRevenue > 0 ? totalRevenue / (totalPurchases || 1) : 0; // Simplified for demo
+  
+  const totalWinners = data.filter(p => calculateSkuState(p) === 'winner').length;
+  const totalBleeders = data.filter(p => calculateSkuState(p) === 'bleeder').length;
 
   const columns: Column[] = [
     { 
@@ -108,9 +122,27 @@ export const ProductDashboard: React.FC<{ dateRange: string }> = ({ dateRange })
         return (
           <span className={cn(
             "text-sm font-black",
-            rate >= 2 ? "text-green-600" : rate < 0.5 ? "text-red-600" : "text-blue-600"
+            rate >= 2.5 ? "text-green-600" : rate < 0.8 ? "text-red-600" : "text-blue-600"
           )}>
             {rate.toFixed(2)}%
+          </span>
+        );
+      }
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      align: 'center',
+      render: (_, row: ProductData) => {
+        const state = calculateSkuState(row);
+        let colorClass = 'bg-gray-100 text-gray-800';
+        if (state === 'winner') colorClass = 'bg-green-100 text-green-800';
+        if (state === 'bleeder') colorClass = 'bg-red-100 text-red-800';
+        if (state === 'stable') colorClass = 'bg-blue-100 text-blue-800';
+
+        return (
+          <span className={cn("px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest border border-white/20", colorClass)}>
+            {state}
           </span>
         );
       }
@@ -153,7 +185,7 @@ export const ProductDashboard: React.FC<{ dateRange: string }> = ({ dateRange })
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6">
         <MetricCard 
           label="Total Products" 
           value={data.length} 
@@ -170,6 +202,20 @@ export const ProductDashboard: React.FC<{ dateRange: string }> = ({ dateRange })
           change="+5"
           positive={true}
           color="#10b981"
+        />
+        <MetricCard 
+          label="Winners" 
+          value={totalWinners} 
+          icon={<TrendingUp className="text-green-600" />}
+          isLoading={isLoading}
+          color="#10b981"
+        />
+        <MetricCard 
+          label="Bleeders" 
+          value={totalBleeders} 
+          icon={<TrendingDown className="text-red-600" />}
+          isLoading={isLoading}
+          color="#ef4444"
         />
         <MetricCard 
           label="Product Revenue" 
@@ -192,6 +238,33 @@ export const ProductDashboard: React.FC<{ dateRange: string }> = ({ dateRange })
           color="#f59e0b"
         />
       </div>
+
+      {!isLoading && (
+        <div className="mt-8 bg-white border border-gray-100 rounded-xl p-6 shadow-sm">
+          <h3 className="text-lg font-bold text-gray-900 mb-6">Top 10 Products by Revenue</h3>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={[...data].sort((a, b) => (b.itemRevenue || 0) - (a.itemRevenue || 0)).slice(0, 10).map(d => ({ 
+                  name: (d.title || '').split('-')[0].trim().substring(0, 20) + '...', 
+                  Revenue: d.itemRevenue || 0, 
+                  Purchased: d.itemsPurchased || 0 
+                }))}
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
+                <XAxis dataKey="name" tick={{fontSize: 10, fill: '#9ca3af'}} axisLine={false} tickLine={false} />
+                <YAxis yAxisId="left" tick={{fontSize: 10, fill: '#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={(value) => `₹${value}`} />
+                <YAxis yAxisId="right" orientation="right" tick={{fontSize: 10, fill: '#9ca3af'}} axisLine={false} tickLine={false} />
+                <RechartsTooltip cursor={{fill: '#f3f4f6'}} contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
+                <Legend wrapperStyle={{fontSize: '12px', fontWeight: 'bold'}} />
+                <Bar yAxisId="left" dataKey="Revenue" fill="#8b5cf6" radius={[4, 4, 0, 0]} barSize={30} />
+                <Bar yAxisId="right" dataKey="Purchased" fill="#10b981" radius={[4, 4, 0, 0]} barSize={30} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
 
       <div className="mt-8">
         {isLoading ? (

@@ -3,6 +3,7 @@ import { dataService, CampaignData } from '../../services/dataService';
 import { DataTable } from '../../components/tables/DataTable';
 import { MetricCard } from '../../components/cards/MetricCard';
 import { Target, TrendingUp, AlertCircle, CheckCircle } from 'lucide-react';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend } from 'recharts';
 import { cn } from '../../lib/utils';
 
 export const CampaignDashboard: React.FC<{ dateRange: string }> = ({ dateRange }) => {
@@ -115,6 +116,32 @@ export const CampaignDashboard: React.FC<{ dateRange: string }> = ({ dateRange }
           isLoading={isLoading}
         />
       </div>
+
+      {!isLoading && (
+        <div className="mt-8 bg-white border border-gray-100 rounded-xl p-6 shadow-sm">
+          <h3 className="text-lg font-bold text-gray-900 mb-6">Spend vs Revenue by Strategy</h3>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart
+                data={[
+                  { strategy: 'Scale', Spend: data.filter(c => (parseFloat(c['Conv. value']?.replace(/,/g, '') || '0') / (parseFloat(c.Cost?.replace(/,/g, '') || '1') || 1)) >= 4).reduce((s, c) => s + parseFloat(c.Cost?.replace(/,/g, '') || '0'), 0), Revenue: data.filter(c => (parseFloat(c['Conv. value']?.replace(/,/g, '') || '0') / (parseFloat(c.Cost?.replace(/,/g, '') || '1') || 1)) >= 4).reduce((s, c) => s + parseFloat(c['Conv. value']?.replace(/,/g, '') || '0'), 0) },
+                  { strategy: 'Stable', Spend: data.filter(c => { const r = (parseFloat(c['Conv. value']?.replace(/,/g, '') || '0') / (parseFloat(c.Cost?.replace(/,/g, '') || '1') || 1)); return r >= 2 && r < 4; }).reduce((s, c) => s + parseFloat(c.Cost?.replace(/,/g, '') || '0'), 0), Revenue: data.filter(c => { const r = (parseFloat(c['Conv. value']?.replace(/,/g, '') || '0') / (parseFloat(c.Cost?.replace(/,/g, '') || '1') || 1)); return r >= 2 && r < 4; }).reduce((s, c) => s + parseFloat(c['Conv. value']?.replace(/,/g, '') || '0'), 0) },
+                  { strategy: 'Optimize', Spend: data.filter(c => (parseFloat(c['Conv. value']?.replace(/,/g, '') || '0') / (parseFloat(c.Cost?.replace(/,/g, '') || '1') || 1)) < 2).reduce((s, c) => s + parseFloat(c.Cost?.replace(/,/g, '') || '0'), 0), Revenue: data.filter(c => (parseFloat(c['Conv. value']?.replace(/,/g, '') || '0') / (parseFloat(c.Cost?.replace(/,/g, '') || '1') || 1)) < 2).reduce((s, c) => s + parseFloat(c['Conv. value']?.replace(/,/g, '') || '0'), 0) },
+                ]}
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
+                <XAxis dataKey="strategy" tick={{fontSize: 10, fill: '#9ca3af', fontWeight: 'bold'}} axisLine={false} tickLine={false} />
+                <YAxis tick={{fontSize: 10, fill: '#9ca3af'}} axisLine={false} tickLine={false} tickFormatter={(val) => `₹${(val/1000).toFixed(0)}k`} />
+                <RechartsTooltip cursor={{fill: '#f3f4f6'}} contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
+                <Legend wrapperStyle={{fontSize: '12px', fontWeight: 'bold'}} />
+                <Area type="monotone" dataKey="Spend" stackId="1" stroke="#f43f5e" fill="#f43f5e" fillOpacity={0.8} />
+                <Area type="monotone" dataKey="Revenue" stackId="1" stroke="#10b981" fill="#10b981" fillOpacity={0.8} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
 
       <div className="mt-8">
         {isLoading ? (
