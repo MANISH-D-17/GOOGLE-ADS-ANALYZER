@@ -8,6 +8,7 @@ import { CampaignDashboard } from './dashboards/campaigns/CampaignDashboard';
 import { CreativeDashboard } from './dashboards/creatives/CreativeDashboard';
 import { CompetitorDashboard } from './dashboards/competitor-analysis/CompetitorDashboard';
 import SKUDetailPage from './pages/SKUDetailPage';
+import CompetitorScraperPage from './competitor-scraper/pages/CompetitorScraperPage';
 
 function App() {
   const [dateRange, setDateRange] = useState('Last 30d');
@@ -22,6 +23,7 @@ function App() {
         <Route path="/creatives" element={<CreativeDashboard dateRange={dateRange} />} />
         <Route path="/competitors" element={<CompetitorDashboard dateRange={dateRange} />} />
         <Route path="/sku/:id" element={<SKUDetailPage dateRange={dateRange} />} />
+        <Route path="/competitor-scraper" element={<CompetitorScraperPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </DashboardLayout>
