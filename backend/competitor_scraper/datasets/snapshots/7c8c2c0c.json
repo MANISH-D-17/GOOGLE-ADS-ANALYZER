@@ -1,0 +1,1512 @@
+{
+  "sessionId": "7c8c2c0c",
+  "domain": "google.com",
+  "capturedAt": "2026-05-16T11:42:46.139207",
+  "adsCount": 40,
+  "ads": [
+    {
+      "id": "ad_78eac116",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Shop Now",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-01-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/7778381322512705091"
+      ],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/7778381322512705091",
+      "contentHash": "ce4db45e83545acb",
+      "extractedAt": "2026-05-16T11:42:46.138544",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR06682056801392787457?region=IN"
+    },
+    {
+      "id": "ad_e87c743c",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Explore Collection",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-02-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/7972046100190189117"
+      ],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/7972046100190189117",
+      "contentHash": "a2b6f730e60e409c",
+      "extractedAt": "2026-05-16T11:42:46.138580",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR03924063824512024577?region=IN"
+    },
+    {
+      "id": "ad_10fd2114",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Order Now",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-03-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/12793535750162511789"
+      ],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/12793535750162511789",
+      "contentHash": "378a38a67e1067e0",
+      "extractedAt": "2026-05-16T11:42:46.138598",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR10803080808122810369?region=IN"
+    },
+    {
+      "id": "ad_ce5c71e7",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Find Your Style",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-04-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/6908154490877149603"
+      ],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/6908154490877149603",
+      "contentHash": "79b7ba22edf17fcc",
+      "extractedAt": "2026-05-16T11:42:46.138612",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR02083300489952231425?region=IN"
+    },
+    {
+      "id": "ad_d94de857",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Shop the Look",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-05-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/16221221631515002699"
+      ],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/16221221631515002699",
+      "contentHash": "c6c1d7d389b2ca0a",
+      "extractedAt": "2026-05-16T11:42:46.138626",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR11724724989629300737?region=IN"
+    },
+    {
+      "id": "ad_46bbbae8",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Discover More",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-06-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/8756631091353051852"
+      ],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/8756631091353051852",
+      "contentHash": "cf07d1184d7c91b9",
+      "extractedAt": "2026-05-16T11:42:46.138640",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR13975917872896016385?region=IN"
+    },
+    {
+      "id": "ad_11d7e48e",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Shop Now",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-07-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/18371445489771763618"
+      ],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/18371445489771763618",
+      "contentHash": "73f1f8e6083266b4",
+      "extractedAt": "2026-05-16T11:42:46.138652",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR10275221768301969409?region=IN"
+    },
+    {
+      "id": "ad_a83f412c",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Explore Collection",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-08-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/16673228551007245135"
+      ],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/16673228551007245135",
+      "contentHash": "c147e262bd9bff32",
+      "extractedAt": "2026-05-16T11:42:46.138665",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR02621832489143894017?region=IN"
+    },
+    {
+      "id": "ad_78a9ff01",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Order Now",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-09-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/7202138935319655949"
+      ],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/7202138935319655949",
+      "contentHash": "7e07dacc51758a4d",
+      "extractedAt": "2026-05-16T11:42:46.138677",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR16617511601058086913?region=IN"
+    },
+    {
+      "id": "ad_15427d25",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Find Your Style",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-01-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/9191445403695162774"
+      ],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/9191445403695162774",
+      "contentHash": "fb909df7c3a2b80a",
+      "extractedAt": "2026-05-16T11:42:46.138690",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR01490749347048980481?region=IN"
+    },
+    {
+      "id": "ad_45cde908",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Shop the Look",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-02-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/16830143458506217661"
+      ],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/16830143458506217661",
+      "contentHash": "a1daad30ca87c4b7",
+      "extractedAt": "2026-05-16T11:42:46.138702",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR11842544807371079681?region=IN"
+    },
+    {
+      "id": "ad_33f810b7",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Discover More",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-03-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/12825185195834275926"
+      ],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/12825185195834275926",
+      "contentHash": "3cf1223c175bd124",
+      "extractedAt": "2026-05-16T11:42:46.138714",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR00198606168304648193?region=IN"
+    },
+    {
+      "id": "ad_a86a9e5d",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Shop Now",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-04-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/12339079814975112119"
+      ],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/12339079814975112119",
+      "contentHash": "15cd846a62b8c542",
+      "extractedAt": "2026-05-16T11:42:46.138726",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR01932685538888777729?region=IN"
+    },
+    {
+      "id": "ad_c605fded",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Explore Collection",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-05-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/16965700205840413449"
+      ],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/16965700205840413449",
+      "contentHash": "868c499992db9faf",
+      "extractedAt": "2026-05-16T11:42:46.138738",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR16503323332783898625?region=IN"
+    },
+    {
+      "id": "ad_69ccee47",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Order Now",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-06-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/9974762426488518582"
+      ],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/9974762426488518582",
+      "contentHash": "aeca99c28675c4a2",
+      "extractedAt": "2026-05-16T11:42:46.138750",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR15525604195699785729?region=IN"
+    },
+    {
+      "id": "ad_0ffddf39",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Find Your Style",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-07-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/7076388960835095939"
+      ],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/7076388960835095939",
+      "contentHash": "9eabe4ee8385717e",
+      "extractedAt": "2026-05-16T11:42:46.138762",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR00997196306965331969?region=IN"
+    },
+    {
+      "id": "ad_b8130621",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Shop the Look",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-08-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/11756565211036181543"
+      ],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/11756565211036181543",
+      "contentHash": "2804262ef5ee8250",
+      "extractedAt": "2026-05-16T11:42:46.138774",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR10156557525630058497?region=IN"
+    },
+    {
+      "id": "ad_3a01c658",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Discover More",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-09-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/13160156301537379544"
+      ],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/13160156301537379544",
+      "contentHash": "b8c1073d3501ee02",
+      "extractedAt": "2026-05-16T11:42:46.138786",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR08947488360239202305?region=IN"
+    },
+    {
+      "id": "ad_2cef09ac",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Shop Now",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-01-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/4943165057857513842"
+      ],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/4943165057857513842",
+      "contentHash": "8f74fcb4d58ec5e7",
+      "extractedAt": "2026-05-16T11:42:46.138798",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR05926551575622320129?region=IN"
+    },
+    {
+      "id": "ad_82bd7862",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Explore Collection",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-02-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/9583900891604893884"
+      ],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/9583900891604893884",
+      "contentHash": "dc60fcf0d6236b86",
+      "extractedAt": "2026-05-16T11:42:46.138811",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR04392028067921395713?region=IN"
+    },
+    {
+      "id": "ad_57e0cc76",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Order Now",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-03-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/12491765632087036362"
+      ],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/12491765632087036362",
+      "contentHash": "9489651a724f015b",
+      "extractedAt": "2026-05-16T11:42:46.138823",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR07181470375891435521?region=IN"
+    },
+    {
+      "id": "ad_b81a6d59",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Find Your Style",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-04-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/2262231676327656140"
+      ],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/2262231676327656140",
+      "contentHash": "97c23dda9fb56ad7",
+      "extractedAt": "2026-05-16T11:42:46.138838",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR04694757703908589569?region=IN"
+    },
+    {
+      "id": "ad_928fb5a5",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Shop the Look",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-05-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/3796608653250976607"
+      ],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/3796608653250976607",
+      "contentHash": "f2e96dbe1ec19043",
+      "extractedAt": "2026-05-16T11:42:46.138850",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR14929351684340580353?region=IN"
+    },
+    {
+      "id": "ad_8809211b",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Discover More",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-06-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/10453845634691198405"
+      ],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/10453845634691198405",
+      "contentHash": "c53c1bb3a8c0dc35",
+      "extractedAt": "2026-05-16T11:42:46.138863",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR05593041111615537153?region=IN"
+    },
+    {
+      "id": "ad_c182a133",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Shop Now",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-07-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/10310132237226138163"
+      ],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/10310132237226138163",
+      "contentHash": "0305a10d629e2b4f",
+      "extractedAt": "2026-05-16T11:42:46.138875",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR05132407312228548609?region=IN"
+    },
+    {
+      "id": "ad_c8bca293",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Explore Collection",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-08-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/10343232382576966921"
+      ],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/10343232382576966921",
+      "contentHash": "4e9f384c668370a0",
+      "extractedAt": "2026-05-16T11:42:46.138888",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR08892508380803891201?region=IN"
+    },
+    {
+      "id": "ad_01188d61",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Order Now",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-09-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/1735263544522041907"
+      ],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/1735263544522041907",
+      "contentHash": "4e92eb012d556c3c",
+      "extractedAt": "2026-05-16T11:42:46.138900",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR06163093910152282113?region=IN"
+    },
+    {
+      "id": "ad_2ca82f93",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Find Your Style",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-01-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/9280155741918823203"
+      ],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/9280155741918823203",
+      "contentHash": "06547bfa0987e0de",
+      "extractedAt": "2026-05-16T11:42:46.138912",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR14139338286132363265?region=IN"
+    },
+    {
+      "id": "ad_a73c2974",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Shop the Look",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-02-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/15268776345742467004"
+      ],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/15268776345742467004",
+      "contentHash": "9e6a20fdbd1ee4af",
+      "extractedAt": "2026-05-16T11:42:46.138924",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR05743614530345238529?region=IN"
+    },
+    {
+      "id": "ad_a9442da0",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Discover More",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-03-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/3265802553112978016"
+      ],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/3265802553112978016",
+      "contentHash": "7320148d0cf38ad0",
+      "extractedAt": "2026-05-16T11:42:46.138937",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR09338890834457657345?region=IN"
+    },
+    {
+      "id": "ad_b4190d60",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Shop Now",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-04-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/2887002576112419944"
+      ],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/2887002576112419944",
+      "contentHash": "ec44e2ad0de48e5d",
+      "extractedAt": "2026-05-16T11:42:46.138950",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR16903555761546723329?region=IN"
+    },
+    {
+      "id": "ad_58204c84",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Explore Collection",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-05-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/9946036291830695139"
+      ],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/9946036291830695139",
+      "contentHash": "6b452484156b7843",
+      "extractedAt": "2026-05-16T11:42:46.138962",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR17777192602504790017?region=IN"
+    },
+    {
+      "id": "ad_328f8f74",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Order Now",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-06-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/8971132682233991306"
+      ],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/8971132682233991306",
+      "contentHash": "0537b577532cd994",
+      "extractedAt": "2026-05-16T11:42:46.138975",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR06783954204705685505?region=IN"
+    },
+    {
+      "id": "ad_f436a76f",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Find Your Style",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-07-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/12254440916579538342"
+      ],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/12254440916579538342",
+      "contentHash": "d2a915eb538d209d",
+      "extractedAt": "2026-05-16T11:42:46.138990",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR17136471906728280065?region=IN"
+    },
+    {
+      "id": "ad_ff21178b",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Shop the Look",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-08-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/12911652940045157863"
+      ],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/12911652940045157863",
+      "contentHash": "9b857a19944f33fd",
+      "extractedAt": "2026-05-16T11:42:46.139003",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR00072465530031702017?region=IN"
+    },
+    {
+      "id": "ad_b6aad462",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Discover More",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-09-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/1576518031681976954"
+      ],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/1576518031681976954",
+      "contentHash": "a1de42d166e77047",
+      "extractedAt": "2026-05-16T11:42:46.139016",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR11112111470370881537?region=IN"
+    },
+    {
+      "id": "ad_607a51d9",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Shop Now",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-01-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/16570636931894940380"
+      ],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/16570636931894940380",
+      "contentHash": "30f0232f313d3fe2",
+      "extractedAt": "2026-05-16T11:42:46.139031",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR08657065283023798273?region=IN"
+    },
+    {
+      "id": "ad_75009e59",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Explore Collection",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-02-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/2022210313854455106"
+      ],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/2022210313854455106",
+      "contentHash": "ad9aacbdc7eb6406",
+      "extractedAt": "2026-05-16T11:42:46.139043",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR07966352052685111297?region=IN"
+    },
+    {
+      "id": "ad_f8ca2f5a",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Order Now",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-03-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/5052557725292453932"
+      ],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/5052557725292453932",
+      "contentHash": "265eb37e84780552",
+      "extractedAt": "2026-05-16T11:42:46.139056",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR18316577298733596673?region=IN"
+    },
+    {
+      "id": "ad_5e2aa881",
+      "sessionId": "7c8c2c0c",
+      "brand": "Google",
+      "domain": "google.com",
+      "headline": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "description": "VISTA EYE CARE ( Aman Malik - Proprietor )",
+      "ctaText": "Find Your Style",
+      "landingUrl": "https://google.com",
+      "adFormat": "image",
+      "firstSeen": "2025-04-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/6210564959886006225"
+      ],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/6210564959886006225",
+      "contentHash": "4468989e2e2cf128",
+      "extractedAt": "2026-05-16T11:42:46.139068",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR03002592292100898817/creative/CR03089201621884731393?region=IN"
+    }
+  ]
+}

@@ -1,0 +1,1476 @@
+{
+  "sessionId": "de71d619",
+  "domain": "clovia.com",
+  "capturedAt": "2026-05-14T10:10:24.818346",
+  "adsCount": 40,
+  "ads": [
+    {
+      "id": "ad_98ead336",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Shop Now",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "image",
+      "firstSeen": "2025-01-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/657449099931077025"
+      ],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/657449099931077025",
+      "contentHash": "2884f653f1a83767",
+      "extractedAt": "2026-05-14T10:10:24.817715",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR11592343523357097985?region=IN"
+    },
+    {
+      "id": "ad_da25b9da",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Explore Collection",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "image",
+      "firstSeen": "2025-02-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/7424161680471208437"
+      ],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/7424161680471208437",
+      "contentHash": "cf82eba7b29e4784",
+      "extractedAt": "2026-05-14T10:10:24.817750",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR01231666405674319873?region=IN"
+    },
+    {
+      "id": "ad_34e84e42",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Order Now",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "image",
+      "firstSeen": "2025-03-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/11300349490347018333"
+      ],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/11300349490347018333",
+      "contentHash": "f3af00a2934437ce",
+      "extractedAt": "2026-05-14T10:10:24.817766",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR12379077250178351105?region=IN"
+    },
+    {
+      "id": "ad_6dd2fd78",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Find Your Style",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "image",
+      "firstSeen": "2025-04-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/17574793718410897084"
+      ],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/17574793718410897084",
+      "contentHash": "63331e298e2f026b",
+      "extractedAt": "2026-05-14T10:10:24.817779",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR00551743602062000129?region=IN"
+    },
+    {
+      "id": "ad_a79397b2",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Shop the Look",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "image",
+      "firstSeen": "2025-05-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/17079148186926616058"
+      ],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/17079148186926616058",
+      "contentHash": "2790a1a8d4cc95f7",
+      "extractedAt": "2026-05-14T10:10:24.817792",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR03155705213323575297?region=IN"
+    },
+    {
+      "id": "ad_235f1b9d",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Discover More",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "text",
+      "firstSeen": "2025-06-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "31e5e14bcf6cd61f",
+      "extractedAt": "2026-05-14T10:10:24.817805",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR02310275741880680449?region=IN"
+    },
+    {
+      "id": "ad_9463cdd9",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Shop Now",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "text",
+      "firstSeen": "2025-07-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "476275497a4591d3",
+      "extractedAt": "2026-05-14T10:10:24.817817",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR06723232962097184769?region=IN"
+    },
+    {
+      "id": "ad_e6035dfa",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Explore Collection",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "text",
+      "firstSeen": "2025-08-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "b16ed6898b88fad2",
+      "extractedAt": "2026-05-14T10:10:24.817827",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR05764186143792824321?region=IN"
+    },
+    {
+      "id": "ad_1e5fe679",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Order Now",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "image",
+      "firstSeen": "2025-09-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/3876769235613239211"
+      ],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/3876769235613239211",
+      "contentHash": "227775a102557959",
+      "extractedAt": "2026-05-14T10:10:24.817838",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR02714003037071867905?region=IN"
+    },
+    {
+      "id": "ad_ea3d724b",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Find Your Style",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "image",
+      "firstSeen": "2025-01-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/8462682305640180101"
+      ],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/8462682305640180101",
+      "contentHash": "e3dc9a22e7c3786b",
+      "extractedAt": "2026-05-14T10:10:24.817849",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR16717314958706081793?region=IN"
+    },
+    {
+      "id": "ad_c513885a",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Shop the Look",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "text",
+      "firstSeen": "2025-02-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "684d274ecefce2ac",
+      "extractedAt": "2026-05-14T10:10:24.817860",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR06967477719177101313?region=IN"
+    },
+    {
+      "id": "ad_24f20a5b",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Discover More",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "text",
+      "firstSeen": "2025-03-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "4800ae17f83a2aa6",
+      "extractedAt": "2026-05-14T10:10:24.817874",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR15535740593396252673?region=IN"
+    },
+    {
+      "id": "ad_779097dd",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Shop Now",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "image",
+      "firstSeen": "2025-04-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/10722968400121118977"
+      ],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/10722968400121118977",
+      "contentHash": "b42a1507cabf4259",
+      "extractedAt": "2026-05-14T10:10:24.817891",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR05920774561141358593?region=IN"
+    },
+    {
+      "id": "ad_579c8b78",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Explore Collection",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "image",
+      "firstSeen": "2025-05-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/12113927738103396902"
+      ],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/12113927738103396902",
+      "contentHash": "3957cb540734cbee",
+      "extractedAt": "2026-05-14T10:10:24.817903",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR02511151465393815553?region=IN"
+    },
+    {
+      "id": "ad_5717461a",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Order Now",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "image",
+      "firstSeen": "2025-06-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/15365130944211736476"
+      ],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/15365130944211736476",
+      "contentHash": "f3339507de0d88e0",
+      "extractedAt": "2026-05-14T10:10:24.817915",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR02153272447871221761?region=IN"
+    },
+    {
+      "id": "ad_f656650e",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Find Your Style",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "image",
+      "firstSeen": "2025-07-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/3153132621891666438"
+      ],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/3153132621891666438",
+      "contentHash": "b68374126cee1816",
+      "extractedAt": "2026-05-14T10:10:24.817927",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR02773080080300113921?region=IN"
+    },
+    {
+      "id": "ad_50defbd1",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Shop the Look",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "image",
+      "firstSeen": "2025-08-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/5820661714637829771"
+      ],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/5820661714637829771",
+      "contentHash": "295ab4fcd4ab770d",
+      "extractedAt": "2026-05-14T10:10:24.817937",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR18138435464183414785?region=IN"
+    },
+    {
+      "id": "ad_5cf1504a",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "hide_image\nSorry, we're not able to show you this ad at this time",
+      "description": "hide_image\nSorry, we're not able to show you this ad at this time",
+      "ctaText": "Discover More",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "text",
+      "firstSeen": "2025-09-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "b81dd2410e7e0c47",
+      "extractedAt": "2026-05-14T10:10:24.817953",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR03689883378397478913?region=IN"
+    },
+    {
+      "id": "ad_a8f0cb55",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Shop Now",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "text",
+      "firstSeen": "2025-01-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "03cebcf3ac39a698",
+      "extractedAt": "2026-05-14T10:10:24.817966",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR09490775515292762113?region=IN"
+    },
+    {
+      "id": "ad_d87f494a",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Explore Collection",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "image",
+      "firstSeen": "2025-02-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/4999461272957045669"
+      ],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/4999461272957045669",
+      "contentHash": "4109315fad9cf361",
+      "extractedAt": "2026-05-14T10:10:24.817978",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR05385319493700419585?region=IN"
+    },
+    {
+      "id": "ad_f7f447d0",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Order Now",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "image",
+      "firstSeen": "2025-03-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/17079032109984739801"
+      ],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/17079032109984739801",
+      "contentHash": "22aa46aedc56ee8b",
+      "extractedAt": "2026-05-14T10:10:24.817989",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR00649714769611194369?region=IN"
+    },
+    {
+      "id": "ad_ea39f446",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Find Your Style",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "image",
+      "firstSeen": "2025-04-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/8584168819143004544"
+      ],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/8584168819143004544",
+      "contentHash": "e21bcdc3df4e2e5d",
+      "extractedAt": "2026-05-14T10:10:24.818001",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR15229993287617085441?region=IN"
+    },
+    {
+      "id": "ad_93272f4f",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Shop the Look",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "text",
+      "firstSeen": "2025-05-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "e9ce62b80b20e5a9",
+      "extractedAt": "2026-05-14T10:10:24.818012",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR04343160960819658753?region=IN"
+    },
+    {
+      "id": "ad_063d08b4",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Discover More",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "text",
+      "firstSeen": "2025-06-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "714448534c512ac5",
+      "extractedAt": "2026-05-14T10:10:24.818027",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR13561372001762803713?region=IN"
+    },
+    {
+      "id": "ad_63a29ff2",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Shop Now",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "image",
+      "firstSeen": "2025-07-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/15962286341153635920"
+      ],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/15962286341153635920",
+      "contentHash": "c4288cef3c3d29e1",
+      "extractedAt": "2026-05-14T10:10:24.818042",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR01854583285187870721?region=IN"
+    },
+    {
+      "id": "ad_cec58d7a",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Explore Collection",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "text",
+      "firstSeen": "2025-08-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "177ac0765db88e55",
+      "extractedAt": "2026-05-14T10:10:24.818054",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR11119972402983862273?region=IN"
+    },
+    {
+      "id": "ad_ab7f4cc2",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Order Now",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "image",
+      "firstSeen": "2025-09-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/14850511189177948082"
+      ],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/14850511189177948082",
+      "contentHash": "bb1ba4809c432f81",
+      "extractedAt": "2026-05-14T10:10:24.818064",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR00467978270772559873?region=IN"
+    },
+    {
+      "id": "ad_0aec7752",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Find Your Style",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "image",
+      "firstSeen": "2025-01-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/13918816990843891482"
+      ],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/13918816990843891482",
+      "contentHash": "c2352eb00d507635",
+      "extractedAt": "2026-05-14T10:10:24.818075",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR07468301486057848833?region=IN"
+    },
+    {
+      "id": "ad_96f0b53d",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Shop the Look",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "image",
+      "firstSeen": "2025-02-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/2266473950686667045"
+      ],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/2266473950686667045",
+      "contentHash": "00d17f3ce7e96bc3",
+      "extractedAt": "2026-05-14T10:10:24.818086",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR04859875462450511873?region=IN"
+    },
+    {
+      "id": "ad_616f0de6",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Discover More",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "text",
+      "firstSeen": "2025-03-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "083e1d29597add13",
+      "extractedAt": "2026-05-14T10:10:24.818099",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR16076347920785342465?region=IN"
+    },
+    {
+      "id": "ad_9b8ec873",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Shop Now",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "text",
+      "firstSeen": "2025-04-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "3d855c67fcc96fc0",
+      "extractedAt": "2026-05-14T10:10:24.818111",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR00145858377862348801?region=IN"
+    },
+    {
+      "id": "ad_02498962",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Explore Collection",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "image",
+      "firstSeen": "2025-05-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/6933330793716690031"
+      ],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/6933330793716690031",
+      "contentHash": "bd08c659bf26bde3",
+      "extractedAt": "2026-05-14T10:10:24.818123",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR00632064996645273601?region=IN"
+    },
+    {
+      "id": "ad_78988493",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Order Now",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "text",
+      "firstSeen": "2025-06-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "31661319e2fea2de",
+      "extractedAt": "2026-05-14T10:10:24.818135",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR07919203095710531585?region=IN"
+    },
+    {
+      "id": "ad_32521b6c",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Find Your Style",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "text",
+      "firstSeen": "2025-07-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "6c1f25fe8d65b42f",
+      "extractedAt": "2026-05-14T10:10:24.818147",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR13813793577710387201?region=IN"
+    },
+    {
+      "id": "ad_af549d60",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Shop the Look",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "text",
+      "firstSeen": "2025-08-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "627cc5ff9a9bad00",
+      "extractedAt": "2026-05-14T10:10:24.818159",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR02623434812593012737?region=IN"
+    },
+    {
+      "id": "ad_0d38a68e",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Discover More",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "text",
+      "firstSeen": "2025-09-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "e85871fbf31bd52f",
+      "extractedAt": "2026-05-14T10:10:24.818172",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR12825241339104854017?region=IN"
+    },
+    {
+      "id": "ad_25a0e895",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Shop Now",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "image",
+      "firstSeen": "2025-01-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/14034664728084891158"
+      ],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/14034664728084891158",
+      "contentHash": "096fc0966dd90773",
+      "extractedAt": "2026-05-14T10:10:24.818186",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR08857077718110437377?region=IN"
+    },
+    {
+      "id": "ad_0566a422",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Explore Collection",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "image",
+      "firstSeen": "2025-02-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/16282471418936965314"
+      ],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/16282471418936965314",
+      "contentHash": "4bdff2c275e5bdbd",
+      "extractedAt": "2026-05-14T10:10:24.818198",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR05334641628386689025?region=IN"
+    },
+    {
+      "id": "ad_a5d06d6c",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Order Now",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "text",
+      "firstSeen": "2025-03-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "4e17fb6b7a9296ec",
+      "extractedAt": "2026-05-14T10:10:24.818209",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR02875523494215417857?region=IN"
+    },
+    {
+      "id": "ad_e5d75c31",
+      "sessionId": "de71d619",
+      "brand": "Clovia",
+      "domain": "clovia.com",
+      "headline": "Vibrant Advertising Pvt Ltd",
+      "description": "Vibrant Advertising Pvt Ltd",
+      "ctaText": "Find Your Style",
+      "landingUrl": "https://clovia.com",
+      "adFormat": "text",
+      "firstSeen": "2025-04-01",
+      "lastSeen": "2026-05-14",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "d6d6274b0d958f9b",
+      "extractedAt": "2026-05-14T10:10:24.818220",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00845816911852732417/creative/CR06772738816735182849?region=IN"
+    }
+  ]
+}

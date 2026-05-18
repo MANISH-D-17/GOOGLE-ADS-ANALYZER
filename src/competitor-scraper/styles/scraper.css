@@ -15,15 +15,15 @@
 .scraper-glass {
   background: #ffffff;
   border: 1px solid #f1f5f9;
-  border-radius: 16px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+  border-radius: 32px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02), 0 10px 15px -3px rgba(0,0,0,0.03);
 }
 
 .scraper-glass-strong {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border-radius: 32px;
+  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05), 0 10px 10px -5px rgba(0,0,0,0.04);
 }
 
 /* Text */
@@ -98,36 +98,38 @@
 
 /* Primary button — matches dashboard blue */
 .scraper-btn-primary {
-  background: linear-gradient(135deg, #2563eb, #4f46e5);
+  background: #0f172a;
   border: none;
   color: white;
-  font-weight: 800;
-  font-size: 11px;
-  letter-spacing: 0.08em;
+  font-weight: 900;
+  font-size: 10px;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  padding: 10px 22px;
-  border-radius: 10px;
+  padding: 14px 32px;
+  border-radius: 16px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
   white-space: nowrap;
 }
 .scraper-btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(37,99,235,0.35);
+  background: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
 }
-.scraper-btn-primary:active  { transform: translateY(0); }
-.scraper-btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.scraper-btn-primary:active  { transform: scale(0.95); }
+.scraper-btn-primary:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
 
 /* Tags — light colored pills matching dashboard */
 .scraper-tag {
   display: inline-block;
-  padding: 3px 10px;
-  border-radius: 999px;
+  padding: 4px 12px;
+  border-radius: 12px;
   font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
+  font-weight: 900;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
+  border-width: 1px;
 }
 .scraper-tag-blue   { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
 .scraper-tag-green  { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }

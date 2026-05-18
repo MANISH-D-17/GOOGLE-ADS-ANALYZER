@@ -1,0 +1,1452 @@
+{
+  "sessionId": "de626633",
+  "domain": "zivame.com",
+  "capturedAt": "2026-05-16T11:41:36.108552",
+  "adsCount": 40,
+  "ads": [
+    {
+      "id": "ad_d3ca1de4",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "Logicserve Digital Consultancy Services Pvt Ltd",
+      "description": "Logicserve Digital Consultancy Services Pvt Ltd",
+      "ctaText": "Shop Now",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "image",
+      "firstSeen": "2025-01-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/17265232687975239569"
+      ],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/17265232687975239569",
+      "contentHash": "c407c65225a92b9a",
+      "extractedAt": "2026-05-16T11:41:36.107680",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR12627322649035407361?region=IN"
+    },
+    {
+      "id": "ad_26e70934",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Explore Collection",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-02-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "5595e3f288ea177e",
+      "extractedAt": "2026-05-16T11:41:36.107711",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR17778379619796254721?region=IN"
+    },
+    {
+      "id": "ad_664d8b63",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Order Now",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-03-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "ecc63ba4d3c147b2",
+      "extractedAt": "2026-05-16T11:41:36.107727",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR10134645152241680385?region=IN"
+    },
+    {
+      "id": "ad_30ef057e",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Find Your Style",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-04-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "52e41220c711ce24",
+      "extractedAt": "2026-05-16T11:41:36.107740",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR17808178377773809665?region=IN"
+    },
+    {
+      "id": "ad_70306f6d",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Shop the Look",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-05-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "1791faf9ad880a26",
+      "extractedAt": "2026-05-16T11:41:36.107752",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR01786097343003623425?region=IN"
+    },
+    {
+      "id": "ad_56b0eec1",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Discover More",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-06-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "165e5a46a3620242",
+      "extractedAt": "2026-05-16T11:41:36.107764",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR12728718537607086081?region=IN"
+    },
+    {
+      "id": "ad_361545f1",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "Logicserve Digital Consultancy Services Pvt Ltd",
+      "description": "Logicserve Digital Consultancy Services Pvt Ltd",
+      "ctaText": "Shop Now",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "image",
+      "firstSeen": "2025-07-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/8688857736993196661"
+      ],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/8688857736993196661",
+      "contentHash": "458557b0c41a05d4",
+      "extractedAt": "2026-05-16T11:41:36.107775",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR10295966005075116033?region=IN"
+    },
+    {
+      "id": "ad_97af3260",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "Logicserve Digital Consultancy Services Pvt Ltd",
+      "description": "Logicserve Digital Consultancy Services Pvt Ltd",
+      "ctaText": "Explore Collection",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "image",
+      "firstSeen": "2025-08-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/14775929627984668976"
+      ],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/14775929627984668976",
+      "contentHash": "f14f5ef9eff64e74",
+      "extractedAt": "2026-05-16T11:41:36.107786",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR01568589968522084353?region=IN"
+    },
+    {
+      "id": "ad_3448afa4",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "Logicserve Digital Consultancy Services Pvt Ltd",
+      "description": "Logicserve Digital Consultancy Services Pvt Ltd",
+      "ctaText": "Order Now",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-09-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "51a3b29c5c788827",
+      "extractedAt": "2026-05-16T11:41:36.107797",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR13481035179657003009?region=IN"
+    },
+    {
+      "id": "ad_3a1d4ed9",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Find Your Style",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-01-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "83f347ca9613e132",
+      "extractedAt": "2026-05-16T11:41:36.107808",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR17425937738812620801?region=IN"
+    },
+    {
+      "id": "ad_7cc9b349",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "Logicserve Digital Consultancy Services Pvt Ltd",
+      "description": "Logicserve Digital Consultancy Services Pvt Ltd",
+      "ctaText": "Shop the Look",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "image",
+      "firstSeen": "2025-02-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/14171455734688755349"
+      ],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/14171455734688755349",
+      "contentHash": "fcbfa07b3ac80dac",
+      "extractedAt": "2026-05-16T11:41:36.107818",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR07327005007708946433?region=IN"
+    },
+    {
+      "id": "ad_2291e144",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Discover More",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-03-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "8bc46eb8a26c1073",
+      "extractedAt": "2026-05-16T11:41:36.107832",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR14319615105975713793?region=IN"
+    },
+    {
+      "id": "ad_051df638",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Shop Now",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-04-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "0affbb0b0ce9ee48",
+      "extractedAt": "2026-05-16T11:41:36.107844",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR03268347662738391041?region=IN"
+    },
+    {
+      "id": "ad_81658798",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Explore Collection",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-05-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "57bdc2ac3326fcb4",
+      "extractedAt": "2026-05-16T11:41:36.107855",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR00017596824609095681?region=IN"
+    },
+    {
+      "id": "ad_14d6f739",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "Logicserve Digital Consultancy Services Pvt Ltd",
+      "description": "Logicserve Digital Consultancy Services Pvt Ltd",
+      "ctaText": "Order Now",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "image",
+      "firstSeen": "2025-06-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/7663472508538441974"
+      ],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/7663472508538441974",
+      "contentHash": "09a583964c59d2a0",
+      "extractedAt": "2026-05-16T11:41:36.107865",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR06301079638730866689?region=IN"
+    },
+    {
+      "id": "ad_58a8d069",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "Logicserve Digital Consultancy Services Pvt Ltd",
+      "description": "Logicserve Digital Consultancy Services Pvt Ltd",
+      "ctaText": "Find Your Style",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "image",
+      "firstSeen": "2025-07-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/14750567980814020345"
+      ],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/14750567980814020345",
+      "contentHash": "6cdfa4b6b03defae",
+      "extractedAt": "2026-05-16T11:41:36.107874",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR11799140829950377985?region=IN"
+    },
+    {
+      "id": "ad_99c81d4c",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Shop the Look",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-08-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "4ae484f643c3a803",
+      "extractedAt": "2026-05-16T11:41:36.107884",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR10037507466045947905?region=IN"
+    },
+    {
+      "id": "ad_50d1f88e",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Discover More",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-09-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "682d49b3ed10beb1",
+      "extractedAt": "2026-05-16T11:41:36.107895",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR06106952434121179137?region=IN"
+    },
+    {
+      "id": "ad_5220afc1",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "Logicserve Digital Consultancy Services Pvt Ltd",
+      "description": "Logicserve Digital Consultancy Services Pvt Ltd",
+      "ctaText": "Shop Now",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "image",
+      "firstSeen": "2025-01-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/8456412699031315266"
+      ],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/8456412699031315266",
+      "contentHash": "6d2bb5649bca773f",
+      "extractedAt": "2026-05-16T11:41:36.107905",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR13108694680831262721?region=IN"
+    },
+    {
+      "id": "ad_d959af28",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Explore Collection",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-02-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "4a82bc10d20dc1f2",
+      "extractedAt": "2026-05-16T11:41:36.107916",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR11878420497395875841?region=IN"
+    },
+    {
+      "id": "ad_d384d5df",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Order Now",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-03-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "0707615151cae5d0",
+      "extractedAt": "2026-05-16T11:41:36.107927",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR14311452331651104769?region=IN"
+    },
+    {
+      "id": "ad_dfef9d66",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Find Your Style",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-04-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "ed0ced6ade1acfb3",
+      "extractedAt": "2026-05-16T11:41:36.107938",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR15029213522263277569?region=IN"
+    },
+    {
+      "id": "ad_c2fffc6e",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "Logicserve Digital Consultancy Services Pvt Ltd",
+      "description": "Logicserve Digital Consultancy Services Pvt Ltd",
+      "ctaText": "Shop the Look",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-05-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "b1e829dbabbd69ae",
+      "extractedAt": "2026-05-16T11:41:36.107947",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR11323946266796228609?region=IN"
+    },
+    {
+      "id": "ad_3d61dd75",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Discover More",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-06-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "ae5d72e656f6d2aa",
+      "extractedAt": "2026-05-16T11:41:36.107960",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR09588699876288364545?region=IN"
+    },
+    {
+      "id": "ad_81130e9a",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "Logicserve Digital Consultancy Services Pvt Ltd",
+      "description": "Logicserve Digital Consultancy Services Pvt Ltd",
+      "ctaText": "Shop Now",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "image",
+      "firstSeen": "2025-07-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/6301103784042705329"
+      ],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/6301103784042705329",
+      "contentHash": "e28afb6ad10688af",
+      "extractedAt": "2026-05-16T11:41:36.107969",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR07002815584807157761?region=IN"
+    },
+    {
+      "id": "ad_dc1b7cf8",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Explore Collection",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-08-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "7aa9428995da89f9",
+      "extractedAt": "2026-05-16T11:41:36.107980",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR17164764170567024641?region=IN"
+    },
+    {
+      "id": "ad_60bba5da",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Order Now",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-09-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "8633694b3fea709f",
+      "extractedAt": "2026-05-16T11:41:36.107991",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR15709181912658477057?region=IN"
+    },
+    {
+      "id": "ad_c40d9ef2",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Find Your Style",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-01-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "0e25d33b34cf8313",
+      "extractedAt": "2026-05-16T11:41:36.108002",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR12877299186000723969?region=IN"
+    },
+    {
+      "id": "ad_04d72308",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "hide_image\nSorry, we're not able to show you this ad at this time",
+      "description": "hide_image\nSorry, we're not able to show you this ad at this time",
+      "ctaText": "Shop the Look",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-02-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "bddb1f2ec4cf093c",
+      "extractedAt": "2026-05-16T11:41:36.108015",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR11058289551557525505?region=IN"
+    },
+    {
+      "id": "ad_993f22e7",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Discover More",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-03-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "9b381a3668ca9c7e",
+      "extractedAt": "2026-05-16T11:41:36.108025",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR03914892591866314753?region=IN"
+    },
+    {
+      "id": "ad_a3c6541c",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "Logicserve Digital Consultancy Services Pvt Ltd",
+      "description": "Logicserve Digital Consultancy Services Pvt Ltd",
+      "ctaText": "Shop Now",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "image",
+      "firstSeen": "2025-04-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/1688177782212035144"
+      ],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/1688177782212035144",
+      "contentHash": "6adfe6ae02b9391a",
+      "extractedAt": "2026-05-16T11:41:36.108035",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR17352226891603378177?region=IN"
+    },
+    {
+      "id": "ad_551e2435",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Explore Collection",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-05-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "f96c2dfde27a8a99",
+      "extractedAt": "2026-05-16T11:41:36.108046",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR13678696584005550081?region=IN"
+    },
+    {
+      "id": "ad_83e16041",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Order Now",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-06-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "7f4591214554db01",
+      "extractedAt": "2026-05-16T11:41:36.108056",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR03137139091905183745?region=IN"
+    },
+    {
+      "id": "ad_7333148b",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Find Your Style",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-07-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "f75ebf0b3219b23d",
+      "extractedAt": "2026-05-16T11:41:36.108067",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR10550016327110623233?region=IN"
+    },
+    {
+      "id": "ad_1c66582a",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Shop the Look",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-08-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "fbfa9f593d5d2a86",
+      "extractedAt": "2026-05-16T11:41:36.108078",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR16572784155234926593?region=IN"
+    },
+    {
+      "id": "ad_f24952e0",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "Logicserve Digital Consultancy Services Pvt Ltd",
+      "description": "Logicserve Digital Consultancy Services Pvt Ltd",
+      "ctaText": "Discover More",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "image",
+      "firstSeen": "2025-09-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/12182802199003200459"
+      ],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/12182802199003200459",
+      "contentHash": "f6b00abed7b2edcd",
+      "extractedAt": "2026-05-16T11:41:36.108089",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR13003068197933416449?region=IN"
+    },
+    {
+      "id": "ad_c7aa8dca",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Shop Now",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-01-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "0b1920d6e03ee89f",
+      "extractedAt": "2026-05-16T11:41:36.108101",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR13913122289932566529?region=IN"
+    },
+    {
+      "id": "ad_8395285a",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Explore Collection",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-02-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "977267711f7224f0",
+      "extractedAt": "2026-05-16T11:41:36.108112",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR12635561890957754369?region=IN"
+    },
+    {
+      "id": "ad_715e68b0",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Order Now",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-03-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "0e8b6884ae930ca5",
+      "extractedAt": "2026-05-16T11:41:36.108123",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR10439357551291138049?region=IN"
+    },
+    {
+      "id": "ad_e1666025",
+      "sessionId": "de626633",
+      "brand": "Zivame",
+      "domain": "zivame.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Find Your Style",
+      "landingUrl": "https://zivame.com",
+      "adFormat": "text",
+      "firstSeen": "2025-04-01",
+      "lastSeen": "2026-05-16",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "9dd1b276095b6e93",
+      "extractedAt": "2026-05-16T11:41:36.108134",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR16315081298521620481/creative/CR02783632866485993473?region=IN"
+    }
+  ]
+}

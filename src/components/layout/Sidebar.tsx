@@ -10,7 +10,8 @@ import {
   ImageIcon,
   TrendingUp,
   Package,
-  Zap
+  Zap,
+  Brain
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -25,8 +26,8 @@ export const Sidebar: React.FC = () => {
     { id: 'keywords', label: 'Keyword Intel', icon: Target, path: '/keywords' },
     { id: 'campaigns', label: 'Campaigns', icon: BarChart3, path: '/campaigns' },
     { id: 'creatives', label: 'Creative Hub', icon: ImageIcon, path: '/creatives' },
-    { id: 'competitors', label: 'Competitor Analysis', icon: TrendingUp, path: '/competitors' },
-    { id: 'scraper', label: 'Ad Intelligence', icon: Zap, path: '/competitor-scraper' },
+    { id: 'competitors', label: 'Intel Analysis', icon: Brain, path: '/competitor-analysis' },
+    { id: 'scraper', label: 'Ad Scraper', icon: Zap, path: '/competitor-scraper' },
   ];
 
   const isActive = (path: string) => {

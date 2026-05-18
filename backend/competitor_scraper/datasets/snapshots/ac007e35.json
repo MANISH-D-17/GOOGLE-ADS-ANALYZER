@@ -1,0 +1,413 @@
+{
+  "sessionId": "ac007e35",
+  "domain": "gocolors.com",
+  "capturedAt": "2026-05-15T08:00:02.344163",
+  "adsCount": 11,
+  "ads": [
+    {
+      "id": "ad_d7906a96",
+      "sessionId": "ac007e35",
+      "brand": "Gocolors",
+      "domain": "gocolors.com",
+      "headline": "Premium Fabrics, Affordable Prices",
+      "description": "Shop the latest collection of women's bottomwear. Trendy designs, comfortable fabrics.",
+      "ctaText": "Discover More",
+      "landingUrl": "https://gocolors.com",
+      "adFormat": "image",
+      "firstSeen": "2025-03-01",
+      "lastSeen": "2026-05-15",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/7976306122915290584"
+      ],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/7976306122915290584",
+      "contentHash": "fdaf57614d1313ef",
+      "extractedAt": "2026-05-15T08:00:02.343708",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00413450328055218177/creative/CR13552216256769163265?region=IN"
+    },
+    {
+      "id": "ad_1a464dbe",
+      "sessionId": "ac007e35",
+      "brand": "Gocolors",
+      "domain": "gocolors.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Order Now",
+      "landingUrl": "https://gocolors.com",
+      "adFormat": "text",
+      "firstSeen": "2025-06-01",
+      "lastSeen": "2026-05-15",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "9686d12799adc8db",
+      "extractedAt": "2026-05-15T08:00:02.343745",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00413450328055218177/creative/CR01757992520127610881?region=IN"
+    },
+    {
+      "id": "ad_cef929c5",
+      "sessionId": "ac007e35",
+      "brand": "Gocolors",
+      "domain": "gocolors.com",
+      "headline": "Comfort Meets Color \u2014 Shop the Collection",
+      "description": "India's most loved bottomwear brand. 100+ colors, premium fabrics, sizes for all bodies.",
+      "ctaText": "Find Your Style",
+      "landingUrl": "https://gocolors.com",
+      "adFormat": "image",
+      "firstSeen": "2025-07-01",
+      "lastSeen": "2026-05-15",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/9215286321699600543"
+      ],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/9215286321699600543",
+      "contentHash": "168dfc82c749d2b5",
+      "extractedAt": "2026-05-15T08:00:02.343762",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00413450328055218177/creative/CR15861863576214962177?region=IN"
+    },
+    {
+      "id": "ad_244fd275",
+      "sessionId": "ac007e35",
+      "brand": "Gocolors",
+      "domain": "gocolors.com",
+      "headline": "New Arrivals \u2014 Fresh Styles Every Season",
+      "description": "Shop the latest collection of women's bottomwear. Trendy designs, comfortable fabrics.",
+      "ctaText": "Shop the Look",
+      "landingUrl": "https://gocolors.com",
+      "adFormat": "image",
+      "firstSeen": "2025-08-01",
+      "lastSeen": "2026-05-15",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/2387950316293509287"
+      ],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/2387950316293509287",
+      "contentHash": "8c478b866c6d32c6",
+      "extractedAt": "2026-05-15T08:00:02.343775",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00413450328055218177/creative/CR08463007940352147457?region=IN"
+    },
+    {
+      "id": "ad_62a0f40a",
+      "sessionId": "ac007e35",
+      "brand": "Gocolors",
+      "domain": "gocolors.com",
+      "headline": "Vibrant Colors, Premium Comfort",
+      "description": "Discover Go Colors' festive collection. Ethnic wear, casuals, and fusion styles starting \u20b9299.",
+      "ctaText": "Discover More",
+      "landingUrl": "https://gocolors.com",
+      "adFormat": "image",
+      "firstSeen": "2025-09-01",
+      "lastSeen": "2026-05-15",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/11079735685942679202"
+      ],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/11079735685942679202",
+      "contentHash": "b553da86a7ee3fa2",
+      "extractedAt": "2026-05-15T08:00:02.343786",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00413450328055218177/creative/CR14941154529347895297?region=IN"
+    },
+    {
+      "id": "ad_fc04dfc0",
+      "sessionId": "ac007e35",
+      "brand": "Gocolors",
+      "domain": "gocolors.com",
+      "headline": "Your Style, Your Colors \u2014 Shop Now",
+      "description": "Premium quality women's wear at affordable prices. Free shipping on orders above \u20b9499.",
+      "ctaText": "Shop Now",
+      "landingUrl": "https://gocolors.com",
+      "adFormat": "image",
+      "firstSeen": "2025-01-01",
+      "lastSeen": "2026-05-15",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/10771680539816602320"
+      ],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "style",
+        "comfort"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Activewear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/10771680539816602320",
+      "contentHash": "001e50deb369cbe0",
+      "extractedAt": "2026-05-15T08:00:02.343801",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00413450328055218177/creative/CR17653869617396842497?region=IN"
+    },
+    {
+      "id": "ad_f068f98b",
+      "sessionId": "ac007e35",
+      "brand": "Gocolors",
+      "domain": "gocolors.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Explore Collection",
+      "landingUrl": "https://gocolors.com",
+      "adFormat": "text",
+      "firstSeen": "2025-02-01",
+      "lastSeen": "2026-05-15",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "2ba83d046ef9aedd",
+      "extractedAt": "2026-05-15T08:00:02.343814",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00413450328055218177/creative/CR13818069372272377857?region=IN"
+    },
+    {
+      "id": "ad_f1777fda",
+      "sessionId": "ac007e35",
+      "brand": "Gocolors",
+      "domain": "gocolors.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Order Now",
+      "landingUrl": "https://gocolors.com",
+      "adFormat": "text",
+      "firstSeen": "2025-03-01",
+      "lastSeen": "2026-05-15",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "40% OFF First Order",
+      "emotionalTriggers": [
+        "comfort",
+        "style",
+        "value"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Bottomwear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "2263b22fdd703285",
+      "extractedAt": "2026-05-15T08:00:02.343826",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00413450328055218177/creative/CR14539489737581789185?region=IN"
+    },
+    {
+      "id": "ad_fed8795d",
+      "sessionId": "ac007e35",
+      "brand": "Gocolors",
+      "domain": "gocolors.com",
+      "headline": "Free Delivery on Orders Above \u20b9499",
+      "description": "Shop the latest collection of women's bottomwear. Trendy designs, comfortable fabrics.",
+      "ctaText": "Find Your Style",
+      "landingUrl": "https://gocolors.com",
+      "adFormat": "image",
+      "firstSeen": "2025-04-01",
+      "lastSeen": "2026-05-15",
+      "imageUrls": [
+        "https://tpc.googlesyndication.com/archive/simgad/5212200412442159751"
+      ],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "festive",
+        "exclusivity",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Ethnic Wear",
+      "creativeType": "Display",
+      "adPreviewAsset": "https://tpc.googlesyndication.com/archive/simgad/5212200412442159751",
+      "contentHash": "64695844cdcd03d7",
+      "extractedAt": "2026-05-15T08:00:02.343838",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00413450328055218177/creative/CR04115855486035689473?region=IN"
+    },
+    {
+      "id": "ad_ae25f96a",
+      "sessionId": "ac007e35",
+      "brand": "Gocolors",
+      "domain": "gocolors.com",
+      "headline": "videocam",
+      "description": "videocam",
+      "ctaText": "Shop the Look",
+      "landingUrl": "https://gocolors.com",
+      "adFormat": "text",
+      "firstSeen": "2025-05-01",
+      "lastSeen": "2026-05-15",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Starting \u20b9299",
+      "emotionalTriggers": [
+        "value",
+        "trust"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "leggings",
+        "churidars"
+      ],
+      "fashionCategory": "Casual Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "4589355329fe96d7",
+      "extractedAt": "2026-05-15T08:00:02.343849",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00413450328055218177/creative/CR07395936303642050561?region=IN"
+    },
+    {
+      "id": "ad_5cbce726",
+      "sessionId": "ac007e35",
+      "brand": "Gocolors",
+      "domain": "gocolors.com",
+      "headline": "Casual Comfort \u2014 Leggings & Track Pants",
+      "description": "From leggings to palazzos, find your perfect fit. Available in 100+ vibrant colors.",
+      "ctaText": "Discover More",
+      "landingUrl": "https://gocolors.com",
+      "adFormat": "text",
+      "firstSeen": "2025-03-01",
+      "lastSeen": "2026-05-15",
+      "imageUrls": [],
+      "videoUrls": [],
+      "offerText": "Free Delivery \u20b9499+",
+      "emotionalTriggers": [
+        "exclusivity",
+        "style",
+        "confidence"
+      ],
+      "dominantColors": [
+        "#f97316",
+        "#ffffff",
+        "#1a1a1a"
+      ],
+      "productMentions": [
+        "palazzos",
+        "kurtas"
+      ],
+      "fashionCategory": "Festive Wear",
+      "creativeType": "Text",
+      "adPreviewAsset": "",
+      "contentHash": "3c67ee996ab91b91",
+      "extractedAt": "2026-05-15T08:00:02.343863",
+      "sourceUrl": "https://adstransparency.google.com/advertiser/AR00413450328055218177/creative/CR15920375049559736321?region=IN"
+    }
+  ]
+}

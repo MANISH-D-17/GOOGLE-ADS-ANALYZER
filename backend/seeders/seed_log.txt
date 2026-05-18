@@ -1,0 +1,113 @@
+Seeding Go Colors session from: /Users/manishd/MANISH-PROJECT/GADS/backend/competitor_scraper/datasets/snapshots/457ec6a4.json
+Ads found: 16
+[NLP] Warning: spacy model 'en_core_web_sm' not found. Keyword inference will use basic tokenization.
+Traceback (most recent call last):
+  File "asyncpg/protocol/prepared_stmt.pyx", line 175, in asyncpg.protocol.protocol.PreparedStatementState._encode_bind_msg
+  File "asyncpg/protocol/codecs/base.pyx", line 251, in asyncpg.protocol.protocol.Codec.encode
+  File "asyncpg/protocol/codecs/base.pyx", line 153, in asyncpg.protocol.protocol.Codec.encode_scalar
+  File "asyncpg/pgproto/codecs/datetime.pyx", line 147, in asyncpg.pgproto.pgproto.timestamp_encode
+TypeError: expected a datetime.date or datetime.datetime instance, got 'str'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 550, in _prepare_and_execute
+    self._rows = deque(await prepared_stmt.fetch(*parameters))
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/asyncpg/prepared_stmt.py", line 177, in fetch
+    data = await self.__bind_execute(args, 0, timeout)
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/asyncpg/prepared_stmt.py", line 268, in __bind_execute
+    data, status, _ = await self.__do_execute(
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/asyncpg/prepared_stmt.py", line 257, in __do_execute
+    return await executor(protocol)
+  File "asyncpg/protocol/protocol.pyx", line 184, in bind_execute
+  File "asyncpg/protocol/prepared_stmt.pyx", line 204, in asyncpg.protocol.protocol.PreparedStatementState._encode_bind_msg
+asyncpg.exceptions.DataError: invalid input for query argument $3: '2026-05-14T09:49:01.626251' (expected a datetime.date or datetime.datetime instance, got 'str')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 585, in execute
+    self._adapt_connection.await_(
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 563, in _prepare_and_execute
+    self._handle_exception(error)
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 513, in _handle_exception
+    self._adapt_connection._handle_exception(error)
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 797, in _handle_exception
+    raise translated_error from error
+sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_dbapi.Error: <class 'asyncpg.exceptions.DataError'>: invalid input for query argument $3: '2026-05-14T09:49:01.626251' (expected a datetime.date or datetime.datetime instance, got 'str')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/manishd/MANISH-PROJECT/GADS/backend/seeders/go_colors_seeder.py", line 69, in <module>
+    asyncio.run(seed())
+  File "/Users/manishd/.local/share/uv/python/cpython-3.10-macos-aarch64-none/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/Users/manishd/.local/share/uv/python/cpython-3.10-macos-aarch64-none/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/Users/manishd/MANISH-PROJECT/GADS/backend/seeders/go_colors_seeder.py", line 59, in seed
+    result = await pipeline.store(
+  File "/Users/manishd/MANISH-PROJECT/GADS/backend/database/services/storage_pipeline.py", line 84, in store
+    await BenchmarkRepository(self.db).create(competitor.id, benchmark_data)
+  File "/Users/manishd/MANISH-PROJECT/GADS/backend/database/repositories/repositories.py", line 228, in create
+    await self.db.flush()
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/ext/asyncio/session.py", line 787, in flush
+    await greenlet_spawn(self.sync_session.flush, objects=objects)
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 203, in greenlet_spawn
+    result = context.switch(value)
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/orm/session.py", line 4331, in flush
+    self._flush(objects)
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/orm/session.py", line 4466, in _flush
+    with util.safe_reraise():
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/util/langhelpers.py", line 121, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/orm/session.py", line 4427, in _flush
+    flush_context.execute()
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/orm/unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/orm/unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/orm/persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/orm/persistence.py", line 1048, in _emit_insert_statements
+    result = connection.execute(
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 585, in execute
+    self._adapt_connection.await_(
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 563, in _prepare_and_execute
+    self._handle_exception(error)
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 513, in _handle_exception
+    self._adapt_connection._handle_exception(error)
+  File "/Users/manishd/MANISH-PROJECT/GADS/.venv/lib/python3.10/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 797, in _handle_exception
+    raise translated_error from error
+sqlalchemy.exc.DBAPIError: (sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.DataError'>: invalid input for query argument $3: '2026-05-14T09:49:01.626251' (expected a datetime.date or datetime.datetime instance, got 'str')
+[SQL: INSERT INTO benchmark_reports (id, competitor_id, report_date, my_ctr, competitor_estimated_ctr, my_cpc, competitor_estimated_cpc, my_roas, my_creative_score, competitor_creative_score, my_keyword_count, competitor_keyword_count, strengths, weaknesses, opportunities, threats, overall_score, created_at) VALUES ($1::VARCHAR, $2::VARCHAR, $3::TIMESTAMP WITHOUT TIME ZONE, $4::FLOAT, $5::FLOAT, $6::FLOAT, $7::FLOAT, $8::FLOAT, $9::FLOAT, $10::FLOAT, $11::INTEGER, $12::INTEGER, $13::JSON, $14::JSON, $15::JSON, $16::JSON, $17::FLOAT, $18::TIMESTAMP WITHOUT TIME ZONE)]
+[parameters: ('b0afc26a-e678-4b2b-9aff-1bdadd8084fb', '0da86637-e8dd-46d5-a9a3-02c3fb88df01', '2026-05-14T09:49:01.626251', 3.2, 3.83, 12.5, 14.0, 4.1, 72.0, 85.6, 45, 32, '["Strong ROAS of 4.1x indicates efficient spend"]', '["Competitor CTR estimate (3.83%) exceeds mine (3.2%)"]', '["Competitor has gaps in video ad formats \\u2014 opportunity to differentiate", "Test stronger emotional CTAs (\'Get Your Perfect Fit\') vs competitor\'s generic \'Shop Now\'"]', '["Competitor runs frequent offers/discounts \\u2014 pricing pressure risk"]', 82.7, datetime.datetime(2026, 5, 14, 9, 49, 1, 629858))]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)

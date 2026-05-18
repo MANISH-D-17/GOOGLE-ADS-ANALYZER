@@ -58,7 +58,17 @@ class PlaywrightScraper:
                 except Exception:
                     print("[Scraper] No creative-preview on domain page")
 
-                await asyncio.sleep(5)
+                # Click "See all ads" if present to expand results/show more accounts
+                try:
+                    expand_btn = await page.query_selector("material-button.grid-expansion-button")
+                    if expand_btn and await expand_btn.is_visible():
+                        print("[Scraper] Clicking 'See all ads' expansion button")
+                        await expand_btn.click()
+                        await asyncio.sleep(3)
+                except Exception as e:
+                    print(f"[Scraper] No expansion button or click failed: {e}")
+
+                await asyncio.sleep(2)
                 session_store[session_id]["progress"] = 10
 
                 # Grab advertiser ID from creative links
@@ -110,10 +120,14 @@ class PlaywrightScraper:
                             const imgs = Array.from(el.querySelectorAll('img'))
                                 .map(i => i.src)
                                 .filter(s => s && s.includes('googlesyndication'));
-                            // Get any text inside the tile  
-                            const textNodes = Array.from(el.querySelectorAll('div, span, p'))
+                            
+                            // Target specific text elements within the creative preview
+                            const textNodes = Array.from(el.querySelectorAll('div, span, p, [role="heading"]'))
                                 .map(e => (e.innerText || '').trim())
-                                .filter(t => t.length > 3 && t.length < 200);
+                                .filter(t => t.length > 5 && t.length < 500)
+                                // Remove duplicates within the same tile
+                                .filter((t, i, arr) => arr.indexOf(t) === i);
+
                             if (creativeId) {
                                 results.push({ creativeId, href, images: imgs, textNodes });
                             }
@@ -180,6 +194,20 @@ class PlaywrightScraper:
                 # ── Save snapshot & complete ──
                 await self._save_snapshot(session_id, domain, ads)
 
+                # ── Persist to PostgreSQL ──
+                try:
+                    from database.connection import get_db
+                    from database.services.storage_pipeline import StoragePipelineService
+                    
+                    # Use a fresh DB session for persistence
+                    async for db in get_db():
+                        pipeline = StoragePipelineService(db)
+                        await pipeline.store(session_id, domain, region, ads)
+                        print(f"[Scraper] Data persisted to PostgreSQL for session {session_id}")
+                        break
+                except Exception as db_err:
+                    print(f"[Scraper] DB persistence failed: {db_err}")
+
                 session_store[session_id].update({
                     "status": "complete",
                     "progress": 100,
@@ -205,82 +233,69 @@ class PlaywrightScraper:
         """Build a structured ad object from a creative-preview tile."""
         creative_id = tile["creativeId"]
         images = tile["images"]
+        
+        # Priority 1: Use extracted text nodes
+        # Filter out obvious boilerplate but keep brand-related content
         text_nodes = [
             t for t in tile.get("textNodes", [])
-            if not any(skip in t.lower() for skip in [
-                "verified", "go fashion", "private limited", "limited",
-                "gocolors", "go colors"
-            ])
+            if not any(skip in t.lower() for skip in ["verified", "private limited", "limited"])
+            and len(t) > 5
         ]
 
-        # Generate meaningful headline from creative ID + index pattern
-        ad_themes = [
-            "Comfort Meets Color — Shop the Collection",
-            "New Arrivals — Fresh Styles Every Season",
-            "Vibrant Colors, Premium Comfort",
-            "Your Style, Your Colors — Shop Now",
-            "Festive Season Specials — Look Your Best",
-            "Explore India's Widest Range of Bottomwear",
-            "Free Delivery on Orders Above ₹499",
-            "Sizes XS to 5XL — Fashion for Every Body",
-            "Go Colors — 100+ Shades, Endless Style",
-            "New Collection — Limited Time Offers",
-            "Be Bold, Be Colorful — Shop Go Colors",
-            "Premium Fabrics, Affordable Prices",
-            "Trending Now — Palazzos & Churidars",
-            "Shop the Latest Ethnic Wear Collection",
-            "Casual Comfort — Leggings & Track Pants",
-        ]
-        cta_options = [
-            "Shop Now", "Explore Collection", "Order Now",
-            "Find Your Style", "Shop the Look", "Discover More"
-        ]
-        desc_options = [
-            "India's most loved bottomwear brand. 100+ colors, premium fabrics, sizes for all bodies.",
-            "Shop the latest collection of women's bottomwear. Trendy designs, comfortable fabrics.",
-            "Discover Go Colors' festive collection. Ethnic wear, casuals, and fusion styles starting ₹299.",
-            "Premium quality women's wear at affordable prices. Free shipping on orders above ₹499.",
-            "From leggings to palazzos, find your perfect fit. Available in 100+ vibrant colors.",
-        ]
-        category_options = ["Bottomwear", "Ethnic Wear", "Casual Wear", "Activewear", "Festive Wear"]
-        trigger_sets = [
-            ["comfort", "style", "value"],
-            ["festive", "exclusivity", "confidence"],
-            ["value", "trust"],
-            ["style", "comfort"],
-            ["exclusivity", "style", "confidence"],
-        ]
+        # Standard GADS card layout usually has Headline followed by Description
+        headline = text_nodes[0] if text_nodes else f"{brand_name} Ad {index + 1}"
+        description = text_nodes[1] if len(text_nodes) > 1 else ""
+        
+        # If we have many nodes, description might be the rest joined
+        if len(text_nodes) > 2:
+            description = " ".join(text_nodes[1:])
 
-        idx = index % len(ad_themes)
+        # Clean up description (remove display URL if it leaked in)
+        if domain.lower() in description.lower():
+            description = re.sub(rf"https?://(www\.)?{re.escape(domain)}[^\s]*", "", description, flags=re.IGNORECASE).strip()
 
         return {
             "id": f"ad_{uuid.uuid4().hex[:8]}",
             "sessionId": session_id,
             "brand": brand_name,
             "domain": domain,
-            "headline": text_nodes[0] if text_nodes else ad_themes[idx],
-            "description": text_nodes[1] if len(text_nodes) > 1 else desc_options[index % len(desc_options)],
-            "ctaText": cta_options[index % len(cta_options)],
+            "headline": headline[:150],
+            "description": description[:300],
+            "ctaText": "Visit Site", # Usually hard to scrape from tile, "Visit Site" is standard
             "landingUrl": f"https://{domain}",
             "adFormat": "image" if images else "text",
-            "firstSeen": f"2025-0{(index % 9) + 1}-01",
+            "firstSeen": datetime.utcnow().strftime("%Y-%m-%d"),
             "lastSeen": datetime.utcnow().strftime("%Y-%m-%d"),
             "imageUrls": images,
             "videoUrls": [],
-            "offerText": ["40% OFF First Order", "Free Delivery ₹499+", "Starting ₹299", ""][index % 4],
-            "emotionalTriggers": trigger_sets[index % len(trigger_sets)],
-            "dominantColors": ["#f97316", "#ffffff", "#1a1a1a"],
-            "productMentions": [
-                ["leggings", "palazzos"][index % 2],
-                ["churidars", "kurtas"][index % 2],
-            ],
-            "fashionCategory": category_options[index % len(category_options)],
+            "offerText": self._extract_offer(headline + " " + description),
+            "emotionalTriggers": self._detect_triggers(headline + " " + description),
+            "dominantColors": ["#f3f4f6", "#111827"],
+            "productMentions": [],
+            "fashionCategory": "General",
             "creativeType": "Display" if images else "Text",
             "adPreviewAsset": images[0] if images else "",
             "contentHash": hashlib.sha256(creative_id.encode()).hexdigest()[:16],
             "extractedAt": datetime.utcnow().isoformat(),
             "sourceUrl": tile.get("href", ""),
         }
+
+    def _extract_offer(self, text: str) -> str:
+        patterns = [r'\d+%\s*off', r'₹\s*\d+', r'free shipping', r'buy \d+ get \d+', r'limited time']
+        for p in patterns:
+            m = re.search(p, text, re.IGNORECASE)
+            if m:
+                return m.group(0)
+        return ""
+
+    def _detect_triggers(self, text: str) -> list:
+        text_lower = text.lower()
+        triggers = {
+            'urgency': ['now', 'today', 'hurry', 'limited'],
+            'trust': ['guarantee', 'certified', 'verified', 'trusted'],
+            'savings': ['save', 'off', 'discount', 'deal'],
+        }
+        return [k for k, words in triggers.items() if any(w in text_lower for w in words)]
 
     async def _save_snapshot(self, session_id: str, domain: str, ads: list):
         snapshot_dir = os.path.join(os.path.dirname(__file__), "..", "datasets", "snapshots")
