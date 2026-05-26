@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   BarChart, 
@@ -21,6 +21,7 @@ import {
   Zap,
   ArrowRight
 } from 'lucide-react';
+import { ClientCompetitorStore } from '../services/clientCompetitorStore';
 
 interface CampaignTimelineProps {
   domain?: string;
@@ -28,19 +29,53 @@ interface CampaignTimelineProps {
 }
 
 const CampaignTimeline: React.FC<CampaignTimelineProps> = ({ domain, loading }) => {
+  const [timelineData, setTimelineData] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!domain) {
+      setTimelineData([]);
+      return;
+    }
+    const data = ClientCompetitorStore.findByDomain(domain);
+    if (data && data.creatives && data.creatives.length > 0) {
+      const monthCounts: Record<string, number> = {};
+      data.creatives.forEach((ad: any) => {
+        const dateStr = ad.firstSeen || '2026-01-01';
+        try {
+          const date = new Date(dateStr);
+          const month = date.toLocaleDateString('en-US', { month: 'short' });
+          monthCounts[month] = (monthCounts[month] || 0) + 1;
+        } catch {
+          monthCounts['Jan'] = (monthCounts['Jan'] || 0) + 1;
+        }
+      });
+      
+      const monthsOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const mapped = monthsOrder
+        .filter(m => monthCounts[m] !== undefined)
+        .map(m => ({
+          month: m,
+          ads: monthCounts[m],
+          campaigns: Math.max(1, Math.ceil(monthCounts[m] / 5)),
+          impact: Math.min(100, monthCounts[m] * 12)
+        }));
+        
+      if (mapped.length > 0) {
+        setTimelineData(mapped);
+      } else {
+        setTimelineData([
+          { month: 'Jan', ads: data.creatives.length > 5 ? 5 : 2, campaigns: 1, impact: 30 },
+          { month: 'Feb', ads: data.creatives.length, campaigns: 2, impact: 60 }
+        ]);
+      }
+    } else {
+      setTimelineData([]);
+    }
+  }, [domain]);
+
   if (loading) {
     return <div className="h-96 animate-pulse rounded-3xl bg-white shadow-sm border border-gray-100" />;
   }
-
-  // Mock timeline data based on seasonal patterns
-  const timelineData = [
-    { month: 'Jan', ads: 12, campaigns: 2, impact: 65 },
-    { month: 'Feb', ads: 18, campaigns: 3, impact: 72 },
-    { month: 'Mar', ads: 25, campaigns: 4, impact: 85 },
-    { month: 'Apr', ads: 15, campaigns: 2, impact: 60 },
-    { month: 'May', ads: 30, campaigns: 5, impact: 92 },
-    { month: 'Jun', ads: 22, campaigns: 4, impact: 78 },
-  ];
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
@@ -58,41 +93,47 @@ const CampaignTimeline: React.FC<CampaignTimelineProps> = ({ domain, loading }) 
         </div>
 
         <div className="h-[400px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={timelineData}>
-              <defs>
-                <linearGradient id="colorAds" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#2563eb" stopOpacity={0.15}/>
-                  <stop offset="95%" stopColor="#2563eb" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-              <XAxis 
-                dataKey="month" 
-                axisLine={false} 
-                tickLine={false} 
-                tick={{ fill: '#64748b', fontSize: 10, fontWeight: 900 }}
-                dy={15}
-              />
-              <YAxis 
-                axisLine={false} 
-                tickLine={false} 
-                tick={{ fill: '#64748b', fontSize: 10, fontWeight: 900 }}
-              />
-              <Tooltip 
-                contentStyle={{ borderRadius: '24px', border: 'none', boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.15)', padding: '20px' }}
-              />
-              <Area 
-                type="monotone" 
-                dataKey="ads" 
-                stroke="#2563eb" 
-                strokeWidth={5}
-                fillOpacity={1} 
-                fill="url(#colorAds)" 
-                animationDuration={2000}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+          {timelineData.length === 0 ? (
+            <div className="h-full flex items-center justify-center border-2 border-dashed border-gray-100 rounded-3xl p-12 text-center">
+              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">No session history — run a scrape first</p>
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={timelineData}>
+                <defs>
+                  <linearGradient id="colorAds" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#2563eb" stopOpacity={0.15}/>
+                    <stop offset="95%" stopColor="#2563eb" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis 
+                  dataKey="month" 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fill: '#64748b', fontSize: 10, fontWeight: 900 }}
+                  dy={15}
+                />
+                <YAxis 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fill: '#64748b', fontSize: 10, fontWeight: 900 }}
+                />
+                <Tooltip 
+                  contentStyle={{ borderRadius: '24px', border: 'none', boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.15)', padding: '20px' }}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="ads" 
+                  stroke="#2563eb" 
+                  strokeWidth={5}
+                  fillOpacity={1} 
+                  fill="url(#colorAds)" 
+                  animationDuration={2000}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          )}
         </div>
       </div>
 

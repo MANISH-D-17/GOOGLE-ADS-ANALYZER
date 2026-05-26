@@ -37,8 +37,10 @@ const ChartBackground: React.FC<{ data: { val: number }[]; color: string }> = ({
   </div>
 );
 
+import { colors } from '../../theme/colors';
+
 export const MetricCard: React.FC<MetricCardProps> = ({ 
-  label, title, value, change, trend, positive, color = '#3b82f6', icon, chartData, className, subtitle, isLoading, prefix='', suffix='' 
+  label, title, value, change, trend, positive, color = colors.primary.DEFAULT, icon, chartData, className, subtitle, isLoading, prefix='', suffix='' 
 }) => {
   const internalChartData = chartData || Array.from({ length: 15 }, () => ({ val: 50 + Math.random() * 50 }));
 

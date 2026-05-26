@@ -22,6 +22,15 @@ interface AdGalleryProps {
 
 const AdGallery: React.FC<AdGalleryProps> = ({ creatives, loading }) => {
   const [selectedAd, setSelectedAd] = useState<AdCreative | null>(null);
+  
+  const [formatFilter, setFormatFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+
+  const filteredCreatives = creatives.filter(ad => {
+    const fmtMatch = formatFilter === 'all' || ad.adFormat.toLowerCase() === formatFilter;
+    const catMatch = categoryFilter === 'all' || ad.fashionCategory?.toLowerCase().includes(categoryFilter.toLowerCase());
+    return fmtMatch && catMatch;
+  });
 
   if (loading && creatives.length === 0) {
     return (
@@ -43,17 +52,25 @@ const AdGallery: React.FC<AdGalleryProps> = ({ creatives, loading }) => {
             Active Filters:
           </div>
           <div className="flex items-center gap-4">
-            <select className="bg-gray-50 border border-gray-100 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-tight text-gray-900 outline-none transition-all focus:border-gray-300">
-              <option>All Formats</option>
-              <option>Image Ads</option>
-              <option>Text Ads</option>
-              <option>Video Ads</option>
+            <select 
+              value={formatFilter} 
+              onChange={e => setFormatFilter(e.target.value)}
+              className="bg-gray-50 border border-gray-100 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-tight text-gray-900 outline-none transition-all focus:border-gray-300"
+            >
+              <option value="all">All Formats</option>
+              <option value="image">Image Ads</option>
+              <option value="text">Text Ads</option>
+              <option value="video">Video Ads</option>
             </select>
-            <select className="bg-gray-50 border border-gray-100 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-tight text-gray-900 outline-none transition-all focus:border-gray-300">
-              <option>All Categories</option>
-              <option>Bottomwear</option>
-              <option>Ethnic Wear</option>
-              <option>Casual Wear</option>
+            <select 
+              value={categoryFilter} 
+              onChange={e => setCategoryFilter(e.target.value)}
+              className="bg-gray-50 border border-gray-100 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-tight text-gray-900 outline-none transition-all focus:border-gray-300"
+            >
+              <option value="all">All Categories</option>
+              <option value="bottomwear">Bottomwear</option>
+              <option value="ethnic wear">Ethnic Wear</option>
+              <option value="casual wear">Casual Wear</option>
             </select>
           </div>
         </div>
@@ -64,7 +81,7 @@ const AdGallery: React.FC<AdGalleryProps> = ({ creatives, loading }) => {
 
       {/* Grid */}
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {creatives.map((ad, i) => (
+        {filteredCreatives.map((ad, i) => (
           <motion.div
             key={ad.id}
             initial={{ opacity: 0, y: 20 }}
@@ -100,7 +117,7 @@ const AdGallery: React.FC<AdGalleryProps> = ({ creatives, loading }) => {
                   Extract Intel
                 </button>
                 <a 
-                  href={ad.sourceUrl || '#'} 
+                  href={ad.landingUrl || '#'} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="flex h-12 w-44 items-center justify-center gap-3 rounded-2xl bg-white/10 text-[10px] font-black uppercase tracking-widest text-white shadow-2xl backdrop-blur-xl border border-white/20 transition-all hover:bg-white/20 hover:scale-105 active:scale-95"

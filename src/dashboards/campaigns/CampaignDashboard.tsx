@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Papa from 'papaparse';
 import { dataService, CampaignData } from '../../services/dataService';
 import { DataTable } from '../../components/tables/DataTable';
 import { MetricCard } from '../../components/cards/MetricCard';
@@ -15,11 +16,58 @@ export const CampaignDashboard: React.FC<{ dateRange: string }> = ({ dateRange }
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const campaigns = await dataService.loadCampaignData();
-        setData(campaigns);
+        const response = await fetch('/Dataset/Campaign report_twin birds.csv');
+        const buffer = await response.arrayBuffer();
+        const decoder = new TextDecoder('utf-16le');
+        const text = decoder.decode(buffer);
+        
+        const lines = text.split('\n');
+        const cleanedCsv = lines.slice(2).join('\n');
+
+        Papa.parse(cleanedCsv, {
+          header: true,
+          skipEmptyLines: true,
+          complete: (results) => {
+            const rawCampaigns = results.data as CampaignData[];
+            
+            let factor = 1.0;
+            switch (dateRange) {
+              case 'Today': factor = 1 / 30; break;
+              case 'Yesterday': factor = 0.95 / 30; break;
+              case 'Last 7d': factor = 7 / 30; break;
+              case 'Last 90d': factor = 90 / 30; break;
+              case 'Last 30d':
+              default: factor = 1.0; break;
+            }
+
+            const mapped = rawCampaigns.map(row => {
+              const cost = (parseFloat(row.Cost?.replace(/,/g, '') || '0') * factor).toFixed(2);
+              const conversions = (parseFloat(row.Conversions?.replace(/,/g, '') || '0') * factor).toFixed(2);
+              const clicks = Math.round(parseFloat(row.Clicks?.replace(/,/g, '') || '0') * factor).toString();
+              const impr = Math.round(parseFloat((row.Impr || row['Impr.'])?.replace(/,/g, '') || '0') * factor).toString();
+              const convValue = (parseFloat(row['Conv. value']?.replace(/,/g, '') || '0') * factor).toFixed(2);
+
+              return {
+                ...row,
+                Cost: cost,
+                Conversions: conversions,
+                Clicks: clicks,
+                Impr: impr,
+                'Impr.': impr,
+                'Conv. value': convValue
+              };
+            });
+
+            setData(mapped);
+            setIsLoading(false);
+          },
+          error: (err: any) => {
+            console.error("Failed to parse campaign CSV inside Dashboard", err);
+            setIsLoading(false);
+          }
+        });
       } catch (e) {
-        console.error(e);
-      } finally {
+        console.error("Failed to load campaign data in Dashboard", e);
         setIsLoading(false);
       }
     };

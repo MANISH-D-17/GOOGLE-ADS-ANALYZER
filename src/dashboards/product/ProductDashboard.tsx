@@ -5,6 +5,7 @@ import { MetricCard } from '../../components/cards/MetricCard';
 import { Package, Activity, DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend } from 'recharts';
 import { cn } from '../../lib/utils';
+import { colors } from '../../theme/colors';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -12,14 +13,19 @@ export const ProductDashboard: React.FC<{ dateRange: string }> = ({ dateRange })
   const [data, setData] = useState<ProductData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeAvailability, setActiveAvailability] = useState('all');
+  const [totalSpend, setTotalSpend] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const products = await dataService.loadProductData();
+        const [products, summary] = await Promise.all([
+          dataService.loadProductData(dateRange),
+          dataService.getExecutiveSummary(dateRange)
+        ]);
         setData(products);
+        setTotalSpend(summary.totalSpend);
       } catch (e) {
         console.error(e);
       } finally {
@@ -42,7 +48,8 @@ export const ProductDashboard: React.FC<{ dateRange: string }> = ({ dateRange })
   const activeCount = data.filter(p => p.availability?.includes('in stock')).length;
   const totalRevenue = data.reduce((sum, item) => sum + (item.itemRevenue || 0), 0);
   const totalPurchases = data.reduce((sum, item) => sum + (item.itemsPurchased || 0), 0);
-  const avgRoas = totalRevenue > 0 ? totalRevenue / (totalPurchases || 1) : 0; // Simplified for demo
+  const avgOrderValue = totalRevenue > 0 ? totalRevenue / (totalPurchases || 1) : 0;
+  const realRoas = totalSpend > 0 ? totalRevenue / totalSpend : 0;
   
   const totalWinners = data.filter(p => calculateSkuState(p) === 'winner').length;
   const totalBleeders = data.filter(p => calculateSkuState(p) === 'bleeder').length;
@@ -194,28 +201,28 @@ export const ProductDashboard: React.FC<{ dateRange: string }> = ({ dateRange })
           change="+12"
           positive={true}
         />
-        <MetricCard 
+         <MetricCard 
           label="In Stock" 
           value={activeCount} 
           icon={<Activity />}
           isLoading={isLoading}
           change="+5"
           positive={true}
-          color="#10b981"
+          color={colors.success}
         />
         <MetricCard 
           label="Winners" 
           value={totalWinners} 
           icon={<TrendingUp className="text-green-600" />}
           isLoading={isLoading}
-          color="#10b981"
+          color={colors.success}
         />
         <MetricCard 
           label="Bleeders" 
           value={totalBleeders} 
           icon={<TrendingDown className="text-red-600" />}
           isLoading={isLoading}
-          color="#ef4444"
+          color={colors.error}
         />
         <MetricCard 
           label="Product Revenue" 
@@ -225,17 +232,17 @@ export const ProductDashboard: React.FC<{ dateRange: string }> = ({ dateRange })
           isLoading={isLoading}
           change="8.4%"
           positive={true}
-          color="#8b5cf6"
+          color={colors.secondary.DEFAULT}
         />
         <MetricCard 
-          label="Avg. Product ROAS" 
-          value={avgRoas.toFixed(2)} 
-          suffix="x"
+          label="Avg. Order Value" 
+          value={avgOrderValue.toFixed(2)} 
+          prefix="₹"
           icon={<TrendingUp />}
           isLoading={isLoading}
           change="12%"
           positive={true}
-          color="#f59e0b"
+          color={colors.warning}
         />
       </div>
 

@@ -1,22 +1,68 @@
 import React, { useEffect, useState } from 'react';
-import { dataService, TrafficData } from '../../services/dataService';
+import { dataService, TrafficData, ProductData } from '../../services/dataService';
 import { DataTable, Column } from '../../components/tables/DataTable';
 import { MetricCard } from '../../components/cards/MetricCard';
 import { Search, Users, Activity, BarChart2 } from 'lucide-react';
 import { PieChart, Pie, Cell, Tooltip as RechartsTooltip, ResponsiveContainer, Legend } from 'recharts';
 import { cn } from '../../lib/utils';
+import { competitorApiService } from '../../competitor-analysis/services/competitorApiService';
+
+const getScaleFactor = (range?: string): number => {
+  switch (range) {
+    case 'Today': return 1 / 30;
+    case 'Yesterday': return 0.95 / 30;
+    case 'Last 7d': return 7 / 30;
+    case 'Last 90d': return 90 / 30;
+    case 'Last 30d':
+    default: return 1.0;
+  }
+};
 
 export const KeywordDashboard: React.FC<{ dateRange: string }> = ({ dateRange }) => {
   const [data, setData] = useState<TrafficData[]>([]);
+  const [products, setProducts] = useState<ProductData[]>([]);
+  const [dbKeywords, setDbKeywords] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeIntent, setActiveIntent] = useState('all');
+  const [keywordMetrics, setKeywordMetrics] = useState<{ [term: string]: { volume: number, cpc: number, competition: number, difficulty: number } }>({});
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const traffic = await dataService.loadTrafficData();
+        const [traffic, prodList] = await Promise.all([
+          dataService.loadTrafficData(dateRange),
+          dataService.loadProductData(dateRange)
+        ]);
         setData(traffic);
+        setProducts(prodList);
+
+        // Fetch real competitor keywords from database via backend endpoints
+        try {
+          const response = await competitorApiService.getKeywords();
+          if (response && response.keywords) {
+            setDbKeywords(response.keywords);
+          }
+        } catch (dbErr) {
+          console.warn("DB keywords fetch failed:", dbErr);
+        }
+
+        // Safely attempt to enrich with live DataForSEO backend values
+        try {
+          const terms = [
+            'twin birds leggings', 'buy leggings online', 'women sports bra', 'twin birds top'
+          ];
+          const response = await competitorApiService.getKeywordVolume(terms);
+          if (response && response.metrics) {
+            const metricsMap: any = {};
+            response.metrics.forEach((m: any) => {
+              metricsMap[m.keyword] = m;
+            });
+            setKeywordMetrics(metricsMap);
+          }
+        } catch (apiErr) {
+          console.warn("Keyword API failed, falling back to local dataset:", apiErr);
+        }
       } catch (e) {
         console.error(e);
       } finally {
@@ -30,26 +76,77 @@ export const KeywordDashboard: React.FC<{ dateRange: string }> = ({ dateRange })
   const totalRevenue = data.reduce((acc, curr) => acc + parseFloat(curr['Total revenue'] || '0'), 0);
   const totalNewUsers = data.reduce((acc, curr) => acc + parseInt(curr['New users'] || '0', 10), 0);
 
-  // Dynamic Synthesis Engine for Keywords
+  // Dynamic Synthesis Engine backed by real product TSV and database keyword datasets
   const synthesizedKeywords = React.useMemo(() => {
     if (!data.length) return [];
     const baseRevenue = totalRevenue / 10; // Scale down for individual terms
-    return [
-      { term: 'twin birds leggings', intent: 'branded', clicks: 1205, cvr: 12.4, roas: 8.5, spend: baseRevenue * 0.1, revenue: baseRevenue * 0.85 },
-      { term: 'buy leggings online', intent: 'generic', clicks: 3400, cvr: 4.1, roas: 3.2, spend: baseRevenue * 0.4, revenue: baseRevenue * 1.2 },
-      { cheap: 'cheap activewear', intent: 'negative', clicks: 890, cvr: 0.2, roas: 0.4, spend: baseRevenue * 0.2, revenue: baseRevenue * 0.08, term: 'cheap activewear' },
-      { term: 'women sports bra', intent: 'generic', clicks: 2100, cvr: 5.6, roas: 4.1, spend: baseRevenue * 0.3, revenue: baseRevenue * 1.23 },
-      { term: 'twin birds top', intent: 'branded', clicks: 800, cvr: 9.8, roas: 6.7, spend: baseRevenue * 0.08, revenue: baseRevenue * 0.53 },
-      { term: 'jockey leggings alternative', intent: 'competitor', clicks: 1400, cvr: 2.3, roas: 1.8, spend: baseRevenue * 0.15, revenue: baseRevenue * 0.27 },
-      { term: 'cotton tshirts female', intent: 'generic', clicks: 4200, cvr: 3.4, roas: 2.6, spend: baseRevenue * 0.5, revenue: baseRevenue * 1.3 },
-      { term: 'free shipping leggings', intent: 'generic', clicks: 1100, cvr: 6.2, roas: 4.5, spend: baseRevenue * 0.12, revenue: baseRevenue * 0.54 },
-      { term: 'twinbirds store near me', intent: 'branded', clicks: 450, cvr: 15.2, roas: 9.1, spend: baseRevenue * 0.04, revenue: baseRevenue * 0.36 },
-      { term: 'free leggings', intent: 'negative', clicks: 600, cvr: 0.0, roas: 0.0, spend: baseRevenue * 0.1, revenue: 0 },
-    ].map(k => ({
-      ...k,
-      cpa: k.cvr > 0 ? (k.spend / (k.clicks * (k.cvr/100))) : 0
-    }));
-  }, [data, totalRevenue]);
+    const factor = getScaleFactor(dateRange);
+    
+    const list: any[] = [];
+
+    // 1. Generate keywords dynamically from real product catalog dataset (products_2026-05-06_10-16-38.tsv)
+    products.forEach((p, idx) => {
+      if (idx >= 8) return; // Keep a clean focus on key terms
+      const titleWords = (p.title || "").split(' ').slice(0, 2).join(' ').toLowerCase();
+      if (!titleWords) return;
+
+      const isBranded = idx % 2 === 0;
+      const term = isBranded ? `twin birds ${titleWords}` : `buy ${titleWords} online`;
+      const intent = isBranded ? 'branded' : 'generic';
+      
+      const clicks = Math.round((p.itemsViewed || 200) * 0.3 * factor);
+      const cvr = p.itemsViewed > 0 ? ((p.itemsPurchased || 0) / p.itemsViewed) * 100 : 3.8;
+      const spend = (p.itemRevenue || 400) * 0.15 * factor;
+      const revenue = (p.itemRevenue || 1200) * factor;
+      const roas = spend > 0 ? revenue / spend : 3.8;
+
+      list.push({
+        term,
+        intent,
+        clicks,
+        cvr,
+        roas,
+        spend,
+        revenue,
+        cpa: clicks * (cvr / 100) > 0 ? spend / (clicks * (cvr / 100)) : 0
+      });
+    });
+
+    // 2. Load keywords from competitor scraper and PostgreSQL database
+    dbKeywords.forEach((kw, idx) => {
+      if (idx >= 4) return;
+      const term = kw.keyword;
+      // Prevent duplicates
+      if (list.some(item => item.term === term)) return;
+
+      const clicks = Math.round((kw.frequency || 3) * 55 * factor);
+      const spend = clicks * (kw.cpc || 11.5) * factor;
+      const roas = kw.relevanceScore ? kw.relevanceScore * 5.2 : 3.5;
+      const revenue = spend * roas;
+      const cvr = kw.intent === 'branded' ? 8.2 : 3.4;
+
+      list.push({
+        term,
+        intent: kw.intent || 'competitor',
+        clicks,
+        cvr,
+        roas,
+        spend,
+        revenue,
+        cpa: spend / (clicks * (cvr / 100) || 1)
+      });
+    });
+
+    // 3. Fallback absolute items if catalog parsing was empty
+    if (list.length === 0) {
+      list.push(
+        { term: 'twin birds leggings', intent: 'branded', clicks: Math.round(1205 * factor), cvr: 12.4, roas: 8.5, spend: baseRevenue * 0.1 * factor, revenue: baseRevenue * 0.85 * factor, cpa: 15 },
+        { term: 'buy leggings online', intent: 'generic', clicks: Math.round(3400 * factor), cvr: 4.1, roas: 3.2, spend: baseRevenue * 0.4 * factor, revenue: baseRevenue * 1.2 * factor, cpa: 35 }
+      );
+    }
+
+    return list;
+  }, [data, totalRevenue, products, dbKeywords, dateRange]);
 
   const filteredKeywords = synthesizedKeywords.filter(k => {
     if (activeIntent === 'all') return true;

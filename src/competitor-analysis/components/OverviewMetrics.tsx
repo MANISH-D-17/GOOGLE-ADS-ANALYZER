@@ -13,6 +13,14 @@ import {
 } from 'lucide-react';
 import { OverviewResponse, CompetitorOverview } from '../services/competitorApiService';
 
+const colorClasses: Record<string, { bg: string; text: string; bgBar: string }> = {
+  blue:    { bg: 'bg-blue-50',    text: 'text-blue-600',    bgBar: 'bg-blue-600' },
+  emerald: { bg: 'bg-emerald-50', text: 'text-emerald-600', bgBar: 'bg-emerald-600' },
+  amber:   { bg: 'bg-amber-50',   text: 'text-amber-600',   bgBar: 'bg-amber-600' },
+  indigo:  { bg: 'bg-indigo-50',  text: 'text-indigo-600',  bgBar: 'bg-indigo-600' },
+  rose:    { bg: 'bg-rose-50',    text: 'text-rose-600',    bgBar: 'bg-rose-600' },
+};
+
 interface OverviewMetricsProps {
   overview: OverviewResponse | null;
   activeCompetitor: CompetitorOverview | undefined;
@@ -69,6 +77,7 @@ const OverviewMetrics: React.FC<OverviewMetricsProps> = ({ overview, activeCompe
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat, i) => {
           const Icon = stat.icon;
+          const colors = colorClasses[stat.color] || { bg: 'bg-gray-50', text: 'text-gray-600', bgBar: 'bg-gray-600' };
           return (
             <motion.div
               key={stat.label}
@@ -78,7 +87,7 @@ const OverviewMetrics: React.FC<OverviewMetricsProps> = ({ overview, activeCompe
               className="group relative overflow-hidden rounded-3xl border border-gray-100 bg-white p-6 shadow-sm transition-all hover:shadow-md"
             >
               <div className="flex items-center justify-between">
-                <div className={`rounded-2xl bg-${stat.color}-50 p-3 text-${stat.color}-600`}>
+                <div className={`rounded-2xl p-3 ${colors.bg} ${colors.text}`}>
                   <Icon className="h-5 w-5" />
                 </div>
                 <div className={`flex items-center gap-1 text-[10px] font-black uppercase tracking-tight ${stat.trendUp ? 'text-emerald-600' : 'text-rose-600'}`}>
@@ -90,7 +99,7 @@ const OverviewMetrics: React.FC<OverviewMetricsProps> = ({ overview, activeCompe
                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{stat.label}</p>
                 <h3 className="mt-1 text-2xl font-black text-gray-900 tracking-tight">{stat.value}</h3>
               </div>
-              <div className={`absolute bottom-0 left-0 h-1 w-full bg-${stat.color}-600 opacity-0 transition-opacity group-hover:opacity-100`} />
+              <div className={`absolute bottom-0 left-0 h-1 w-full ${colors.bgBar} opacity-0 transition-opacity group-hover:opacity-100`} />
             </motion.div>
           );
         })}

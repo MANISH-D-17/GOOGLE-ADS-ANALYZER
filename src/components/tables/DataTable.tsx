@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Search, ChevronLeft, ChevronRight, ArrowUpDown, ChevronRight as ChevronRightIcon } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -24,12 +24,36 @@ export const DataTable: React.FC<DataTableProps> = ({ data, columns, searchable 
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
 
+  const [sortKey, setSortKey] = useState<string | null>(null);
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
+
+  const handleSort = (key: string) => {
+    if (sortKey === key) {
+      setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortKey(key);
+      setSortDir('asc');
+    }
+    setCurrentPage(1);
+  };
+
   const filteredData = data.filter(row => 
     Object.values(row).some(val => String(val).toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-  const currentData = filteredData.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+  const sortedData = useMemo(() => {
+    if (!sortKey) return filteredData;
+    return [...filteredData].sort((a, b) => {
+      const av = a[sortKey]; const bv = b[sortKey];
+      const an = parseFloat(String(av).replace(/[,₹%x]/g, ''));
+      const bn = parseFloat(String(bv).replace(/[,₹%x]/g, ''));
+      const compare = !isNaN(an) && !isNaN(bn) ? an - bn : String(av || '').localeCompare(String(bv || ''));
+      return sortDir === 'asc' ? compare : -compare;
+    });
+  }, [filteredData, sortKey, sortDir]);
+
+  const totalPages = Math.ceil(sortedData.length / rowsPerPage);
+  const currentData = sortedData.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
   return (
     <div className="space-y-4">
@@ -62,14 +86,23 @@ export const DataTable: React.FC<DataTableProps> = ({ data, columns, searchable 
             <thead>
               <tr className="bg-gray-50/50 border-b border-gray-100">
                 {columns.map((col, idx) => (
-                  <th key={idx} className={cn(
-                    "px-4 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400 whitespace-nowrap",
-                    col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : 'text-left',
-                    col.className
-                  )}>
+                  <th 
+                    key={idx} 
+                    onClick={() => col.sortable && handleSort(col.key)}
+                    className={cn(
+                      "px-4 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400 whitespace-nowrap",
+                      col.sortable && "cursor-pointer select-none hover:text-gray-700",
+                      col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : 'text-left',
+                      col.className
+                    )}
+                  >
                     <div className={cn("flex items-center gap-1", col.align === 'right' && "justify-end", col.align === 'center' && "justify-center")}>
                       {col.label}
-                      {col.sortable && <ArrowUpDown size={12} className="text-gray-300 cursor-pointer hover:text-gray-600" />}
+                      {col.sortable && (
+                        <span className="ml-1 inline-block">
+                          {sortKey === col.key ? (sortDir === 'asc' ? '↑' : '↓') : '↕'}
+                        </span>
+                      )}
                     </div>
                   </th>
                 ))}

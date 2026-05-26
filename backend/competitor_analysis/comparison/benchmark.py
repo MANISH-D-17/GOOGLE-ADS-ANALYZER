@@ -26,7 +26,7 @@ class BenchmarkEngine:
 
         for path in csv_files[:5]:
             try:
-                with open(path, encoding="utf-8-sig") as f:
+                with open(path, encoding="utf-16", errors="replace") as f:
                     reader = csv.DictReader(f)
                     for row in reader:
                         for key, val_list in [("CTR", ctrs), ("CPC", cpcs), ("ROAS", roas_vals)]:

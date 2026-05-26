@@ -34,11 +34,22 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({ ads, keywords, session
       let blob: Blob;
       const filename = `competitor_intel_${Date.now()}`;
       if (isDemoMode || !sessionId) {
-        blob = format === 'csv' ? exportCSV() : exportJSON();
+        if (format === 'zip') {
+          try {
+            // Attempt to get the latest snapshot/seed zip from backend
+            blob = await scraperApiService.exportData('go-colors-session', 'zip');
+          } catch (err) {
+            // Fallback to JSON if backend fails
+            blob = exportJSON();
+          }
+        } else {
+          blob = format === 'csv' ? exportCSV() : exportJSON();
+        }
       } else {
         blob = await scraperApiService.exportData(sessionId, format);
       }
-      downloadBlob(blob, `${filename}.${format === 'zip' ? 'json' : format}`);
+      // Save with correct format extension (csv, json, or zip)
+      downloadBlob(blob, `${filename}.${format === 'zip' ? 'zip' : format}`);
       setExported(format);
       setTimeout(() => setExported(null), 3000);
     } catch (err) { console.error('Export error:', err); }

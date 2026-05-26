@@ -101,14 +101,25 @@ async def get_analysis(session_id: str):
 
 @router.get("/export")
 async def export_data(session_id: str, format: str = "json"):
-    """Export session data as CSV, JSON."""
+    """Export session data as CSV, JSON, or ZIP."""
     import json, csv, io
-    from fastapi.responses import Response, StreamingResponse
+    from fastapi.responses import Response, StreamingResponse, FileResponse
 
-    if session_id not in SESSION_STORE:
-        raise HTTPException(status_code=404, detail="Session not found")
+    ads = []
+    domain = ""
+    if session_id in SESSION_STORE:
+        ads = SESSION_STORE[session_id].get("ads", [])
+        domain = SESSION_STORE[session_id].get("domain", "")
+    else:
+        snapshot = snapshot_mgr._load_snapshot(session_id)
+        if snapshot:
+            ads = snapshot.get("ads", [])
+            domain = snapshot.get("session", {}).get("domain", "")
+            if not domain and ads:
+                domain = ads[0].get("domain", "")
 
-    ads = SESSION_STORE[session_id].get("ads", [])
+    if not ads:
+        raise HTTPException(status_code=404, detail="Session or snapshot data not found")
 
     if format == "json":
         content = json.dumps({"ads": ads, "exportedAt": datetime.utcnow().isoformat()}, indent=2)
@@ -118,14 +129,24 @@ async def export_data(session_id: str, format: str = "json"):
     elif format == "csv":
         output = io.StringIO()
         if ads:
-            writer = csv.DictWriter(output, fieldnames=ads[0].keys())
+            writer = csv.DictWriter(output, fieldnames=list(ads[0].keys()))
             writer.writeheader()
             for ad in ads:
                 writer.writerow({k: str(v) for k, v in ad.items()})
         return Response(content=output.getvalue(), media_type="text/csv",
                         headers={"Content-Disposition": f"attachment; filename=export_{session_id}.csv"})
 
-    raise HTTPException(status_code=400, detail="Invalid format. Use json or csv.")
+    elif format == "zip":
+        from api.zip_generator import generate_zip_export
+        keywords = nlp_engine.infer_keywords(ads)
+        zip_path = await generate_zip_export(session_id, domain, ads, keywords)
+        return FileResponse(
+            path=zip_path,
+            filename=f"competitor_intel_{session_id}.zip",
+            media_type="application/zip"
+        )
+
+    raise HTTPException(status_code=400, detail="Invalid format. Use json, csv or zip.")
 
 
 @router.get("/snapshots")

@@ -12,6 +12,17 @@ class DataForSEORestClient:
         self.password = password or os.getenv("DATAFORSEO_PASSWORD", "PLACEHOLDER_PASS")
         self._auth_header = self._generate_auth_header()
 
+    def has_credentials(self) -> bool:
+        """Returns True if valid non-placeholder credentials are provided."""
+        if not self.username or not self.password:
+            return False
+        invalid_keywords = ["placeholder", "your_", "username", "password", "api_", "your-"]
+        u_lower = self.username.lower()
+        p_lower = self.password.lower()
+        if any(ik in u_lower for ik in invalid_keywords) or any(ik in p_lower for ik in invalid_keywords):
+            return False
+        return True
+
     def _generate_auth_header(self) -> str:
         auth_str = f"{self.username}:{self.password}"
         encoded = base64.b64encode(auth_str.encode("ascii")).decode("ascii")

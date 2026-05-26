@@ -52,7 +52,7 @@ const KeywordIntelligence: React.FC<KeywordIntelligenceProps> = ({ keywords, loa
     my_rank: k.my_rank,
     competitor_rank: k.competitor_rank || 0,
     search_volume: k.search_volume || 0,
-    opportunity_level: k.opportunity_level || 'low'
+    opportunity_level: (k.opportunity_level === 'high' || k.opportunity_level === 'medium' || k.opportunity_level === 'low' ? k.opportunity_level : 'low') as 'high' | 'medium' | 'low'
   }));
 
   const serpData: any[] = []; // This should come from a separate API call or prop

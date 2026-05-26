@@ -24,6 +24,18 @@ class PlaywrightScraper:
     def __init__(self):
         self.seen_hashes: set = set()
 
+    async def _goto_with_retry(self, page: Page, url: str, retries: int = 3, timeout: int = 60000):
+        for i in range(retries):
+            try:
+                print(f"[Scraper] Navigating to {url} (attempt {i+1}/{retries})")
+                await page.goto(url, wait_until="domcontentloaded", timeout=timeout)
+                return
+            except Exception as e:
+                if i == retries - 1:
+                    raise e
+                print(f"[Scraper] Navigation attempt {i+1} failed: {e}. Retrying in 5s...")
+                await asyncio.sleep(5)
+
     async def scrape(
         self, session_id: str, domain: str, region: str,
         session_store: dict, max_ads: int = 50
@@ -31,6 +43,7 @@ class PlaywrightScraper:
         session_store[session_id]["status"] = "running"
         session_store[session_id]["progress"] = 2
 
+        browser = None
         try:
             async with async_playwright() as pw:
                 browser = await pw.chromium.launch(
@@ -50,8 +63,7 @@ class PlaywrightScraper:
                 # ── Phase 1: Load domain search page → get advertiser ID ──
                 page = await context.new_page()
                 domain_url = f"https://adstransparency.google.com/?region={region}&domain={domain}"
-                print(f"[Scraper] Loading domain page: {domain_url}")
-                await page.goto(domain_url, wait_until="domcontentloaded", timeout=60000)
+                await self._goto_with_retry(page, domain_url, retries=3, timeout=60000)
 
                 try:
                     await page.wait_for_selector("creative-preview", timeout=20000)
@@ -92,7 +104,7 @@ class PlaywrightScraper:
                     print("[Scraper] No advertiser ID, using domain page")
 
                 print(f"[Scraper] Navigating to advertiser page: {adv_url}")
-                await page.goto(adv_url, wait_until="domcontentloaded", timeout=60000)
+                await self._goto_with_retry(page, adv_url, retries=3, timeout=60000)
 
                 try:
                     await page.wait_for_selector("creative-preview", timeout=20000)
@@ -164,8 +176,6 @@ class PlaywrightScraper:
                     await asyncio.sleep(2.5)
                     scroll_round += 1
 
-                await browser.close()
-
                 # ── Phase 4: Convert tiles to structured ads ──
                 ads = []
                 tile_list = list(collected_ads.values())[:max_ads]
@@ -226,6 +236,13 @@ class PlaywrightScraper:
                 "status": "error", "progress": 100,
                 "errorsCount": session_store[session_id].get("errorsCount", 0) + 1,
             })
+        finally:
+            if browser:
+                try:
+                    await browser.close()
+                    print(f"[Scraper] Browser closed in finally block.")
+                except Exception as close_err:
+                    print(f"[Scraper] Error closing browser in finally block: {close_err}")
 
     def _build_ad_from_tile(
         self, tile: dict, domain: str, session_id: str, brand_name: str, index: int

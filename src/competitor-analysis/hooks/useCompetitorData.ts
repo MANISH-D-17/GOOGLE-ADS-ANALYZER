@@ -18,6 +18,7 @@ export const useCompetitorData = (domain?: string) => {
   const [recommendations, setRecommendations] = useState<AIRecommendation[]>([]);
 
   const fetchData = useCallback(async () => {
+    const controller = new AbortController();
     setLoading(true);
     setError(null);
     try {
@@ -29,29 +30,39 @@ export const useCompetitorData = (domain?: string) => {
         competitorApiService.getRecommendations(domain)
       ]);
 
-      setOverview(overviewData);
-      setKeywords(keywordsData.keywords);
-      setCreatives(creativesData.ads);
-      
-      // Handle both single report and multiple reports return from comparison
-      if ('benchmark' in comparisonData) {
-        setComparison(comparisonData as BenchmarkReport);
-      } else if ('reports' in comparisonData && (comparisonData as any).reports.length > 0) {
-        // Use the first report if domain is not specified
-        setComparison((comparisonData as any).reports[0]);
+      if (!controller.signal.aborted) {
+        setOverview(overviewData);
+        setKeywords(keywordsData.keywords);
+        setCreatives(creativesData.ads);
+        
+        // Handle both single report and multiple reports return from comparison
+        if ('benchmark' in comparisonData) {
+          setComparison(comparisonData as BenchmarkReport);
+        } else if ('reports' in comparisonData && (comparisonData as any).reports.length > 0) {
+          // Use the first report if domain is not specified
+          setComparison((comparisonData as any).reports[0]);
+        }
+        
+        setRecommendations(recommendationsData.recommendations);
       }
-      
-      setRecommendations(recommendationsData.recommendations);
     } catch (err: any) {
-      console.error('Error fetching competitor data:', err);
-      setError(err.message || 'An error occurred while fetching data');
+      if (!controller.signal.aborted) {
+        console.error('Error fetching competitor data:', err);
+        setError(err.message || 'An error occurred while fetching data');
+      }
     } finally {
-      setLoading(false);
+      if (!controller.signal.aborted) {
+        setLoading(false);
+      }
     }
+    return () => controller.abort();
   }, [domain]);
 
   useEffect(() => {
-    fetchData();
+    const cleanupPromise = fetchData();
+    return () => {
+      cleanupPromise.then(cleanup => cleanup());
+    };
   }, [fetchData]);
 
   return {

@@ -12,7 +12,8 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  Cell
+  Cell,
+  CartesianGrid
 } from 'recharts';
 import { 
   Target, 
@@ -46,19 +47,22 @@ const ComparisonEngine: React.FC<ComparisonEngineProps> = ({ comparison, loading
   const b = comparison?.benchmark;
   const c = comparison?.competitor;
   
+  // Normalize all metrics to 0-100 scale using domain-specific max values
+  const normalize = (val: number, max: number) => Math.min(100, Math.round((val / max) * 100));
+
   const radarData = [
-    { subject: 'CTR', A: b?.myCTR || 0, B: b?.competitorCTR || 0, fullMark: 10 },
-    { subject: 'Creative', A: b?.myCreativeScore || 0, B: b?.competitorCreativeScore || 0, fullMark: 100 },
-    { subject: 'CPC', A: (b?.myCPC || 0) * 5, B: (b?.competitorCPC || 0) * 5, fullMark: 100 },
-    { subject: 'Keywords', A: b?.myKeywordCount || 0, B: b?.competitorKeywordCount || 0, fullMark: 100 },
-    { subject: 'ROAS', A: (b?.myROAS || 0) * 10, B: 35, fullMark: 100 },
+    { subject: 'CTR %',          mine: normalize(b?.myCTR || 0, 10),              comp: normalize(b?.competitorCTR || 0, 10) },
+    { subject: 'Creative Score', mine: b?.myCreativeScore || 0,                    comp: b?.competitorCreativeScore || 0 },
+    { subject: 'ROAS',          mine: normalize(b?.myROAS || 0, 10),              comp: 0 }, // competitor ROAS unknown — show 0, not 35
+    { subject: 'Keywords',      mine: normalize(b?.myKeywordCount || 0, 200),     comp: normalize(b?.competitorKeywordCount || 0, 200) },
+    { subject: 'CPC Efficiency', mine: normalize(Math.max(0, 20 - (b?.myCPC || 0)), 20), comp: normalize(Math.max(0, 20 - (b?.competitorCPC || 0)), 20) }, // Inverted — lower CPC = higher score
   ];
 
   const groupedBarData = [
-    { metric: 'CTR %', mine: b?.myCTR || 0, competitor: b?.competitorCTR || 0 },
-    { metric: 'Creative Score', mine: b?.myCreativeScore || 0, competitor: b?.competitorCreativeScore || 0 },
-    { metric: 'CPC (Scaled)', mine: (b?.myCPC || 0) * 10, competitor: (b?.competitorCPC || 0) * 10 },
-    { metric: 'Keywords', mine: b?.myKeywordCount || 0, competitor: b?.competitorKeywordCount || 0 },
+    { metric: 'CTR %',           mine: b?.myCTR || 0,               competitor: b?.competitorCTR || 0 },
+    { metric: 'Creative Score',  mine: b?.myCreativeScore || 0,     competitor: b?.competitorCreativeScore || 0 },
+    { metric: 'CPC (₹)',         mine: b?.myCPC || 0,               competitor: b?.competitorCPC || 0 },
+    { metric: 'Keywords Tracked', mine: b?.myKeywordCount || 0,      competitor: b?.competitorKeywordCount || 0 },
   ];
 
   return (
@@ -153,7 +157,7 @@ const ComparisonEngine: React.FC<ComparisonEngineProps> = ({ comparison, loading
                 <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 10, fontWeight: 700 }} />
                 <Radar
                   name="Twin Birds"
-                  dataKey="A"
+                  dataKey="mine"
                   stroke="#2563eb"
                   fill="#2563eb"
                   fillOpacity={0.15}
@@ -161,7 +165,7 @@ const ComparisonEngine: React.FC<ComparisonEngineProps> = ({ comparison, loading
                 />
                 <Radar
                   name="Competitor"
-                  dataKey="B"
+                  dataKey="comp"
                   stroke="#94a3b8"
                   fill="#94a3b8"
                   fillOpacity={0.1}
@@ -170,6 +174,9 @@ const ComparisonEngine: React.FC<ComparisonEngineProps> = ({ comparison, loading
               </RadarChart>
             </ResponsiveContainer>
           </div>
+          <p className="text-[10px] font-black uppercase tracking-widest text-amber-500 mt-4 text-center">
+            ⚠ Competitor ROAS not available — requires Google Ads API access for that account
+          </p>
         </div>
 
         {/* Overall Benchmark Score */}

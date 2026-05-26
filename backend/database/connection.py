@@ -14,7 +14,7 @@ load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql+asyncpg://postgres:OQGuvwvrvngsQLBoUugDvwgrtCJgShYA@mainline.proxy.rlwy.net:26849/railway"
+    "postgresql+asyncpg://postgres:postgres@localhost:5432/gads_db"
 )
 
 # Async engine with connection pooling

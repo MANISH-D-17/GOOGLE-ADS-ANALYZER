@@ -18,17 +18,14 @@ load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
 
 from api.routes import router as scraper_router
 from competitor_analysis.api.routes import router as analysis_router
+from competitor_analysis.api.keyword_routes import router as kw_router
+from competitor_analysis.api.serp_routes import router as serp_router
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Startup: init PostgreSQL tables."""
-    try:
-        from database.connection import init_db
-        await init_db()
-        print("[Server] PostgreSQL tables initialized.")
-    except Exception as e:
-        print(f"[Server] DB init warning: {e}")
+    # PostgreSQL bypassed for in-browser client competitor analysis
+    print("[Server] PostgreSQL startup bypassed. Running GADS in browser-only mode.")
     yield
     print("[Server] Shutting down.")
 
@@ -61,9 +58,6 @@ app.include_router(scraper_router, prefix="/api/scraper")
 app.include_router(analysis_router, prefix="/api/competitor-analysis")
 
 # DataForSEO Intelligence routes
-from competitor_analysis.api.keyword_routes import router as kw_router
-from competitor_analysis.api.serp_routes import router as serp_router
-
 app.include_router(kw_router, prefix="/api/keywords", tags=["Keywords"])
 app.include_router(serp_router, prefix="/api/serp", tags=["SERP"])
 

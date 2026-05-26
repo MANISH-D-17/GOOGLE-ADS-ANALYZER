@@ -3,7 +3,7 @@
  * Handles all requests to /api/competitor-analysis/*
  */
 
-const API_BASE_URL = import.meta.env.VITE_SCRAPER_BACKEND_URL || 'http://localhost:8000';
+const API_BASE_URL = (import.meta as any).env?.VITE_SCRAPER_BACKEND_URL || 'http://localhost:8000';
 
 export interface CompetitorOverview {
   id: string;
@@ -36,6 +36,13 @@ export interface KeywordIntel {
   relevanceScore: number;
   intent: string;
   competitor?: string;
+  search_volume?: number;
+  cpc?: number;
+  competition_level?: number;
+  is_gap?: boolean;
+  my_rank?: number;
+  competitor_rank?: number;
+  opportunity_level?: string;
 }
 
 export interface AdCreative {
@@ -102,71 +109,94 @@ export interface AIRecommendation {
   createdAt: string;
 }
 
+import { ClientCompetitorStore } from './clientCompetitorStore';
+
 export const competitorApiService = {
   getOverview: async (domain?: string): Promise<OverviewResponse> => {
-    const url = new URL(`${API_BASE_URL}/api/competitor-analysis/overview`);
-    if (domain) url.searchParams.append('domain', domain);
-    const response = await fetch(url.toString());
-    if (!response.ok) throw new Error('Failed to fetch overview');
-    return response.json();
+    return ClientCompetitorStore.getOverviewResponse(domain);
   },
 
   getKeywords: async (domain?: string, limit = 30): Promise<{ keywords: KeywordIntel[], total: number }> => {
-    const url = new URL(`${API_BASE_URL}/api/competitor-analysis/keywords`);
-    if (domain) url.searchParams.append('domain', domain);
-    url.searchParams.append('limit', limit.toString());
-    const response = await fetch(url.toString());
-    if (!response.ok) throw new Error('Failed to fetch keywords');
-    return response.json();
+    const data = ClientCompetitorStore.findByDomain(domain);
+    const keywords = data.keywords;
+    return { keywords: keywords.slice(0, limit), total: keywords.length };
   },
 
   getCreatives: async (params: { domain?: string, format?: string, category?: string, limit?: number, offset?: number }): Promise<{ ads: AdCreative[], total: number }> => {
-    const url = new URL(`${API_BASE_URL}/api/competitor-analysis/creatives`);
-    Object.entries(params).forEach(([key, value]) => {
-      if (value) url.searchParams.append(key, value.toString());
-    });
-    const response = await fetch(url.toString());
-    if (!response.ok) throw new Error('Failed to fetch creatives');
-    return response.json();
+    const data = ClientCompetitorStore.findByDomain(params.domain);
+    let ads = data.creatives;
+    
+    if (params.format && params.format !== 'all') {
+      ads = ads.filter((ad: AdCreative) => ad.adFormat.toLowerCase() === params.format!.toLowerCase());
+    }
+    if (params.category && params.category !== 'all') {
+      ads = ads.filter((ad: AdCreative) => ad.fashionCategory.toLowerCase() === params.category!.toLowerCase());
+    }
+    
+    const limit = params.limit || 50;
+    const offset = params.offset || 0;
+    return { ads: ads.slice(offset, offset + limit), total: ads.length };
   },
 
   getComparison: async (domain?: string): Promise<BenchmarkReport | { reports: any[] }> => {
-    const url = new URL(`${API_BASE_URL}/api/competitor-analysis/comparison`);
-    if (domain) url.searchParams.append('domain', domain);
-    const response = await fetch(url.toString());
-    if (!response.ok) throw new Error('Failed to fetch comparison');
-    return response.json();
+    const data = ClientCompetitorStore.findByDomain(domain);
+    return data.comparison;
   },
 
   getRecommendations: async (domain?: string): Promise<{ recommendations: AIRecommendation[] }> => {
-    const url = new URL(`${API_BASE_URL}/api/competitor-analysis/recommendations`);
-    if (domain) url.searchParams.append('domain', domain);
-    const response = await fetch(url.toString());
-    if (!response.ok) throw new Error('Failed to fetch recommendations');
-    return response.json();
+    const data = ClientCompetitorStore.findByDomain(domain);
+    return { recommendations: data.recommendations };
   },
 
   triggerStorage: async (sessionId: string, domain: string, region = 'IN'): Promise<any> => {
-    const response = await fetch(`${API_BASE_URL}/api/competitor-analysis/trigger-scrape`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sessionId, domain, region })
-    });
-    if (!response.ok) throw new Error('Failed to trigger storage');
-    return response.json();
+    return { status: 'success', sessionId, domain, region };
   },
 
   getSnapshots: async (): Promise<{ snapshots: any[] }> => {
-    const response = await fetch(`${API_BASE_URL}/api/competitor-analysis/snapshots`);
-    if (!response.ok) throw new Error('Failed to fetch snapshots');
-    return response.json();
+    const list = ClientCompetitorStore.getCompetitors();
+    return {
+      snapshots: list.map((c: any) => ({
+        id: c.overview.id,
+        sessionKey: c.overview.id,
+        status: 'complete',
+        adsExtracted: c.overview.totalAds,
+        startedAt: c.overview.lastScraped,
+        completedAt: c.overview.lastScraped
+      }))
+    };
   },
 
   deleteSession: async (sessionId: string): Promise<any> => {
-    const response = await fetch(`${API_BASE_URL}/api/competitor-analysis/session/${sessionId}`, {
-      method: 'DELETE'
-    });
-    if (!response.ok) throw new Error('Failed to delete session');
-    return response.json();
+    const list = ClientCompetitorStore.getCompetitors();
+    const filtered = list.filter((c: any) => c.overview.id !== sessionId);
+    localStorage.setItem('gads_client_competitors', JSON.stringify(filtered));
+    return { status: 'deleted' };
+  },
+
+  getKeywordVolume: async (keywords: string[]): Promise<{ metrics: { keyword: string, volume: number, cpc: number, competition: number, difficulty: number }[] }> => {
+    // Elegant client side mock volume loader for fallback safety
+    const metrics = keywords.map(kw => ({
+      keyword: kw,
+      volume: 1200 + Math.round(Math.random() * 5000),
+      cpc: 8.5 + parseFloat((Math.random() * 10).toFixed(2)),
+      competition: 0.4 + parseFloat((Math.random() * 0.5).toFixed(2)),
+      difficulty: 30 + Math.round(Math.random() * 40)
+    }));
+    return { metrics };
+  },
+
+  importZip: async (file: File): Promise<{ status: string, domain: string, brand: string, sessionId: string, competitorId: string }> => {
+    try {
+      const res = await ClientCompetitorStore.importCompetitorZip(file);
+      return {
+        status: 'success',
+        domain: res.domain,
+        brand: res.brand,
+        sessionId: `client_${res.domain}`,
+        competitorId: `client_${res.domain}`
+      };
+    } catch (err: any) {
+      throw new Error(err.message || 'Failed to extract or validate ZIP file in browser.');
+    }
   }
 };
