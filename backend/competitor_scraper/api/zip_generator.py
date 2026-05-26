@@ -53,9 +53,13 @@ async def generate_zip_export(session_id: str, domain: str, ads: list, keywords:
             "totalKeywords": len(keywords)
         }, f, indent=2)
         
-    # ads.json
+    # Sanitize ads for ZIP — remove local filesystem paths for portability
+    zip_ads = []
+    for ad in ads:
+        ad_copy = {k: v for k, v in ad.items() if k not in ("localImagePaths", "localVideoPaths")}
+        zip_ads.append(ad_copy)
     with open(os.path.join(metadata_dir, "ads.json"), "w") as f:
-        json.dump(ads, f, indent=2)
+        json.dump(zip_ads, f, indent=2)
         
     # campaigns.json
     campaigns = [
@@ -109,22 +113,45 @@ async def generate_zip_export(session_id: str, domain: str, ads: list, keywords:
             "fashionCategories": list(set(ad.get("fashionCategory", "General") for ad in ads))
         }, f, indent=2)
         
-    # 3. Write media files (using lightweight valid placeholder files)
-    # We create a placeholder image for each ad's creatives
+    # 3. Copy real downloaded media files into the zip structure
+    import shutil
+
     for idx, ad in enumerate(ads):
-        ad_id = ad.get("id")
-        img_urls = ad.get("imageUrls", [])
-        if img_urls:
-            # Banners, creatives, thumbnails, products folders
-            banner_path = os.path.join(images_dir, "banners", f"{ad_id}_banner.png")
-            creative_path = os.path.join(images_dir, "creatives", f"{ad_id}_creative.png")
-            thumb_path = os.path.join(images_dir, "thumbnails", f"{ad_id}_thumb.png")
-            prod_path = os.path.join(images_dir, "products", f"{ad_id}_product.png")
+        ad_id = ad.get("id", f"ad_{idx}")
+        
+        # Copy real downloaded images
+        local_img_paths = ad.get("localImagePaths", [])
+        for j, lpath in enumerate(local_img_paths):
+            if os.path.exists(lpath):
+                ext = os.path.splitext(lpath)[1] or ".jpg"
+                dest = os.path.join(images_dir, "creatives", f"{ad_id}_{j}{ext}")
+                shutil.copy2(lpath, dest)
+                # Also copy to banners folder as primary
+                if j == 0:
+                    banner_dest = os.path.join(images_dir, "banners", f"{ad_id}_banner{ext}")
+                    shutil.copy2(lpath, banner_dest)
+                    thumb_dest = os.path.join(images_dir, "thumbnails", f"{ad_id}_thumb{ext}")
+                    shutil.copy2(lpath, thumb_dest)
             
-            with open(banner_path, "wb") as f: f.write(TINY_PNG_BYTES)
-            with open(creative_path, "wb") as f: f.write(TINY_PNG_BYTES)
-            with open(thumb_path, "wb") as f: f.write(TINY_PNG_BYTES)
-            with open(prod_path, "wb") as f: f.write(TINY_PNG_BYTES)
+        # If no local images, write a URL reference file instead of a blank PNG
+        if not local_img_paths and ad.get("imageUrls"):
+            url_ref_path = os.path.join(images_dir, "creatives", f"{ad_id}_image_urls.txt")
+            with open(url_ref_path, "w") as f:
+                f.write("\n".join(ad.get("imageUrls", [])))
+
+        # Copy real downloaded videos
+        local_vid_paths = ad.get("localVideoPaths", [])
+        for j, lpath in enumerate(local_vid_paths):
+            if os.path.exists(lpath):
+                ext = os.path.splitext(lpath)[1] or ".mp4"
+                dest = os.path.join(videos_dir, f"{ad_id}_{j}{ext}")
+                shutil.copy2(lpath, dest)
+        
+        # If no local videos but URLs exist, write URL reference
+        if not local_vid_paths and ad.get("videoUrls"):
+            url_ref_path = os.path.join(videos_dir, f"{ad_id}_video_urls.txt")
+            with open(url_ref_path, "w") as f:
+                f.write("\n".join(ad.get("videoUrls", [])))
             
     # 4. Write text files
     headlines = [ad.get("headline", "") for ad in ads]

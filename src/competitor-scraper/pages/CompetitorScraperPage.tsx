@@ -43,6 +43,7 @@ function StatCard({ label, value, icon, color }: { label: string; value: number 
 const CompetitorScraperPage: React.FC = () => {
   const [domain, setDomain] = useState('');
   const [region, setRegion] = useState('IN');
+  const [maxAds, setMaxAds] = useState(200);
   const [snapshots, setSnapshots] = useState<any[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
 
@@ -82,7 +83,7 @@ const CompetitorScraperPage: React.FC = () => {
   const handleStart = async () => {
     if (!domain.trim()) return;
     const cleanDomain = domain.trim().replace(/^https?:\/\//, '').replace(/\/$/, '');
-    await startScraping(cleanDomain, region);
+    await startScraping(cleanDomain, region, maxAds);
   };
 
   const isRunning = status === 'running';
@@ -133,7 +134,24 @@ const CompetitorScraperPage: React.FC = () => {
             >
               {REGIONS.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
             </select>
-            <ChevronRight className="absolute right-6 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 rotate-90 pointer-events-none" />
+          </div>
+          <div className="flex flex-col gap-2 w-full md:w-48 justify-center">
+            <label className="text-[10px] font-black uppercase tracking-[2px] text-gray-400">
+              Max Ads <span className="text-indigo-400">({maxAds})</span>
+            </label>
+            <input
+              type="range"
+              min={50}
+              max={1000}
+              step={50}
+              value={maxAds}
+              onChange={e => setMaxAds(Number(e.target.value))}
+              className="w-full accent-indigo-600"
+              disabled={status === 'running'}
+            />
+            <div className="flex justify-between text-[9px] text-gray-300 font-bold">
+              <span>50</span><span>500</span><span>1000</span>
+            </div>
           </div>
           <div className="flex gap-4">
             {!isRunning ? (

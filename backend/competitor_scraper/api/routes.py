@@ -21,7 +21,8 @@ snapshot_mgr = SnapshotManager()
 class StartRequest(BaseModel):
     domain: str
     region: str = "IN"
-    maxAds: int = 50
+    maxAds: int = 200
+    downloadMedia: bool = True
 
 
 @router.post("/start")
@@ -42,7 +43,7 @@ async def start_scraping(req: StartRequest, background_tasks: BackgroundTasks):
         "ads": [],
     }
     background_tasks.add_task(
-        scraper.scrape, session_id, req.domain, req.region, SESSION_STORE, req.maxAds
+        scraper.scrape, session_id, req.domain, req.region, SESSION_STORE, req.maxAds, req.downloadMedia
     )
     return {"sessionId": session_id, "message": f"Scraping started for {req.domain}"}
 

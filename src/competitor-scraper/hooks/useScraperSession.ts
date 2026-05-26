@@ -22,7 +22,7 @@ interface UseScraperSessionReturn {
   stats: ScraperStats;
   backendOnline: boolean;
   isDemoMode: boolean;
-  startScraping: (domain: string, region: string) => Promise<void>;
+  startScraping: (domain: string, region: string, maxAds?: number) => Promise<void>;
   stopScraping: () => void;
   resetScraper: () => void;
 }
@@ -122,10 +122,10 @@ export function useScraperSession(): UseScraperSessionReturn {
     }, 600);
   }, [stopPolling]);
 
-  const startLiveMode = useCallback(async (domain: string, region: string) => {
+  const startLiveMode = useCallback(async (domain: string, region: string, maxAds?: number) => {
     setStatus('running');
     setIsDemoMode(false);
-    const { sessionId } = await scraperApiService.startScraping({ domain, region });
+    const { sessionId } = await scraperApiService.startScraping({ domain, region, maxAds: maxAds ?? 200, downloadMedia: true });
     sessionIdRef.current = sessionId;
 
     pollIntervalRef.current = setInterval(async () => {
@@ -158,12 +158,12 @@ export function useScraperSession(): UseScraperSessionReturn {
     }, 2000);
   }, [stopPolling]);
 
-  const startScraping = useCallback(async (domain: string, region: string) => {
+  const startScraping = useCallback(async (domain: string, region: string, maxAds?: number) => {
     stopPolling();
     setAds([]); setKeywords([]); setFeedItems([]); setStats(DEFAULT_STATS);
     try {
       if (backendOnline) {
-        await startLiveMode(domain, region);
+        await startLiveMode(domain, region, maxAds);
       } else {
         startDemoMode(domain, region);
       }

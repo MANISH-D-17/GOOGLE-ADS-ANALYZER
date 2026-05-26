@@ -109,6 +109,7 @@ export interface StartScraperRequest {
   domain: string;
   region: string;
   maxAds?: number;
+  downloadMedia?: boolean;
 }
 
 export interface StartScraperResponse {
