@@ -23,6 +23,8 @@ export interface ScrapedAd {
   lastSeen: string;
   imageUrls: string[];
   videoUrls: string[];
+  localImagePaths?: string[];
+  localVideoPaths?: string[];
   offerText: string;
   emotionalTriggers: string[];
   dominantColors: string[];

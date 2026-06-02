@@ -11,8 +11,8 @@ type GalleryTab = 'images' | 'videos' | 'textads';
 export const AssetGallery: React.FC<AssetGalleryProps> = ({ ads }) => {
   const [activeTab, setActiveTab] = useState<GalleryTab>('images');
 
-  const imageAds = ads.filter(a => a.imageUrls.length > 0);
-  const videoAds = ads.filter(a => a.videoUrls.length > 0);
+  const imageAds = ads.filter(a => (a.imageUrls || []).length > 0);
+  const videoAds = ads.filter(a => (a.videoUrls || []).length > 0);
   const textAds = ads.filter(a => a.adFormat === 'text' || a.adFormat === 'responsive');
 
   const tabs: { id: GalleryTab; label: string; icon: React.ReactNode; count: number }[] = [
@@ -64,7 +64,7 @@ export const AssetGallery: React.FC<AssetGalleryProps> = ({ ads }) => {
               <div className="p-3">
                 <p className="text-white text-xs font-semibold truncate">{ad.headline}</p>
                 <div className="flex items-center gap-2 mt-1.5">
-                  {ad.dominantColors.slice(0, 3).map(c => (
+                  {(ad.dominantColors || []).slice(0, 3).map(c => (
                     <div key={c} className="scraper-color-swatch" style={{ background: c, width: '16px', height: '16px', borderRadius: '4px' }} />
                   ))}
                   <span className="text-gray-500 text-[10px] font-bold ml-auto">{ad.firstSeen}</span>
@@ -81,7 +81,11 @@ export const AssetGallery: React.FC<AssetGalleryProps> = ({ ads }) => {
           {videoAds.map(ad => (
             <div key={ad.id} className="scraper-asset-card p-4">
               <video controls className="w-full rounded-lg mb-3" style={{ maxHeight: '200px' }}>
-                {ad.videoUrls.map(v => <source key={v} src={v} />)}
+                {ad.localVideoPaths && ad.localVideoPaths.length > 0 ? (
+                  <source src={ad.localVideoPaths[0]} type="video/mp4" />
+                ) : (
+                  ad.videoUrls.map(v => <source key={v} src={v} />)
+                )}
                 Your browser does not support video.
               </video>
               <p className="text-white text-sm font-bold">{ad.headline}</p>

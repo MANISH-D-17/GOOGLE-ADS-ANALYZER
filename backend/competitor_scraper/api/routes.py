@@ -56,8 +56,8 @@ async def get_status(session_id: str):
     s = SESSION_STORE[session_id]
     # Count media
     ads = s.get("ads", [])
-    images = sum(len(a.get("imageUrls", [])) for a in ads)
-    videos = sum(len(a.get("videoUrls", [])) for a in ads)
+    images = s.get("imagesFound", 0) if s.get("status") == "running" else sum(len(a.get("imageUrls", [])) for a in ads)
+    videos = s.get("videosFound", 0) if s.get("status") == "running" else sum(len(a.get("videoUrls", [])) for a in ads)
     return {
         "id": session_id,
         "domain": s["domain"],

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, ChevronLeft, ChevronRight, ArrowUpDown, ChevronRight as ChevronRightIcon } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 export interface Column {
@@ -17,15 +17,25 @@ interface DataTableProps {
   searchable?: boolean;
   onRowClick?: (row: any) => void;
   filterSlot?: React.ReactNode;
+  defaultSortKey?: string;
+  defaultSortDir?: 'asc' | 'desc';
 }
 
-export const DataTable: React.FC<DataTableProps> = ({ data, columns, searchable = true, onRowClick, filterSlot }) => {
+export const DataTable: React.FC<DataTableProps> = ({ 
+  data, 
+  columns, 
+  searchable = true, 
+  onRowClick, 
+  filterSlot,
+  defaultSortKey,
+  defaultSortDir = 'asc'
+}) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
 
-  const [sortKey, setSortKey] = useState<string | null>(null);
-  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
+  const [sortKey, setSortKey] = useState<string | null>(defaultSortKey || null);
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>(defaultSortDir);
 
   const handleSort = (key: string) => {
     if (sortKey === key) {
@@ -43,11 +53,30 @@ export const DataTable: React.FC<DataTableProps> = ({ data, columns, searchable 
 
   const sortedData = useMemo(() => {
     if (!sortKey) return filteredData;
+
+    // Strict numeric check that ignores text containing leading numbers (e.g. "12 - Denim")
+    const isNumeric = (val: any) => {
+      if (typeof val === 'number') return true;
+      if (typeof val !== 'string') return false;
+      const clean = val.replace(/[,₹%x\s]/g, '');
+      return clean !== '' && !isNaN(Number(clean));
+    };
+
     return [...filteredData].sort((a, b) => {
-      const av = a[sortKey]; const bv = b[sortKey];
-      const an = parseFloat(String(av).replace(/[,₹%x]/g, ''));
-      const bn = parseFloat(String(bv).replace(/[,₹%x]/g, ''));
-      const compare = !isNaN(an) && !isNaN(bn) ? an - bn : String(av || '').localeCompare(String(bv || ''));
+      const av = a[sortKey] ?? '';
+      const bv = b[sortKey] ?? '';
+      
+      const avNum = isNumeric(av);
+      const bvNum = isNumeric(bv);
+
+      if (avNum && bvNum) {
+        const an = parseFloat(String(av).replace(/[,₹%x\s]/g, ''));
+        const bn = parseFloat(String(bv).replace(/[,₹%x\s]/g, ''));
+        return sortDir === 'asc' ? an - bn : bn - an;
+      }
+
+      // Fall back to clean alphabetical localeCompare for non-numeric/text fields
+      const compare = String(av).localeCompare(String(bv), undefined, { numeric: true, sensitivity: 'base' });
       return sortDir === 'asc' ? compare : -compare;
     });
   }, [filteredData, sortKey, sortDir]);
@@ -96,11 +125,15 @@ export const DataTable: React.FC<DataTableProps> = ({ data, columns, searchable 
                       col.className
                     )}
                   >
-                    <div className={cn("flex items-center gap-1", col.align === 'right' && "justify-end", col.align === 'center' && "justify-center")}>
+                    <div className={cn("flex items-center gap-1.5", col.align === 'right' && "justify-end", col.align === 'center' && "justify-center")}>
                       {col.label}
                       {col.sortable && (
-                        <span className="ml-1 inline-block">
-                          {sortKey === col.key ? (sortDir === 'asc' ? '↑' : '↓') : '↕'}
+                        <span className="ml-1 inline-block text-gray-400 group-hover:text-gray-600 transition-colors">
+                          {sortKey === col.key ? (
+                            sortDir === 'asc' ? <ArrowUp size={12} className="text-indigo-600 font-black" /> : <ArrowDown size={12} className="text-indigo-600 font-black" />
+                          ) : (
+                            <ArrowUpDown size={12} className="opacity-40 group-hover:opacity-100" />
+                          )}
                         </span>
                       )}
                     </div>
@@ -163,7 +196,7 @@ export const DataTable: React.FC<DataTableProps> = ({ data, columns, searchable 
               onClick={() => setCurrentPage(prev => prev + 1)}
               className="p-2 rounded-lg border border-gray-100 bg-white text-gray-400 hover:text-indigo-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
             >
-              <ChevronRightIcon size={16} />
+              <ChevronRight size={16} />
             </button>
           </div>
         </div>

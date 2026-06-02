@@ -38,10 +38,30 @@ export const ProductDashboard: React.FC<{ dateRange: string }> = ({ dateRange })
   const calculateSkuState = (sku: ProductData): string => {
     const views = sku.itemsViewed || 0;
     const purchases = sku.itemsPurchased || 0;
+    const carts = sku.itemsAddedToCart || 0;
+    
     if (views === 0) return 'sleeper';
+    
     const cvr = (purchases / views) * 100;
-    if (cvr >= 2.5) return 'winner';
-    if (cvr < 0.8 && views > 50) return 'bleeder';
+    const atcRate = (carts / views) * 100;
+    
+    // Premium Winner formula:
+    // Requires conversion rate >= 2.2% AND at least 2 actual purchases (ignoring single-view flukes)
+    // OR a highly engaged product with an Add-to-Cart rate >= 10% and at least 1 purchase.
+    if ((cvr >= 2.2 && purchases >= 2) || (atcRate >= 10 && purchases >= 1)) {
+      return 'winner';
+    }
+    
+    // Bleeder: High exposure (views > 40) but extremely low/zero sales (CVR < 0.5%)
+    if (views > 40 && (purchases === 0 || cvr < 0.5)) {
+      return 'bleeder';
+    }
+    
+    // Sleeper: Very low views (< 5) and zero purchases
+    if (views < 5 && purchases === 0) {
+      return 'sleeper';
+    }
+    
     return 'stable';
   };
 
@@ -284,6 +304,8 @@ export const ProductDashboard: React.FC<{ dateRange: string }> = ({ dateRange })
             columns={columns} 
             onRowClick={(row) => navigate(`/sku/${encodeURIComponent(row.id)}`)}
             filterSlot={filterSlot}
+            defaultSortKey="title"
+            defaultSortDir="asc"
           />
         )}
       </div>

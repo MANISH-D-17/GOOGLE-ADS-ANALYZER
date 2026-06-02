@@ -1,7 +1,7 @@
 # ============================================================
 # COMPETITOR AD INTELLIGENCE SCRAPER — FastAPI Backend
 # Includes: Scraper routes + Competitor Analysis routes + PostgreSQL
-# Run with: uvicorn main:app --reload --port 8000
+# Run with: uvicorn main:app --reload --port 8001
 # ============================================================
 import sys
 import os
@@ -22,6 +22,8 @@ from competitor_analysis.api.keyword_routes import router as kw_router
 from competitor_analysis.api.serp_routes import router as serp_router
 
 
+from fastapi.staticfiles import StaticFiles
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # PostgreSQL bypassed for in-browser client competitor analysis
@@ -36,6 +38,11 @@ app = FastAPI(
     version="2.0.0",
     lifespan=lifespan,
 )
+
+# Serve datasets folder for static access
+datasets_dir = os.path.join(os.path.dirname(__file__), "datasets")
+os.makedirs(datasets_dir, exist_ok=True)
+app.mount("/datasets", StaticFiles(directory=datasets_dir), name="datasets")
 
 app.add_middleware(
     CORSMiddleware,
@@ -75,4 +82,4 @@ async def health_check():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8001, reload=True)  # 8000 reserved for Finance Intelligence

@@ -31,3 +31,11 @@ dist-ssr
 
 # Vercel
 .vercel
+
+# Scraper generated datasets and exports
+backend/competitor_scraper/datasets/
+backend/exports/
+*.bak
+__pycache__/
+*.pyc
+

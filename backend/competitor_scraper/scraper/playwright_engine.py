@@ -40,24 +40,38 @@ PRODUCT_KEYWORDS = [
 ]
 
 # ── Delay helpers ─────────────────────────────────────────────────────────
-async def human_delay(min_s: float = 1.5, max_s: float = 4.0):
-    """Random delay to avoid bot detection."""
+async def human_delay(min_s: float = 0.3, max_s: float = 0.8):
+    """Optimized random delay for speed while remaining stable."""
     await asyncio.sleep(random.uniform(min_s, max_s))
 
 async def scroll_delay():
-    """Delay between scroll events — longer to mimic human reading."""
-    await asyncio.sleep(random.uniform(2.0, 5.0))
+    """Optimized delay between scroll events."""
+    await asyncio.sleep(random.uniform(0.4, 0.8))
 
 async def page_load_delay():
-    """Delay after page navigation."""
-    await asyncio.sleep(random.uniform(3.0, 7.0))
+    """Optimized delay after page navigation."""
+    await asyncio.sleep(random.uniform(0.5, 1.2))
 
 
 class PlaywrightScraper:
     def __init__(self):
         self.seen_hashes: set = set()
+        self.downloaded_media_urls: set = set()
 
-    async def _goto_with_retry(self, page: Page, url: str, retries: int = 4, base_timeout: int = 60000):
+        # Initialize checkpoint/state components
+        import os
+        from state.checkpoint_manager import CheckpointManager
+        from state.csv_writer import IncrementalCSVWriter
+        from state.resume_engine import ResumeEngine
+        from state.recovery import RecoveryManager
+        
+        datasets_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "datasets"))
+        self.checkpoint_mgr = CheckpointManager(datasets_dir)
+        self.csv_writer = IncrementalCSVWriter(datasets_dir)
+        self.resume_engine = ResumeEngine(self.checkpoint_mgr)
+        self.recovery_mgr = RecoveryManager(datasets_dir)
+
+    async def _goto_with_retry(self, page: Page, url: str, retries: int = 4, base_timeout: int = 15000):
         for i in range(retries):
             try:
                 print(f"[Scraper] → {url} (attempt {i+1}/{retries})")
@@ -74,10 +88,54 @@ class PlaywrightScraper:
 
     async def scrape(
         self, session_id: str, domain: str, region: str,
-        session_store: dict, max_ads: int = 200, download_media: bool = True
+        session_store: dict, max_ads: int = 2000, download_media: bool = True
     ):
-        session_store[session_id]["status"] = "running"
-        session_store[session_id]["progress"] = 2
+        # 1. Recover memory state from CSV fail-safes
+        csv_hashes = self.recovery_mgr.reconstruct_seen_hashes()
+        csv_downloads = self.recovery_mgr.reconstruct_downloaded_urls()
+        self.seen_hashes = set(csv_hashes)
+        self.downloaded_media_urls = set(csv_downloads)
+
+        # 2. Check for resumable session checkpoint
+        resumed_state = await self.resume_engine.get_resumable_session(domain, region)
+        
+        if resumed_state:
+            current_state = resumed_state
+            # Map checkpoint ID to active polling session ID so progress matches
+            current_state.session_id = session_id
+            current_state.status = "running"
+            
+            # Populate scraper memory sets
+            self.resume_engine.restore_scraper_memory(self, current_state)
+            
+            # Restore state metrics in the memory-store map
+            session_store[session_id].update({
+                "status": "running",
+                "progress": current_state.progress,
+                "adsExtracted": current_state.ads_extracted,
+                "imagesFound": current_state.images_found,
+                "videosFound": current_state.videos_found,
+                "errorsCount": current_state.errors_count,
+                "ads": current_state.processed_ads,
+            })
+            print(f"[Scraper] Resuming session {session_id} for {domain} at phase: {current_state.current_phase}")
+        else:
+            from state.state_models import ScraperState
+            current_state = ScraperState(
+                session_id=session_id,
+                domain=domain,
+                region=region,
+                status="running",
+                started_at=datetime.utcnow().isoformat(),
+                last_activity=datetime.utcnow().isoformat(),
+                current_phase="init"
+            )
+            
+            session_store[session_id]["status"] = "running"
+            session_store[session_id]["progress"] = 2
+            
+            # Start session tracking in sessions.csv
+            await self.csv_writer.append_session(current_state.model_dump())
 
         # Create media output directory for this session
         snapshot_dir = os.path.join(os.path.dirname(__file__), "..", "datasets", "snapshots")
@@ -87,6 +145,10 @@ class PlaywrightScraper:
 
         browser = None
         try:
+            # Check if scrolling was already completely finished in the checkpoint
+            skip_scrolling = (current_state.current_phase == "extracting")
+            collected_hrefs = {}
+
             async with async_playwright() as pw:
                 # ── Random user agent ────────────────────────────────────
                 ua = random.choice(USER_AGENTS)
@@ -105,114 +167,267 @@ class PlaywrightScraper:
                     }
                 )
 
-                # ── Phase 1: Find advertiser ID ───────────────────────────
-                page = await context.new_page()
-                domain_url = f"https://adstransparency.google.com/?region={region}&domain={domain}"
-                await self._goto_with_retry(page, domain_url)
-                await human_delay(2, 5)
+                if not skip_scrolling:
+                    # ── Phase 1: Find advertiser ID ───────────────────────────
+                    page = await context.new_page()
+                    advertiser_id = current_state.advertiser_id
+                    
+                    if not advertiser_id:
+                        domain_url = f"https://adstransparency.google.com/?region={region}&domain={domain}"
+                        await self._goto_with_retry(page, domain_url)
+                        await human_delay(2, 5)
 
-                try:
-                    await page.wait_for_selector("creative-preview", timeout=25000)
-                except Exception:
-                    print("[Scraper] No creative-preview elements found on domain page")
+                        try:
+                            await page.wait_for_selector("creative-preview", timeout=25000)
+                        except Exception:
+                            print("[Scraper] No creative-preview elements found on domain page")
 
-                # Expand "See all ads" if present
-                try:
-                    expand_btn = await page.query_selector("material-button.grid-expansion-button")
-                    if expand_btn and await expand_btn.is_visible():
-                        await expand_btn.click()
-                        await human_delay(2, 4)
-                except Exception:
-                    pass
+                        # Expand "See all ads" if present
+                        try:
+                            expand_btn = await page.query_selector("material-button.grid-expansion-button")
+                            if expand_btn and await expand_btn.is_visible():
+                                await expand_btn.click()
+                                await human_delay(2, 4)
+                        except Exception:
+                            pass
 
-                # Extract advertiser ID
-                initial_links = await page.evaluate("""() =>
-                    Array.from(document.querySelectorAll('creative-preview a[href*="/creative/"]'))
-                        .map(a => a.href)
-                """)
+                        # Extract advertiser ID
+                        initial_links = await page.evaluate("""() =>
+                            Array.from(document.querySelectorAll('creative-preview a[href*="/creative/"]'))
+                                .map(a => a.href)
+                        """)
 
-                advertiser_id = None
-                for link in initial_links:
-                    m = re.search(r'/advertiser/(AR\w+)/', link)
-                    if m:
-                        advertiser_id = m.group(1)
-                        print(f"[Scraper] Advertiser ID: {advertiser_id}")
-                        break
+                        for link in initial_links:
+                            m = re.search(r'/advertiser/(AR\w+)/', link)
+                            if m:
+                                advertiser_id = m.group(1)
+                                print(f"[Scraper] Advertiser ID: {advertiser_id}")
+                                current_state.advertiser_id = advertiser_id
+                                current_state.current_phase = "advertiser_found"
+                                await self.checkpoint_mgr.save_checkpoint(current_state)
+                                break
 
-                # ── Phase 2: Navigate to advertiser listing page ──────────
-                adv_url = (
-                    f"https://adstransparency.google.com/advertiser/{advertiser_id}?region={region}"
-                    if advertiser_id else domain_url
-                )
-                await self._goto_with_retry(page, adv_url)
-                await human_delay(3, 6)
-                session_store[session_id]["progress"] = 15
+                    # ── Phase 2: Navigate to advertiser listing page ──────────
+                    adv_url = (
+                        f"https://adstransparency.google.com/advertiser/{advertiser_id}?region={region}"
+                        if advertiser_id else f"https://adstransparency.google.com/?region={region}&domain={domain}"
+                    )
+                    await self._goto_with_retry(page, adv_url)
+                    await human_delay(2, 4)
 
-                # ── Phase 3: Scroll to collect ALL creative tile hrefs ─────
-                collected_hrefs: dict[str, dict] = {}
-                no_new_streak = 0
-                scroll_round = 0
-                MAX_NO_NEW_STREAK = 5  # Stop only after 5 consecutive empty scroll rounds
-                SCROLL_PIXELS = random.randint(1200, 1800)
+                    # Wait for Google to render the first batch of ads (typically 20-40)
+                    try:
+                        await page.wait_for_function(
+                            "document.querySelectorAll('creative-preview').length >= 20",
+                            timeout=30000
+                        )
+                        initial_count = await page.evaluate("document.querySelectorAll('creative-preview').length")
+                        print(f"[Scraper] Initial batch loaded: {initial_count} creative-preview elements visible")
+                    except Exception:
+                        # If fewer than 20 loaded, check if any loaded at all
+                        initial_count = await page.evaluate("document.querySelectorAll('creative-preview').length")
+                        print(f"[Scraper] Initial batch timeout — {initial_count} elements visible, proceeding anyway")
 
-                while len(collected_hrefs) < max_ads and no_new_streak < MAX_NO_NEW_STREAK:
-                    tiles = await page.evaluate("""() => {
-                        const previews = document.querySelectorAll('creative-preview');
-                        const results = [];
-                        previews.forEach(el => {
-                            const link = el.querySelector('a[href*="/creative/"]');
-                            const href = link ? link.href : '';
-                            const creativeId = href.match(/creative\\/(CR\\w+)/)?.[1] || '';
-                            const imgs = Array.from(el.querySelectorAll('img'))
-                                .map(i => i.src)
-                                .filter(s => s && s.includes('googlesyndication'));
-                            const textNodes = Array.from(el.querySelectorAll('div, span, p, [role="heading"]'))
-                                .map(e => (e.innerText || '').trim())
-                                .filter(t => t.length > 5 && t.length < 500)
-                                .filter((t, i, arr) => arr.indexOf(t) === i);
-                            if (creativeId) {
-                                results.push({ creativeId, href, images: imgs, textNodes });
-                            }
-                        });
-                        return results;
-                    }""")
+                    session_store[session_id]["progress"] = 15
+                    current_state.progress = 15
+                    current_state.current_phase = "scrolling"
+                    await self.checkpoint_mgr.save_checkpoint(current_state)
 
-                    prev_count = len(collected_hrefs)
-                    for tile in tiles:
-                        cid = tile["creativeId"]
-                        if cid and cid not in collected_hrefs:
-                            collected_hrefs[cid] = tile
+                    # ── Phase 3: Scroll to collect ALL creative tile hrefs ─────
+                    print(f"[Scraper] Phase 3: Collecting up to {max_ads} tiles (Google shows 800+ for gocolors)")
+                    
+                    # Restore scroll parameters from checkpoint
+                    collected_hrefs = current_state.collected_hrefs
+                    no_new_streak = current_state.no_new_streak
+                    scroll_round = current_state.scroll_round
+                    MAX_NO_NEW_STREAK = 15
 
-                    new_count = len(collected_hrefs)
-                    print(f"[Scraper] Scroll {scroll_round + 1}: {new_count} tiles ({new_count - prev_count} new)")
+                    while len(collected_hrefs) < max_ads and no_new_streak < MAX_NO_NEW_STREAK:
+                        tiles = await page.evaluate("""() => {
+                            const previews = document.querySelectorAll('creative-preview');
+                            const results = [];
+                            previews.forEach(el => {
+                                const link = el.querySelector('a[href*="/creative/"]');
+                                const href = link ? link.href : '';
+                                // Secondary extraction: use data attributes if href-based ID is empty
+                                let creativeId = href.match(/creative\/(CR[\w-]+)/)?.[1] || '';
+                                if (!creativeId) {
+                                    const dataId = el.getAttribute('data-creative-id') ||
+                                                   el.querySelector('[data-creative-id]')?.getAttribute('data-creative-id') ||
+                                                   el.getAttribute('data-id') || '';
+                                    if (dataId) creativeId = dataId;
+                                }
+                                // Last resort: generate ID from href to avoid losing the tile
+                                if (!creativeId && href) {
+                                    creativeId = 'href_' + btoa(href).slice(0, 16).replace(/[^a-zA-Z0-9]/g, '');
+                                }
+                                const imgs = Array.from(el.querySelectorAll('img'))
+                                    .map(i => i.src || i.getAttribute('src') || i.getAttribute('data-src') || '')
+                                    .filter(s => {
+                                        if (!s || !s.startsWith('http')) return false;
+                                        if (s.includes('data:image')) return false;
+                                        if (s.endsWith('.svg') && s.includes('icon')) return false;
+                                        // Accept all Google-served and external creative images
+                                        return (
+                                            s.includes('googlesyndication') ||
+                                            s.includes('googleusercontent') ||
+                                            s.includes('googleapis.com') ||
+                                            s.includes('gstatic.com') ||
+                                            s.includes('ggpht.com') ||
+                                            s.includes('doubleclick') ||
+                                            s.includes('adwords-creative') ||
+                                            s.includes('google.com/ads') ||
+                                            (s.startsWith('https') && el.closest('creative-preview') !== null)
+                                        );
+                                    });
 
-                    progress = 15 + int(min(new_count, max_ads) / max_ads * 30)
+                                // Also capture background-image CSS from any child element
+                                const bgImgs = Array.from(el.querySelectorAll('[style*="background-image"]'))
+                                    .map(bgEl => {
+                                        const m = bgEl.style.backgroundImage.match(/url\(["']?([^"')]+)["']?\)/);
+                                        return m ? m[1] : '';
+                                    })
+                                    .filter(s => s && s.startsWith('http'));
+
+                                const allImgs = [...new Set([...imgs, ...bgImgs])];
+                                const textNodes = Array.from(el.querySelectorAll('div, span, p, [role="heading"]'))
+                                    .filter(e => {
+                                        const c = e.className || '';
+                                        return typeof c === 'string' && 
+                                               !c.includes('material-icons') && 
+                                               !c.includes('google-symbols') && 
+                                               !c.includes('mat-icon') &&
+                                               !c.includes('icon');
+                                    })
+                                    .map(e => (e.innerText || '').trim())
+                                    .filter(t => {
+                                        const low = t.toLowerCase();
+                                        return t.length > 5 && t.length < 500 &&
+                                               low !== 'videocam' &&
+                                               low !== 'keyboard_arrow_right' &&
+                                               low !== 'play_arrow' &&
+                                               low !== 'volume_up' &&
+                                               low !== 'volume_off' &&
+                                               !low.includes('material-icons') &&
+                                               !low.includes('google-symbols');
+                                    })
+                                    .filter((t, i, arr) => arr.indexOf(t) === i);
+                                
+                                // Check if the ad contains a video element or play indicators on the tile itself
+                                const hasVideo = el.querySelector('video') !== null || 
+                                                 el.querySelector('[class*="video"]') !== null ||
+                                                 el.querySelector('svg') !== null ||
+                                                 el.querySelector('button') !== null ||
+                                                 el.querySelector('[class*="play"]') !== null;
+                                
+                                if (creativeId) {
+                                    results.push({ creativeId, href, images: allImgs, textNodes, hasVideo });
+                                }
+                            });
+                            return results;
+                        }""")
+
+                        prev_count = len(collected_hrefs)
+                        for tile in tiles:
+                            cid = tile["creativeId"]
+                            if cid and cid not in collected_hrefs:
+                                collected_hrefs[cid] = tile
+
+                        new_count = len(collected_hrefs)
+                        print(f"[Scraper] Scroll {scroll_round + 1}: {new_count} tiles ({new_count - prev_count} new)")
+
+                        progress = 15 + int(min(new_count, max_ads) / max_ads * 30)
+                        session_store[session_id].update({
+                            "progress": min(progress, 45),
+                            "adsExtracted": new_count,
+                        })
+
+                        current_state.collected_hrefs = collected_hrefs
+                        current_state.scroll_round = scroll_round
+                        current_state.no_new_streak = no_new_streak
+                        current_state.progress = min(progress, 45)
+
+                        # Write state & sessions.csv incrementally
+                        if scroll_round % 10 == 0:
+                            await self.checkpoint_mgr.save_checkpoint(current_state)
+                            await self.csv_writer.append_session(current_state.model_dump())
+
+                        if new_count == prev_count:
+                            no_new_streak += 1
+                            print(f"[Scraper] No new ads streak: {no_new_streak}/{MAX_NO_NEW_STREAK}")
+
+                            # Record DOM node count BEFORE recovery attempt
+                            nodes_before = await page.evaluate("document.querySelectorAll('creative-preview').length")
+
+                            # Recovery: scroll to absolute bottom to trigger Google's IntersectionObserver
+                            await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+                            await asyncio.sleep(1.5)
+
+                            # Scroll back up 800px and back down — triggers the scroll listener mid-page
+                            await page.evaluate("window.scrollBy(0, -800)")
+                            await asyncio.sleep(0.8)
+                            await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+                            await asyncio.sleep(1.5)
+
+                            # Wait up to 6 seconds for Google to inject new creative-preview nodes
+                            try:
+                                await page.wait_for_function(
+                                    f"document.querySelectorAll('creative-preview').length > {nodes_before}",
+                                    timeout=6000
+                                )
+                                print(f"[Scraper] Recovery succeeded — new nodes appeared after streak {no_new_streak}")
+                                no_new_streak = 0  # Reset streak because DOM grew
+                            except Exception:
+                                print(f"[Scraper] Recovery timeout — DOM still at {nodes_before} nodes")
+                                await asyncio.sleep(random.uniform(2.0, 4.0))
+                        else:
+                            no_new_streak = 0
+
+                        if new_count >= max_ads:
+                            print(f"[Scraper] Reached max_ads={max_ads}")
+                            break
+
+                        # Scroll in 3 overlapping steps of 800px each
+                        # This keeps the viewport in the IntersectionObserver trigger zone
+                        for _ in range(3):
+                            step_px = random.randint(700, 900)
+                            await page.evaluate(f"window.scrollBy(0, {step_px})")
+                            await asyncio.sleep(random.uniform(0.3, 0.6))
+
+                        scroll_round += 1
+
+                    print(f"[Scraper] Collected {len(collected_hrefs)} creative tiles — proceeding to detail extraction")
+                    await page.close()
+
+                    # Save final Phase 3 completed checkpoint
+                    current_state.current_phase = "extracting"
+                    current_state.collected_hrefs = collected_hrefs
+                    await self.checkpoint_mgr.save_checkpoint(current_state)
+                    await self.csv_writer.append_session(current_state.model_dump())
+                else:
+                    # Restore complete Phase 3 scroll state
+                    collected_hrefs = current_state.collected_hrefs
+                    print(f"[Scraper] Resuming Phase 4 directly. Loaded {len(collected_hrefs)} creative tiles.")
+
+                # If Playwright yielded no results or was blocked, set status to blocked (strict real-data policy)
+                if len(collected_hrefs) == 0:
+                    print(f"[Scraper] Google returned 0 ads for domain '{domain}'. Anti-bot controls triggered or no active campaigns. Setting session status to blocked.")
                     session_store[session_id].update({
-                        "progress": min(progress, 45),
-                        "adsExtracted": new_count,
+                        "status": "blocked",
+                        "progress": 100,
+                        "blockReason": (
+                            f"Google returned 0 ads for '{domain}'. The scraping session was likely blocked by rate limits or security controls. "
+                            "Please check the domain spelling, ensure you are using standard region codes, or consider integrating a commercial API service (such as SerpApi) for large-scale production scraping."
+                        )
                     })
-
-                    if new_count == prev_count:
-                        no_new_streak += 1
-                        print(f"[Scraper] No new ads streak: {no_new_streak}/{MAX_NO_NEW_STREAK}")
-                        await human_delay(3, 7)  # Extra wait when stalled
-                    else:
-                        no_new_streak = 0
-
-                    if new_count >= max_ads:
-                        print(f"[Scraper] Reached max_ads={max_ads}")
-                        break
-
-                    # Human-like scroll with random pixel amount
-                    scroll_px = random.randint(1000, 2000)
-                    await page.evaluate(f"window.scrollBy(0, {scroll_px})")
-                    await scroll_delay()
-                    scroll_round += 1
-
-                print(f"[Scraper] Collected {len(collected_hrefs)} creative tiles — proceeding to detail extraction")
+                    current_state.status = "blocked"
+                    current_state.progress = 100
+                    await self.checkpoint_mgr.save_checkpoint(current_state)
+                    await self.csv_writer.append_session(current_state.model_dump())
+                    return
 
                 # ── Phase 4: Open each detail page for full data ──────────
-                ads = []
+                ads = list(current_state.processed_ads)
                 tile_list = list(collected_hrefs.values())[:max_ads]
                 brand_name = domain.split(".")[0].replace("-", " ").title()
 
@@ -224,11 +439,21 @@ class PlaywrightScraper:
                         continue
                     self.seen_hashes.add(content_hash)
 
+                    # Tiered extraction: only deep extract video ads, ads missing key metadata, or 20% sample
+                    should_deep_extract = (
+                        tile.get("hasVideo") or
+                        len(tile.get("textNodes", [])) < 2 or
+                        (i % 5 == 0)
+                    )
+
                     try:
-                        ad = await self._extract_detail_page(
-                            detail_page, tile, domain, session_id, brand_name, i,
-                            media_dir, download_media
-                        )
+                        if should_deep_extract:
+                            ad = await self._extract_detail_page(
+                                detail_page, tile, domain, session_id, brand_name, i,
+                                media_dir, download_media
+                            )
+                        else:
+                            ad = self._build_ad_from_tile(tile, domain, session_id, brand_name, i)
                         ads.append(ad)
                     except Exception as e:
                         print(f"[Scraper] Detail page failed for {tile['creativeId']}: {e}")
@@ -236,23 +461,42 @@ class PlaywrightScraper:
                         ad = self._build_ad_from_tile(tile, domain, session_id, brand_name, i)
                         ads.append(ad)
 
+                    # Update in-memory session store
+                    prog = min(45 + int((i + 1) / len(tile_list) * 53), 98)
                     session_store[session_id].update({
                         "adsExtracted": len(ads),
                         "imagesFound": sum(len(a.get("imageUrls", [])) for a in ads),
                         "videosFound": sum(len(a.get("videoUrls", [])) for a in ads),
-                        "progress": min(45 + int((i + 1) / len(tile_list) * 53), 98),
+                        "progress": prog,
                         "currentAd": {
                             "headline": ad.get("headline", ""),
                             "ctaText": ad.get("ctaText", ""),
+                            "adFormat": ad.get("adFormat", "image"),
                         },
                     })
 
-                    # Rate-limit protection: pause between every detail page
-                    await human_delay(1.5, 4.0)
-                    # Extra long pause every 20 ads
-                    if (i + 1) % 20 == 0:
-                        pause = random.uniform(8, 15)
-                        print(f"[Scraper] Rate-limit pause: {pause:.1f}s after {i+1} ads")
+                    # Update checkpoint state & save
+                    current_state.processed_ads = ads
+                    current_state.seen_hashes = list(self.seen_hashes)
+                    current_state.downloaded_media_urls = list(self.downloaded_media_urls)
+                    current_state.ads_extracted = len(ads)
+                    current_state.images_found = sum(len(a.get("imageUrls", [])) for a in ads)
+                    current_state.videos_found = sum(len(a.get("videoUrls", [])) for a in ads)
+                    current_state.progress = prog
+                    
+                    await self.checkpoint_mgr.save_checkpoint(current_state)
+
+                    # Incremental CSV logs
+                    await self.csv_writer.append_processed_ad(session_id, tile["creativeId"], content_hash, success=True)
+                    await self.csv_writer.append_ad_data(ad)
+                    await self.csv_writer.append_session(current_state.model_dump())
+
+                    # Rate-limit protection: optimized delay between detail pages
+                    await human_delay(0.4, 0.8)
+                    # Extra pause every 50 ads instead of 20
+                    if (i + 1) % 50 == 0:
+                        pause = random.uniform(1.5, 3.0)
+                        print(f"[Scraper] Brief rate-limit pause: {pause:.1f}s after {i+1} ads")
                         await asyncio.sleep(pause)
 
                 await detail_page.close()
@@ -278,16 +522,31 @@ class PlaywrightScraper:
                     "imagesFound": sum(len(a.get("imageUrls", [])) for a in ads),
                     "videosFound": sum(len(a.get("videoUrls", [])) for a in ads),
                 })
+                
+                # Update final session complete checkpoint
+                current_state.status = "complete"
+                current_state.progress = 100
+                current_state.completed_at = datetime.utcnow().isoformat()
+                await self.checkpoint_mgr.save_checkpoint(current_state)
+                await self.csv_writer.append_session(current_state.model_dump())
+                
                 print(f"[Scraper] ✓ Session {session_id}: {len(ads)} ads extracted")
 
         except Exception as e:
             import traceback
             print(f"[Scraper] Fatal error: {e}")
             traceback.print_exc()
+            errors = session_store[session_id].get("errorsCount", 0) + 1
             session_store[session_id].update({
                 "status": "error", "progress": 100,
-                "errorsCount": session_store[session_id].get("errorsCount", 0) + 1,
+                "errorsCount": errors,
             })
+            
+            # Save fatal error state checkpoint
+            current_state.status = "error"
+            current_state.errors_count = errors
+            await self.checkpoint_mgr.save_checkpoint(current_state)
+            await self.csv_writer.append_session(current_state.model_dump())
         finally:
             if browser:
                 try:
@@ -311,8 +570,8 @@ class PlaywrightScraper:
 
         if detail_url:
             try:
-                await page.goto(detail_url, wait_until="domcontentloaded", timeout=45000)
-                await human_delay(1.5, 3.5)
+                await page.goto(detail_url, wait_until="domcontentloaded", timeout=15000)
+                await human_delay(0.5, 1.2)
 
                 # Extract headline (h1 or largest heading)
                 headline = await page.evaluate("""() => {
@@ -333,16 +592,63 @@ class PlaywrightScraper:
                     return 'Shop Now';
                 }""")
 
-                # Extract video sources
-                video_srcs = await page.evaluate("""() =>
-                    Array.from(document.querySelectorAll('video source, video'))
-                        .map(v => v.src || v.getAttribute('src') || '')
-                        .filter(s => s && s.startsWith('http'))
-                """)
+                # Extract video sources across all frames (including nested iframes)
+                video_srcs = []
+                for frame in page.frames:
+                    try:
+                        srcs = await frame.evaluate("""() => {
+                            const found = [];
+                            document.querySelectorAll('video source, video').forEach(v => {
+                                const s = v.src || v.getAttribute('src');
+                                if (s && s.startsWith('http')) found.push(s);
+                            });
+                            document.querySelectorAll('iframe').forEach(f => {
+                                const s = f.src || f.getAttribute('src');
+                                if (s && (s.includes('googleusercontent') || s.includes('youtube') || s.includes('googlesyndication') || s.includes('play-creative') || s.includes('doubleclick'))) {
+                                    found.push(s);
+                                }
+                            });
+                            return [...new Set(found)];
+                        }""")
+                        if srcs:
+                            for s in srcs:
+                                if s not in video_srcs:
+                                    video_srcs.append(s)
+                    except Exception:
+                        pass
                 video_urls = video_srcs[:3]
+
+                # Extract image elements across all frames on detail page
+                detail_images = []
+                for frame in page.frames:
+                    try:
+                        imgs = await frame.evaluate("""() => {
+                            const found = [];
+                            document.querySelectorAll('img').forEach(i => {
+                                const s = i.src || i.getAttribute('src');
+                                if (s && s.startsWith('http') && s.includes('googlesyndication')) found.push(s);
+                            });
+                            return [...new Set(found)];
+                        }""")
+                        if imgs:
+                            for img in imgs:
+                                if img not in detail_images:
+                                    detail_images.append(img)
+                    except Exception:
+                        pass
+                
+                # Merge tile images with detail page images
+                all_images = list(tile.get("images", []))
+                for img in detail_images:
+                    if img not in all_images:
+                        all_images.append(img)
+                tile["images"] = all_images
 
             except Exception as e:
                 print(f"[Detail] Failed to load {detail_url}: {e}")
+
+        # Ensure tile_images uses the merged list
+        tile_images = tile.get("images", [])
 
         # If headline still empty, fall back to tile text
         if not headline:
@@ -354,7 +660,6 @@ class PlaywrightScraper:
             description = " ".join(text_nodes[1:])[:300] if len(text_nodes) > 1 else ""
 
         # ── Download media ────────────────────────────────────────────────
-        tile_images = tile.get("images", [])
         if download_media and tile_images:
             local_image_paths = await self._download_images(
                 tile_images, media_dir, tile["creativeId"]
@@ -364,6 +669,10 @@ class PlaywrightScraper:
             local_video_paths = await self._download_videos(
                 video_urls, media_dir, tile["creativeId"]
             )
+
+        # Convert local absolute paths to served web URLs
+        web_image_paths = [self._map_local_path_to_web_url(p) for p in local_image_paths]
+        web_video_paths = [self._map_local_path_to_web_url(p) for p in local_video_paths]
 
         full_text = f"{headline} {description} {cta_text}"
         return {
@@ -380,15 +689,15 @@ class PlaywrightScraper:
             "lastSeen": datetime.utcnow().strftime("%Y-%m-%d"),
             "imageUrls": tile_images,
             "videoUrls": video_urls,
-            "localImagePaths": local_image_paths,
-            "localVideoPaths": local_video_paths,
+            "localImagePaths": web_image_paths,
+            "localVideoPaths": web_video_paths,
             "offerText": self._extract_offer(full_text),
             "emotionalTriggers": self._detect_triggers(full_text),
             "dominantColors": ["#f3f4f6", "#111827"],
             "productMentions": self._extract_products(full_text),
             "fashionCategory": self._classify_fashion(full_text),
             "creativeType": "Video" if video_urls else ("Display" if tile_images else "Text"),
-            "adPreviewAsset": local_image_paths[0] if local_image_paths else (tile_images[0] if tile_images else ""),
+            "adPreviewAsset": web_image_paths[0] if web_image_paths else (tile_images[0] if tile_images else ""),
             "contentHash": hashlib.sha256(tile["creativeId"].encode()).hexdigest()[:16],
             "extractedAt": datetime.utcnow().isoformat(),
             "sourceUrl": tile.get("href", ""),
@@ -406,7 +715,11 @@ class PlaywrightScraper:
                 headers={"User-Agent": random.choice(USER_AGENTS)},
                 timeout=aiohttp.ClientTimeout(total=20)
             ) as session:
-                for i, url in enumerate(urls[:5]):  # Max 5 images per ad
+                for i, url in enumerate(urls[:3]):  # Capped at 3 images per ad for performance
+                    if url in self.downloaded_media_urls:
+                        print(f"[Download] Skipping duplicate image URL: {url[:60]}")
+                        continue
+                    
                     try:
                         ext = "jpg" if "jpg" in url.lower() or "jpeg" in url.lower() else "png"
                         filename = f"{creative_id}_{i}.{ext}"
@@ -418,9 +731,14 @@ class PlaywrightScraper:
                                 with open(filepath, "wb") as f:
                                     f.write(content)
                                 saved_paths.append(filepath)
+                                self.downloaded_media_urls.add(url)
+                                await self.csv_writer.append_download(url, "image", filepath, "success", creative_id)
                                 await asyncio.sleep(random.uniform(0.3, 0.8))
+                            else:
+                                await self.csv_writer.append_download(url, "image", "", f"status_{resp.status}", creative_id)
                     except Exception as img_err:
                         print(f"[Download] Image failed ({url[:60]}): {img_err}")
+                        await self.csv_writer.append_download(url, "image", "", "failed", creative_id)
         except Exception as e:
             print(f"[Download] Image session failed: {e}")
 
@@ -437,7 +755,13 @@ class PlaywrightScraper:
                 headers={"User-Agent": random.choice(USER_AGENTS)},
                 timeout=aiohttp.ClientTimeout(total=60)
             ) as session:
-                for i, url in enumerate(urls[:2]):  # Max 2 videos per ad
+                for i, url in enumerate(urls[:1]):  # Capped at 1 video per ad for performance
+                    if "youtube" in url or "youtu.be" in url:
+                        continue  # Skip YouTube iframe embeds
+                    if url in self.downloaded_media_urls:
+                        print(f"[Download] Skipping duplicate video URL: {url[:60]}")
+                        continue
+
                     try:
                         ext = "mp4"
                         filename = f"{creative_id}_{i}.{ext}"
@@ -449,8 +773,13 @@ class PlaywrightScraper:
                                 with open(filepath, "wb") as f:
                                     f.write(content)
                                 saved_paths.append(filepath)
+                                self.downloaded_media_urls.add(url)
+                                await self.csv_writer.append_download(url, "video", filepath, "success", creative_id)
+                            else:
+                                await self.csv_writer.append_download(url, "video", "", f"status_{resp.status}", creative_id)
                     except Exception as vid_err:
                         print(f"[Download] Video failed ({url[:60]}): {vid_err}")
+                        await self.csv_writer.append_download(url, "video", "", "failed", creative_id)
         except Exception as e:
             print(f"[Download] Video session failed: {e}")
 
@@ -532,3 +861,19 @@ class PlaywrightScraper:
                 "adsCount": len(ads), "ads": ads,
             }, f, indent=2)
         print(f"[Scraper] Snapshot saved: {path}")
+
+    def _map_local_path_to_web_url(self, local_path: str) -> str:
+        """Convert a local absolute filesystem path to a served FastAPI static web URL."""
+        if not local_path:
+            return ""
+        # Find where "datasets" is in the path
+        marker = os.path.join("competitor_scraper", "datasets")
+        if marker in local_path:
+            parts = local_path.split(marker)
+            relative_url = "/datasets" + parts[-1].replace("\\", "/")
+            return f"http://localhost:8001{relative_url}"
+        elif "datasets" in local_path:
+            parts = local_path.split("datasets")
+            relative_url = "/datasets" + parts[-1].replace("\\", "/")
+            return f"http://localhost:8001{relative_url}"
+        return local_path

@@ -43,17 +43,20 @@ export function useScraperSession(): UseScraperSessionReturn {
   const demoIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const sessionIdRef = useRef<string | null>(null);
   const demoProgressRef = useRef(0);
+  const isPollingRef = useRef(false);
 
   // Check backend health on mount
   useEffect(() => {
     scraperApiService.healthCheck().then(setBackendOnline);
     return () => {
+      isPollingRef.current = false;
       if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
       if (demoIntervalRef.current) clearInterval(demoIntervalRef.current);
     };
   }, []);
 
   const stopPolling = useCallback(() => {
+    isPollingRef.current = false;
     if (pollIntervalRef.current) { clearInterval(pollIntervalRef.current); pollIntervalRef.current = null; }
     if (demoIntervalRef.current) { clearInterval(demoIntervalRef.current); demoIntervalRef.current = null; }
   }, []);
@@ -125,14 +128,42 @@ export function useScraperSession(): UseScraperSessionReturn {
   const startLiveMode = useCallback(async (domain: string, region: string, maxAds?: number) => {
     setStatus('running');
     setIsDemoMode(false);
+    isPollingRef.current = true;
     const { sessionId } = await scraperApiService.startScraping({ domain, region, maxAds: maxAds ?? 200, downloadMedia: true });
     sessionIdRef.current = sessionId;
 
     pollIntervalRef.current = setInterval(async () => {
       try {
+        if (!isPollingRef.current) return;
         const sess = await scraperApiService.getStatus(sessionId);
+        if (!isPollingRef.current) return;
+        
         setSession(sess);
         setStatus(sess.status);
+
+        // Dynamic live feed items
+        if (sess.currentAd && sess.currentAd.headline) {
+          const headlineStr = sess.currentAd.headline;
+          const ctaStr = sess.currentAd.ctaText || 'Shop Now';
+          const formatStr = (sess.currentAd.adFormat || 'image') as any;
+          
+          setFeedItems(prev => {
+            const exists = prev.find(item => item.headline === headlineStr);
+            if (exists) return prev;
+            
+            const newItem = {
+              id: `feed_${Date.now()}_${Math.random()}`,
+              timestamp: new Date().toLocaleTimeString(),
+              headline: headlineStr,
+              cta: ctaStr,
+              assetType: formatStr,
+              brand: sess.domain || 'Competitor',
+              status: 'complete' as const
+            };
+            return [newItem, ...prev].slice(0, 20);
+          });
+        }
+
         if (sess.status === 'complete' || sess.status === 'error') {
           stopPolling();
           if (sess.status === 'complete') {
@@ -140,16 +171,31 @@ export function useScraperSession(): UseScraperSessionReturn {
               scraperApiService.getResults(sessionId),
               scraperApiService.getKeywords(sessionId),
             ]);
-            setAds(results);
-            setKeywords(kws);
-            setStats({
-              totalAds: results.length,
-              totalImages: results.flatMap(a => a.imageUrls).length,
-              totalVideos: results.flatMap(a => a.videoUrls).length,
-              totalKeywords: kws.length,
-              totalCategories: new Set(results.map(a => a.fashionCategory)).size,
-              activeCampaigns: sess.adsExtracted,
-            });
+            
+            if (results && results.length > 0) {
+              setAds(results);
+              setKeywords(kws || []);
+              setStats({
+                totalAds: results.length,
+                totalImages: results.flatMap(a => a.imageUrls || []).length,
+                totalVideos: results.flatMap(a => a.videoUrls || []).length,
+                totalKeywords: (kws || []).length,
+                totalCategories: new Set(results.map(a => a.fashionCategory || 'General')).size,
+                activeCampaigns: sess.adsExtracted,
+              });
+
+              // Map the final real ads list to feed items so feed is fully populated
+              const finalFeed = results.slice(0, 20).map((ad, idx) => ({
+                id: `feed_${ad.id || idx}_${idx}`,
+                timestamp: new Date(new Date().getTime() - idx * 1000).toLocaleTimeString(),
+                headline: ad.headline || 'Competitor ad campaign item',
+                cta: ad.ctaText || 'Shop Now',
+                assetType: (ad.adFormat || 'image') as any,
+                brand: ad.brand || domain,
+                status: 'complete' as const
+              }));
+              setFeedItems(finalFeed);
+            }
           }
         }
       } catch (err) {

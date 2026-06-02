@@ -3,7 +3,7 @@
  * Handles all requests to /api/competitor-analysis/*
  */
 
-const API_BASE_URL = (import.meta as any).env?.VITE_SCRAPER_BACKEND_URL || 'http://localhost:8000';
+const API_BASE_URL = (import.meta as any).env?.VITE_SCRAPER_BACKEND_URL || 'http://localhost:8001';
 
 export interface CompetitorOverview {
   id: string;
@@ -158,6 +158,9 @@ export const competitorApiService = {
       snapshots: list.map((c: any) => ({
         id: c.overview.id,
         sessionKey: c.overview.id,
+        brand: c.overview.brand,
+        domain: c.overview.domain,
+        region: c.overview.region,
         status: 'complete',
         adsExtracted: c.overview.totalAds,
         startedAt: c.overview.lastScraped,

@@ -9,7 +9,7 @@ import type {
   CreativeAnalysis, ScraperSnapshot, ExportFormat
 } from '../types/scraper.types';
 
-const BACKEND_URL = (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_SCRAPER_BACKEND_URL) || 'http://localhost:8000';
+const BACKEND_URL = (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_SCRAPER_BACKEND_URL) || 'http://localhost:8001';
 
 async function apiCall<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const response = await fetch(`${BACKEND_URL}${endpoint}`, {

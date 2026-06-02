@@ -15,10 +15,10 @@ const CTA_STYLE_META: Record<string, { label: string; bg: string; color: string;
 const TRIGGER_COLORS = ['#2563eb', '#7c3aed', '#059669', '#dc2626', '#d97706', '#ea580c', '#db2777'];
 
 export const CreativeAnalysisPanel: React.FC<CreativeAnalysisPanelProps> = ({ ads }) => {
-  const allTriggers = ads.flatMap(a => a.emotionalTriggers);
+  const allTriggers = ads.flatMap(a => a.emotionalTriggers || []);
   const triggerFreq = allTriggers.reduce<Record<string, number>>((acc, t) => { acc[t] = (acc[t] || 0) + 1; return acc; }, {});
 
-  const allColors = ads.flatMap(a => a.dominantColors);
+  const allColors = ads.flatMap(a => a.dominantColors || []);
   const colorFreq = allColors.reduce<Record<string, number>>((acc, c) => { acc[c] = (acc[c] || 0) + 1; return acc; }, {});
   const topColors = Object.entries(colorFreq).sort((a, b) => b[1] - a[1]).slice(0, 8);
 
