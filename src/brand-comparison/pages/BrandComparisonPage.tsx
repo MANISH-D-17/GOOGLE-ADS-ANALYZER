@@ -400,7 +400,7 @@ const BuyingTab: React.FC<{ keywords: KeywordRow[]; onShoppingRank: (keyword: st
       <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 w-full mt-2 mb-1">
         Click a keyword to check Google Shopping rank
       </p>
-      {keywords.slice(0, 10).map((keyword) => (
+      {keywords.slice(0, 20).map((keyword) => (
         <button
           key={keyword.keyword}
           onClick={() => onShoppingRank(keyword.keyword)}
@@ -427,7 +427,7 @@ const ShoppingRankTab: React.FC<{
       <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 w-full">
         Select a buying keyword to check Google Shopping rank
       </p>
-      {keywords.slice(0, 8).map((keyword) => (
+      {keywords.slice(0, 20).map((keyword) => (
         <button
           key={keyword.keyword}
           onClick={() => onSelect(keyword.keyword)}
