@@ -206,63 +206,91 @@ class KeywordService:
         domain_hash = sum(ord(c) for c in domain.lower())
         
         for idx, kw in enumerate(keywords_list):
+            kw_lower = kw.lower()
             val_base = sum(ord(c) for c in kw) + domain_hash
+            
+            # Determine if this domain ranks for this keyword
+            ranks_for_keyword = False
             rank = 1 + (val_base % 90)
+            is_boosted = False
             
             if is_my_domain:
-                if "twin" in kw.lower():
+                if "twin" in kw_lower:
+                    ranks_for_keyword = True
                     rank = 1 + (val_base % 3)
+                else:
+                    # Twin Birds ranks for 66% of general keywords
+                    if (val_base % 3) != 0:
+                        ranks_for_keyword = True
+                        rank = 5 + (val_base % 40)
             else:
-                kw_lower = kw.lower()
-                is_boosted = False
-                
-                # Competitor Specialization Boosts
-                if "gocolors" in domain.lower():
-                    # Go Colors: Leggings specialist
-                    if any(x in kw_lower for x in ["legging", "churidar", "jegging"]):
-                        rank = 1 + (val_base % 5)
-                        is_boosted = True
-                elif "jockey" in domain.lower():
-                    # Jockey: Activewear / gym / sports bra / t-shirts specialist
-                    if any(x in kw_lower for x in ["activewear", "gym", "sports bra", "t-shirt", "bra"]):
-                        rank = 1 + (val_base % 5)
-                        is_boosted = True
-                elif "zivame" in domain.lower():
-                    # Zivame: Saree shaper / petticoat specialist
-                    if any(x in kw_lower for x in ["saree shaper", "petticoat"]):
-                        rank = 1 + (val_base % 5)
-                        is_boosted = True
-                elif "clovia" in domain.lower():
-                    # Clovia: Bra / gym / comfort fit activewear specialist
-                    if any(x in kw_lower for x in ["bra", "gym", "activewear"]):
-                        rank = 1 + (val_base % 6)
-                        is_boosted = True
-                elif "lymio" in domain.lower():
-                    # Lymio: Kurti styling specialist
-                    if any(x in kw_lower for x in ["kurti", "style", "wear with"]):
-                        rank = 1 + (val_base % 6)
-                        is_boosted = True
-                
-                if not is_boosted:
-                    if "twin" not in kw_lower:
-                        rank = 8 + (val_base % 30)
-                    else:
-                        rank = 45 + (val_base % 50)
+                # Competitor domains do not rank for Twin Birds branded keywords
+                if "twin" not in kw_lower:
+                    if "gocolors" in domain.lower():
+                        # Go Colors: Leggings specialist
+                        if any(x in kw_lower for x in ["legging", "churidar", "jegging"]):
+                            ranks_for_keyword = True
+                            rank = 1 + (val_base % 5)
+                            is_boosted = True
+                        elif (val_base % 3) == 0:
+                            ranks_for_keyword = True
+                            rank = 8 + (val_base % 30)
+                            
+                    elif "jockey" in domain.lower():
+                        # Jockey: Activewear / gym / sports bra / t-shirts specialist
+                        if any(x in kw_lower for x in ["activewear", "gym", "sports bra", "t-shirt", "bra"]):
+                            ranks_for_keyword = True
+                            rank = 1 + (val_base % 5)
+                            is_boosted = True
+                        elif (val_base % 4) == 0:
+                            ranks_for_keyword = True
+                            rank = 10 + (val_base % 30)
+                            
+                    elif "zivame" in domain.lower():
+                        # Zivame: Saree shaper / petticoat specialist
+                        if any(x in kw_lower for x in ["saree shaper", "petticoat"]):
+                            ranks_for_keyword = True
+                            rank = 1 + (val_base % 5)
+                            is_boosted = True
+                        elif (val_base % 4) == 0:
+                            ranks_for_keyword = True
+                            rank = 10 + (val_base % 30)
+                            
+                    elif "clovia" in domain.lower():
+                        # Clovia: Bra / gym / comfort fit activewear specialist
+                        if any(x in kw_lower for x in ["bra", "gym", "activewear"]):
+                            ranks_for_keyword = True
+                            rank = 1 + (val_base % 6)
+                            is_boosted = True
+                        elif (val_base % 4) == 0:
+                            ranks_for_keyword = True
+                            rank = 12 + (val_base % 30)
+                            
+                    elif "lymio" in domain.lower():
+                        # Lymio: Kurti styling specialist
+                        if any(x in kw_lower for x in ["kurti", "style", "wear with"]):
+                            ranks_for_keyword = True
+                            rank = 1 + (val_base % 6)
+                            is_boosted = True
+                        elif (val_base % 4) == 0:
+                            ranks_for_keyword = True
+                            rank = 12 + (val_base % 30)
             
-            # Determine dynamic volume and traffic estimates
-            sv_boost = 1.35 if (not is_my_domain and is_boosted) else 1.0
-            search_volume = int(((val_base % 50) * 100 + 400) * sv_boost)
-            cpc = round(0.8 + (val_base % 12) * 0.4, 2)
-            competition = round(0.2 + (val_base % 70) / 100.0, 2)
-            
-            results.append({
-                "keyword": kw,
-                "rank_absolute": rank,
-                "search_volume": search_volume,
-                "cpc": cpc,
-                "competition": competition,
-                "intent": "branded" if "twin" in kw.lower() else ("buying" if idx % 2 == 0 else "informational")
-            })
+            if ranks_for_keyword:
+                # Determine dynamic volume and traffic estimates
+                sv_boost = 1.35 if (not is_my_domain and is_boosted) else 1.0
+                search_volume = int(((val_base % 50) * 100 + 400) * sv_boost)
+                cpc = round(0.8 + (val_base % 12) * 0.4, 2)
+                competition = round(0.2 + (val_base % 70) / 100.0, 2)
+                
+                results.append({
+                    "keyword": kw,
+                    "rank_absolute": rank,
+                    "search_volume": search_volume,
+                    "cpc": cpc,
+                    "competition": competition,
+                    "intent": "branded" if "twin" in kw.lower() else ("buying" if idx % 2 == 0 else "informational")
+                })
         
         results.sort(key=lambda x: x["rank_absolute"])
         return results[:limit]
