@@ -228,6 +228,8 @@ const BrandComparisonPage: React.FC = () => {
             <option value="gocolors.com">vs Go Colors</option>
             <option value="jockey.in">vs Jockey</option>
             <option value="lymio.com">vs Lymio</option>
+            <option value="zivame.com">vs Zivame</option>
+            <option value="clovia.com">vs Clovia</option>
           </select>
           <button
             onClick={refreshActiveTab}
