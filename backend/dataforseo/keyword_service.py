@@ -152,9 +152,47 @@ class KeywordService:
         val_base = sum(ord(c) for c in keyword)
         shift = val_base % len(results)
         shifted = results[shift:] + results[:shift]
+        
+        enriched = []
         for idx, item in enumerate(shifted):
-            item["position"] = idx + 1
-        return shifted
+            domain = item["domain"]
+            is_tb = item["is_twin_birds"]
+            is_comp = domain in COMPETITORS
+            
+            # Generate deterministic values based on domain and keyword
+            h = sum(ord(c) for c in domain) + val_base
+            price = 599 + (h % 5) * 150
+            rating = round(3.8 + (h % 12) * 0.1, 1)
+            reviews = 15 + (h % 30) * 8
+            
+            # Generate descriptive title
+            kw_title = keyword.replace("twin birds ", "").replace("buy ", "").replace(" online", "").title()
+            if is_tb:
+                title = f"Twin Birds Premium {kw_title}"
+            elif domain == "gocolors.com":
+                title = f"Go Colors Classic {kw_title}"
+            elif domain == "zivame.com":
+                title = f"Zivame Comfort Fit {kw_title}"
+            elif domain == "clovia.com":
+                title = f"Clovia Cotton {kw_title}"
+            else:
+                title = f"{domain.split('.')[0].title()} Regular {kw_title}"
+
+            enriched.append({
+                "position": idx + 1,
+                "domain": domain,
+                "is_twin_birds": is_tb,
+                "is_competitor": is_comp,
+                "title": title,
+                "price": price,
+                "url": f"https://{domain}/search?q={keyword}",
+                "image_url": "",
+                "rating": rating,
+                "reviews_count": reviews
+            })
+            
+        return enriched
+
 
     def get_keywords_for_site(self, domain: str, limit: int = 100) -> List[Dict[str, Any]]:
         """
