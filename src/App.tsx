@@ -9,6 +9,7 @@ import { CreativeDashboard } from './dashboards/creatives/CreativeDashboard';
 import SKUDetailPage from './pages/SKUDetailPage';
 import CompetitorScraperPage from './competitor-scraper/pages/CompetitorScraperPage';
 import CompetitorAnalysisPage from './competitor-analysis/pages/CompetitorAnalysisPage';
+import BrandComparisonPage from './brand-comparison/pages/BrandComparisonPage';
 
 function App() {
   const [dateRange, setDateRange] = useState('Last 30d');
@@ -24,6 +25,7 @@ function App() {
         <Route path="/sku/:id" element={<SKUDetailPage dateRange={dateRange} />} />
         <Route path="/competitor-scraper" element={<CompetitorScraperPage />} />
         <Route path="/competitor-analysis" element={<CompetitorAnalysisPage />} />
+        <Route path="/brand-vs-competitor" element={<BrandComparisonPage />} />
         <Route path="/competitors" element={<Navigate to="/competitor-analysis" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

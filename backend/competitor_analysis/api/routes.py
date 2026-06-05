@@ -2,6 +2,8 @@
 Competitor Analysis API Routes
 All endpoints isolated under /api/competitor-analysis/*
 """
+from __future__ import annotations
+
 import json
 import csv
 import io

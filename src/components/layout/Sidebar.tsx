@@ -27,6 +27,7 @@ export const Sidebar: React.FC = () => {
     { id: 'campaigns', label: 'Campaigns', icon: BarChart3, path: '/campaigns' },
     { id: 'creatives', label: 'Creative Hub', icon: ImageIcon, path: '/creatives' },
     { id: 'competitors', label: 'Intel Analysis', icon: Brain, path: '/competitor-analysis' },
+    { id: 'brand-vs-competitor', label: 'Brand vs Competitor', icon: BarChart3, path: '/brand-vs-competitor' },
     { id: 'scraper', label: 'Ad Scraper', icon: Zap, path: '/competitor-scraper' },
   ];
 
