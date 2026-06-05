@@ -109,6 +109,10 @@ export const CampaignDashboard: React.FC<{ dateRange: string }> = ({ dateRange }
     return { ...campaign, roas, strategy };
   });
 
+  const totalCost = processedData.reduce((acc, curr) => acc + (curr.Cost ? parseFloat(String(curr.Cost).replace(/,/g, '')) : 0), 0);
+  const totalRevenue = processedData.reduce((acc, curr) => acc + (curr['Conv. value'] ? parseFloat(String(curr['Conv. value']).replace(/,/g, '')) : 0), 0);
+  const avgRoas = totalCost > 0 ? (totalRevenue / totalCost).toFixed(2) : '0.00';
+
   const filteredData = processedData.filter(campaign => {
     if (activeStrategy === 'all') return true;
     return campaign.strategy.toLowerCase() === activeStrategy.toLowerCase();
@@ -157,7 +161,7 @@ export const CampaignDashboard: React.FC<{ dateRange: string }> = ({ dateRange }
         />
         <MetricCard 
           label="Avg. Campaign ROAS" 
-          value="2.8" 
+          value={avgRoas} 
           suffix="x"
           trend={15}
           icon={<TrendingUp />}

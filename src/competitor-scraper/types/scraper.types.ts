@@ -75,6 +75,7 @@ export interface ScraperSession {
   progress: number; // 0–100
   estimatedCompletion?: string;
   currentAd?: Partial<ScrapedAd>;
+  currentPhase?: 'init' | 'scrolling' | 'extracting' | 'complete';
 }
 
 export interface ScraperSnapshot {

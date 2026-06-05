@@ -48,6 +48,18 @@ async def start_scraping(req: StartRequest, background_tasks: BackgroundTasks):
     return {"sessionId": session_id, "message": f"Scraping started for {req.domain}"}
 
 
+@router.post("/stop")
+async def stop_scraping(session_id: str):
+    """Gracefully stop a running scraping session."""
+    if session_id not in SESSION_STORE:
+        raise HTTPException(status_code=404, detail="Session not found")
+    
+    session = SESSION_STORE[session_id]
+    if session["status"] == "running":
+        session["status"] = "paused"
+    return session
+
+
 @router.get("/status")
 async def get_status(session_id: str):
     """Get current status of a scraping session."""
@@ -71,6 +83,7 @@ async def get_status(session_id: str):
         "errorsCount": s["errorsCount"],
         "progress": s["progress"],
         "currentAd": s.get("currentAd"),
+        "currentPhase": s.get("currentPhase", "init"),
     }
 
 

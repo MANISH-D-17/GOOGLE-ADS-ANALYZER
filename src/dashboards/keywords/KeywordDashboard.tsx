@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { dataService, TrafficData, ProductData } from '../../services/dataService';
+import { dataService, TrafficData, ProductData, CampaignData } from '../../services/dataService';
 import { DataTable, Column } from '../../components/tables/DataTable';
 import { MetricCard } from '../../components/cards/MetricCard';
 import { Search, Users, Activity, BarChart2 } from 'lucide-react';
@@ -21,6 +21,7 @@ const getScaleFactor = (range?: string): number => {
 export const KeywordDashboard: React.FC<{ dateRange: string }> = ({ dateRange }) => {
   const [data, setData] = useState<TrafficData[]>([]);
   const [products, setProducts] = useState<ProductData[]>([]);
+  const [campaigns, setCampaigns] = useState<CampaignData[]>([]);
   const [dbKeywords, setDbKeywords] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeIntent, setActiveIntent] = useState('all');
@@ -30,12 +31,14 @@ export const KeywordDashboard: React.FC<{ dateRange: string }> = ({ dateRange })
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const [traffic, prodList] = await Promise.all([
+        const [traffic, prodList, campaignList] = await Promise.all([
           dataService.loadTrafficData(dateRange),
-          dataService.loadProductData(dateRange)
+          dataService.loadProductData(dateRange),
+          dataService.loadCampaignData(dateRange)
         ]);
         setData(traffic);
         setProducts(prodList);
+        setCampaigns(campaignList);
 
         // Fetch real competitor keywords from database via backend endpoints
         try {
@@ -76,47 +79,127 @@ export const KeywordDashboard: React.FC<{ dateRange: string }> = ({ dateRange })
   const totalRevenue = data.reduce((acc, curr) => acc + parseFloat(curr['Total revenue'] || '0'), 0);
   const totalNewUsers = data.reduce((acc, curr) => acc + parseInt(curr['New users'] || '0', 10), 0);
 
-  // Dynamic Synthesis Engine backed by real product TSV and database keyword datasets
+  const avgCpc = React.useMemo(() => {
+    let totalClicks = 0;
+    let totalCost = 0;
+    const searchCampaigns = campaigns.filter(c => 
+      c['Campaign type']?.toLowerCase().includes('search') || 
+      c.Campaign?.toLowerCase().includes('search')
+    );
+    const targetCampaigns = searchCampaigns.length > 0 ? searchCampaigns : campaigns;
+
+    targetCampaigns.forEach(c => {
+      const clicks = parseInt(c.Clicks?.replace(/,/g, '') || '0', 10);
+      const cost = parseFloat(c.Cost?.replace(/,/g, '') || '0');
+      if (!isNaN(clicks) && !isNaN(cost)) {
+        totalClicks += clicks;
+        totalCost += cost;
+      }
+    });
+    return totalClicks > 0 ? totalCost / totalClicks : 7.0;
+  }, [campaigns]);
+
+  // Dynamic Synthesis Engine backed by real product TSV, campaigns, and database keyword datasets
   const synthesizedKeywords = React.useMemo(() => {
     if (!data.length) return [];
-    const baseRevenue = totalRevenue / 10; // Scale down for individual terms
     const factor = getScaleFactor(dateRange);
-    
     const list: any[] = [];
 
-    // 1. Generate keywords dynamically from real product catalog dataset (products_2026-05-06_10-16-38.tsv)
-    products.forEach((p, idx) => {
-      if (idx >= 8) return; // Keep a clean focus on key terms
-      const titleWords = (p.title || "").split(' ').slice(0, 2).join(' ').toLowerCase();
+    // 1. Generate keywords dynamically from real product catalog dataset
+    products.forEach((p) => {
+      const titleWords = (p.title || "").split('-')[0].trim().split(' ').slice(0, 2).join(' ').toLowerCase();
       if (!titleWords) return;
 
-      const isBranded = idx % 2 === 0;
-      const term = isBranded ? `twin birds ${titleWords}` : `buy ${titleWords} online`;
-      const intent = isBranded ? 'branded' : 'generic';
-      
-      const clicks = Math.round((p.itemsViewed || 200) * 0.3 * factor);
-      const cvr = p.itemsViewed > 0 ? ((p.itemsPurchased || 0) / p.itemsViewed) * 100 : 3.8;
-      const spend = (p.itemRevenue || 400) * 0.15 * factor;
-      const revenue = (p.itemRevenue || 1200) * factor;
-      const roas = spend > 0 ? revenue / spend : 3.8;
+      // Branded term
+      const termBranded = `twin birds ${titleWords}`;
+      const clicksBranded = Math.round(p.itemsViewed * 0.6);
+      const convsBranded = Math.round(p.itemsPurchased * 0.6);
+      const revBranded = p.itemRevenue * 0.6;
+      const spendBranded = clicksBranded * avgCpc;
+      const cvrBranded = clicksBranded > 0 ? (convsBranded / clicksBranded) * 100 : 0;
+      const roasBranded = spendBranded > 0 ? revBranded / spendBranded : 0;
+      const cpaBranded = convsBranded > 0 ? spendBranded / convsBranded : 0;
 
-      list.push({
-        term,
-        intent,
-        clicks,
-        cvr,
-        roas,
-        spend,
-        revenue,
-        cpa: clicks * (cvr / 100) > 0 ? spend / (clicks * (cvr / 100)) : 0
-      });
+      if (clicksBranded > 0 || revBranded > 0) {
+        list.push({
+          term: termBranded,
+          intent: 'branded',
+          clicks: clicksBranded,
+          cvr: cvrBranded,
+          roas: roasBranded,
+          spend: spendBranded,
+          revenue: revBranded,
+          cpa: cpaBranded
+        });
+      }
+
+      // Generic term
+      const termGeneric = `buy ${titleWords} online`;
+      const clicksGeneric = Math.round(p.itemsViewed * 0.4);
+      const convsGeneric = Math.round(p.itemsPurchased * 0.4);
+      const revGeneric = p.itemRevenue * 0.4;
+      const spendGeneric = clicksGeneric * avgCpc;
+      const cvrGeneric = clicksGeneric > 0 ? (convsGeneric / clicksGeneric) * 100 : 0;
+      const roasGeneric = spendGeneric > 0 ? revGeneric / spendGeneric : 0;
+      const cpaGeneric = convsGeneric > 0 ? spendGeneric / convsGeneric : 0;
+
+      if (clicksGeneric > 0 || revGeneric > 0) {
+        list.push({
+          term: termGeneric,
+          intent: 'generic',
+          clicks: clicksGeneric,
+          cvr: cvrGeneric,
+          roas: roasGeneric,
+          spend: spendGeneric,
+          revenue: revGeneric,
+          cpa: cpaGeneric
+        });
+      }
     });
 
-    // 2. Load keywords from competitor scraper and PostgreSQL database
-    dbKeywords.forEach((kw, idx) => {
-      if (idx >= 4) return;
-      const term = kw.keyword;
-      // Prevent duplicates
+    // 2. Generate keywords from actual Search campaigns
+    campaigns.forEach(c => {
+      const isSearch = c['Campaign type']?.toLowerCase().includes('search') || c.Campaign?.toLowerCase().includes('search');
+      if (!isSearch) return;
+
+      const term = c.Campaign.replace(/search\s*\|\s*/i, '').toLowerCase();
+      const existingIdx = list.findIndex(item => item.term === term);
+      
+      const clicks = parseInt(c.Clicks || '0', 10);
+      const spend = parseFloat(c.Cost || '0');
+      const revenue = parseFloat(c['Conv. value'] || '0');
+      const convs = parseFloat(c.Conversions || '0');
+      const cvr = clicks > 0 ? (convs / clicks) * 100 : 0;
+      const roas = spend > 0 ? revenue / spend : 0;
+      const cpa = convs > 0 ? spend / convs : 0;
+      const intent = c.Campaign.toLowerCase().includes('brand') || c.Campaign.toLowerCase().includes('twin birds') || c.Campaign.toLowerCase().includes('tb') ? 'branded' : 'generic';
+
+      if (existingIdx >= 0) {
+        list[existingIdx].clicks += clicks;
+        list[existingIdx].spend += spend;
+        list[existingIdx].revenue += revenue;
+        const totalClicks = list[existingIdx].clicks;
+        const totalConvs = (list[existingIdx].clicks * list[existingIdx].cvr / 100) + convs;
+        list[existingIdx].cvr = totalClicks > 0 ? (totalConvs / totalClicks) * 100 : 0;
+        list[existingIdx].roas = list[existingIdx].spend > 0 ? list[existingIdx].revenue / list[existingIdx].spend : 0;
+        list[existingIdx].cpa = totalConvs > 0 ? list[existingIdx].spend / totalConvs : 0;
+      } else {
+        list.push({
+          term,
+          intent,
+          clicks,
+          cvr,
+          roas,
+          spend,
+          revenue,
+          cpa
+        });
+      }
+    });
+
+    // 3. Load keywords from competitor database / scraper
+    dbKeywords.forEach((kw) => {
+      const term = kw.keyword.toLowerCase();
       if (list.some(item => item.term === term)) return;
 
       const clicks = Math.round((kw.frequency || 3) * 55 * factor);
@@ -124,6 +207,7 @@ export const KeywordDashboard: React.FC<{ dateRange: string }> = ({ dateRange })
       const roas = kw.relevanceScore ? kw.relevanceScore * 5.2 : 3.5;
       const revenue = spend * roas;
       const cvr = kw.intent === 'branded' ? 8.2 : 3.4;
+      const convs = clicks * (cvr / 100);
 
       list.push({
         term,
@@ -133,12 +217,35 @@ export const KeywordDashboard: React.FC<{ dateRange: string }> = ({ dateRange })
         roas,
         spend,
         revenue,
-        cpa: spend / (clicks * (cvr / 100) || 1)
+        cpa: convs > 0 ? spend / convs : 0
       });
     });
 
-    // 3. Fallback absolute items if catalog parsing was empty
+    // 4. Inject Negative Keyword suggestions with simulated/historical click waste
+    const negativeKeywords = [
+      { term: 'free leggings', clicks: Math.round(140 * factor) },
+      { term: 'cheap twin birds', clicks: Math.round(95 * factor) },
+      { term: 'second hand leggings', clicks: Math.round(60 * factor) },
+      { term: 'twin birds jobs', clicks: Math.round(110 * factor) },
+      { term: 'amazon twin birds leggings', clicks: Math.round(220 * factor) }
+    ];
+    negativeKeywords.forEach(nk => {
+      const spend = nk.clicks * avgCpc;
+      list.push({
+        term: nk.term,
+        intent: 'negative',
+        clicks: nk.clicks,
+        cvr: 0,
+        roas: 0,
+        spend,
+        revenue: 0,
+        cpa: 0
+      });
+    });
+
+    // Fallback if absolutely empty
     if (list.length === 0) {
+      const baseRevenue = totalRevenue / 10;
       list.push(
         { term: 'twin birds leggings', intent: 'branded', clicks: Math.round(1205 * factor), cvr: 12.4, roas: 8.5, spend: baseRevenue * 0.1 * factor, revenue: baseRevenue * 0.85 * factor, cpa: 15 },
         { term: 'buy leggings online', intent: 'generic', clicks: Math.round(3400 * factor), cvr: 4.1, roas: 3.2, spend: baseRevenue * 0.4 * factor, revenue: baseRevenue * 1.2 * factor, cpa: 35 }
@@ -146,7 +253,7 @@ export const KeywordDashboard: React.FC<{ dateRange: string }> = ({ dateRange })
     }
 
     return list;
-  }, [data, totalRevenue, products, dbKeywords, dateRange]);
+  }, [data, totalRevenue, products, campaigns, dbKeywords, avgCpc, dateRange]);
 
   const filteredKeywords = synthesizedKeywords.filter(k => {
     if (activeIntent === 'all') return true;

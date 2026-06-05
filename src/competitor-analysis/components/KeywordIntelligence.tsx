@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Search, 
@@ -11,9 +11,10 @@ import {
   BarChart3,
   Globe,
   PieChart,
-  Split
+  Split,
+  ShieldAlert
 } from 'lucide-react';
-import { KeywordIntel } from '../services/competitorApiService';
+import { KeywordIntel, competitorApiService } from '../services/competitorApiService';
 import { cn } from '../../lib/utils';
 
 // New Components
@@ -21,14 +22,33 @@ import KeywordVolumeChart from './keywords/KeywordVolumeChart';
 import KeywordGapAnalysis from './keywords/KeywordGapAnalysis';
 import SERPPositionTable from './keywords/SERPPositionTable';
 import SearchIntentDistribution from './keywords/SearchIntentDistribution';
+import KeywordNegativeSuggestions from './keywords/KeywordNegativeSuggestions';
 
 interface KeywordIntelligenceProps {
   keywords: KeywordIntel[];
   loading: boolean;
+  domain?: string;
 }
 
-const KeywordIntelligence: React.FC<KeywordIntelligenceProps> = ({ keywords, loading }) => {
-  const [activeView, setActiveView] = useState<'nlp' | 'volume' | 'serp' | 'gap'>('nlp');
+const KeywordIntelligence: React.FC<KeywordIntelligenceProps> = ({ keywords, loading, domain }) => {
+  const [activeView, setActiveView] = useState<'nlp' | 'volume' | 'serp' | 'gap' | 'negative'>('nlp');
+  const [negatives, setNegatives] = useState<any[]>([]);
+  const [negativesLoading, setNegativesLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchNegatives = async () => {
+      setNegativesLoading(true);
+      try {
+        const res = await competitorApiService.getNegativeKeywords(domain);
+        setNegatives(res.negatives || []);
+      } catch (e) {
+        console.error("Failed to load negatives:", e);
+      } finally {
+        setNegativesLoading(false);
+      }
+    };
+    fetchNegatives();
+  }, [domain]);
 
   if (loading && keywords.length === 0) {
     return (
@@ -66,6 +86,7 @@ const KeywordIntelligence: React.FC<KeywordIntelligenceProps> = ({ keywords, loa
           { id: 'volume', label: 'Search Volume', icon: BarChart3 },
           { id: 'serp', label: 'SERP Intel', icon: Globe },
           { id: 'gap', label: 'Keyword Gap', icon: Split },
+          { id: 'negative', label: 'Negative Suggestions', icon: ShieldAlert },
         ].map(view => (
           <button
             key={view.id}
@@ -227,6 +248,10 @@ const KeywordIntelligence: React.FC<KeywordIntelligenceProps> = ({ keywords, loa
           </div>
           <SERPPositionTable results={serpData} />
         </div>
+      )}
+
+      {activeView === 'negative' && (
+        <KeywordNegativeSuggestions negatives={negatives} />
       )}
     </div>
   );

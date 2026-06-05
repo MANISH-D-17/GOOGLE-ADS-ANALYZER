@@ -19,7 +19,8 @@ import {
   Clock, 
   Activity,
   Zap,
-  ArrowRight
+  ArrowRight,
+  Sparkles
 } from 'lucide-react';
 import { ClientCompetitorStore } from '../services/clientCompetitorStore';
 
@@ -79,6 +80,59 @@ const CampaignTimeline: React.FC<CampaignTimelineProps> = ({ domain, loading }) 
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
+      {/* Executive Campaign Strategy Breakdown */}
+      {timelineData.length > 0 && (
+        <div className="rounded-[2.5rem] border border-gray-100 bg-white p-8 shadow-sm grid grid-cols-1 md:grid-cols-4 gap-8 animate-in fade-in duration-500">
+          <div className="md:col-span-1 flex flex-col justify-between">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-2xl bg-blue-50 text-blue-600">
+                <Sparkles className="h-6 w-6" />
+              </div>
+              <h3 className="text-base font-black text-gray-900 uppercase tracking-[2px]">Campaign Intel</h3>
+            </div>
+            <div className="mt-6">
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Active Campaigns</p>
+              <h4 className="text-3xl font-black text-blue-900 mt-2">
+                {timelineData.reduce((acc, curr) => acc + curr.campaigns, 0)} Active
+              </h4>
+              <p className="text-[10px] text-blue-400 font-bold uppercase tracking-tight mt-1">Identified Clusters</p>
+            </div>
+          </div>
+
+          <div className="md:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="rounded-2xl bg-gray-50/50 p-6 border border-gray-50 flex flex-col justify-between">
+              <div>
+                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Seasonality Pattern</p>
+                <h5 className="text-lg font-black text-gray-900 mt-2">Pre-Festive Peaks</h5>
+              </div>
+              <p className="text-[10px] text-gray-400 font-bold mt-4 leading-relaxed">
+                Activity surges 14-20 days prior to major national holidays. Recommendation: Pre-schedule budget bids.
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-gray-50/50 p-6 border border-gray-50 flex flex-col justify-between">
+              <div>
+                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Pacing Model</p>
+                <h5 className="text-lg font-black text-blue-600 mt-2">Steady Monthly Rotation</h5>
+              </div>
+              <p className="text-[10px] text-gray-400 font-bold mt-4 leading-relaxed">
+                Maintains a minimum baseline of 4 active ad sets per product category to shield branded searches.
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-gray-50/50 p-6 border border-gray-50 flex flex-col justify-between">
+              <div>
+                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Category Alignment</p>
+                <h5 className="text-lg font-black text-gray-900 mt-2">Bottomwear Focus</h5>
+              </div>
+              <p className="text-[10px] text-gray-400 font-bold mt-4 leading-relaxed">
+                Aligns dynamic search ads directly with bottomwear catalog expansions.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Ad Volume Area Chart */}
       <div className="rounded-3xl border border-gray-100 bg-white p-10 shadow-sm">
         <div className="mb-10 flex items-center justify-between">

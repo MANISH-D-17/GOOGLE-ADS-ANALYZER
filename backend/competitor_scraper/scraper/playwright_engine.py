@@ -131,6 +131,10 @@ class PlaywrightScraper:
                 current_phase="init"
             )
             
+            # Reset memory for a fresh session so it doesn't skip ads from previous runs
+            self.seen_hashes = set()
+            self.downloaded_media_urls = set()
+            
             session_store[session_id]["status"] = "running"
             session_store[session_id]["progress"] = 2
             
@@ -145,9 +149,15 @@ class PlaywrightScraper:
 
         browser = None
         try:
-            # Check if scrolling was already completely finished in the checkpoint
-            skip_scrolling = (current_state.current_phase == "extracting")
+            # Skip scrolling if: (a) checkpoint says extracting, OR (b) resumed session already has tiles collected
+            has_tiles = resumed_state is not None and len(current_state.collected_hrefs) > 0
+            skip_scrolling = (current_state.current_phase == "extracting") or has_tiles
             collected_hrefs = {}
+            if has_tiles and current_state.current_phase != "extracting":
+                print(f"[Scraper] Skipping Phase 3 — checkpoint already has {len(current_state.collected_hrefs)} tiles (phase was '{current_state.current_phase}').")
+                current_state.current_phase = "extracting"
+                await self.checkpoint_mgr.save_checkpoint(current_state)
+
 
             async with async_playwright() as pw:
                 # ── Random user agent ────────────────────────────────────
@@ -235,6 +245,7 @@ class PlaywrightScraper:
 
                     # ── Phase 3: Scroll to collect ALL creative tile hrefs ─────
                     print(f"[Scraper] Phase 3: Collecting up to {max_ads} tiles (Google shows 800+ for gocolors)")
+                    session_store[session_id]["currentPhase"] = "scrolling"
                     
                     # Restore scroll parameters from checkpoint
                     collected_hrefs = current_state.collected_hrefs
@@ -243,6 +254,9 @@ class PlaywrightScraper:
                     MAX_NO_NEW_STREAK = 15
 
                     while len(collected_hrefs) < max_ads and no_new_streak < MAX_NO_NEW_STREAK:
+                        if session_store.get(session_id, {}).get("status") in ("paused", "stopped"):
+                            print(f"[Scraper] Stopped/Paused by user during Phase 3 (scrolling). Halted.")
+                            break
                         tiles = await page.evaluate("""() => {
                             const previews = document.querySelectorAll('creative-preview');
                             const results = [];
@@ -340,6 +354,12 @@ class PlaywrightScraper:
                         session_store[session_id].update({
                             "progress": min(progress, 45),
                             "adsExtracted": new_count,
+                            "currentPhase": "scrolling",
+                            "currentAd": {
+                                "headline": f"Scanning Google Ads Transparency... ({new_count} tiles found)",
+                                "ctaText": f"Scroll round {scroll_round + 1}",
+                                "adFormat": "image",
+                            },
                         })
 
                         current_state.collected_hrefs = collected_hrefs
@@ -390,6 +410,8 @@ class PlaywrightScraper:
                         # Scroll in 3 overlapping steps of 800px each
                         # This keeps the viewport in the IntersectionObserver trigger zone
                         for _ in range(3):
+                            if session_store.get(session_id, {}).get("status") in ("paused", "stopped"):
+                                break
                             step_px = random.randint(700, 900)
                             await page.evaluate(f"window.scrollBy(0, {step_px})")
                             await asyncio.sleep(random.uniform(0.3, 0.6))
@@ -408,6 +430,9 @@ class PlaywrightScraper:
                     # Restore complete Phase 3 scroll state
                     collected_hrefs = current_state.collected_hrefs
                     print(f"[Scraper] Resuming Phase 4 directly. Loaded {len(collected_hrefs)} creative tiles.")
+
+                session_store[session_id]["currentPhase"] = "extracting"
+
 
                 # If Playwright yielded no results or was blocked, set status to blocked (strict real-data policy)
                 if len(collected_hrefs) == 0:
@@ -431,75 +456,101 @@ class PlaywrightScraper:
                 tile_list = list(collected_hrefs.values())[:max_ads]
                 brand_name = domain.split(".")[0].replace("-", " ").title()
 
-                detail_page = await context.new_page()
+                is_stopped = session_store.get(session_id, {}).get("status") in ("paused", "stopped")
 
-                for i, tile in enumerate(tile_list):
-                    content_hash = hashlib.sha256(tile["creativeId"].encode()).hexdigest()[:16]
-                    if content_hash in self.seen_hashes:
-                        continue
-                    self.seen_hashes.add(content_hash)
+                if is_stopped:
+                    print(f"[Scraper] Session stopped before Phase 4. Building partial ads from collected tiles.")
+                    processed_hashes = {a["contentHash"] for a in ads}
+                    for idx, tile in enumerate(tile_list):
+                        content_hash = hashlib.sha256(tile["creativeId"].encode()).hexdigest()[:16]
+                        if content_hash in processed_hashes:
+                            continue
+                        ad = self._build_ad_from_tile(tile, domain, session_id, brand_name, idx)
+                        ads.append(ad)
+                else:
+                    detail_page = await context.new_page()
 
-                    # Tiered extraction: only deep extract video ads, ads missing key metadata, or 20% sample
-                    should_deep_extract = (
-                        tile.get("hasVideo") or
-                        len(tile.get("textNodes", [])) < 2 or
-                        (i % 5 == 0)
-                    )
+                    for i, tile in enumerate(tile_list):
+                        if session_store.get(session_id, {}).get("status") in ("paused", "stopped"):
+                            print(f"[Scraper] Stopped/Paused by user during Phase 4 (extraction). Halted.")
+                            is_stopped = True
+                            # Convert remaining tiles to basic ads so user gets all ads collected so far
+                            processed_hashes = {a["contentHash"] for a in ads}
+                            for j, t in enumerate(tile_list[i:]):
+                                content_hash = hashlib.sha256(t["creativeId"].encode()).hexdigest()[:16]
+                                if content_hash in processed_hashes:
+                                    continue
+                                ad = self._build_ad_from_tile(t, domain, session_id, brand_name, i + j)
+                                ads.append(ad)
+                            break
 
-                    try:
-                        if should_deep_extract:
-                            ad = await self._extract_detail_page(
-                                detail_page, tile, domain, session_id, brand_name, i,
-                                media_dir, download_media
-                            )
-                        else:
+                        content_hash = hashlib.sha256(tile["creativeId"].encode()).hexdigest()[:16]
+                        if content_hash in self.seen_hashes:
+                            continue
+                        self.seen_hashes.add(content_hash)
+
+                        # Tiered extraction: only deep extract video ads, ads missing key metadata, or 20% sample
+                        should_deep_extract = (
+                            tile.get("hasVideo") or
+                            len(tile.get("textNodes", [])) < 2 or
+                            (i % 5 == 0)
+                        )
+
+                        try:
+                            if should_deep_extract:
+                                ad = await self._extract_detail_page(
+                                    detail_page, tile, domain, session_id, brand_name, i,
+                                    media_dir, download_media
+                                )
+                            else:
+                                ad = self._build_ad_from_tile(tile, domain, session_id, brand_name, i)
+                            ads.append(ad)
+                        except Exception as e:
+                            print(f"[Scraper] Detail page failed for {tile['creativeId']}: {e}")
+                            # Fall back to tile-only data without crashing
                             ad = self._build_ad_from_tile(tile, domain, session_id, brand_name, i)
-                        ads.append(ad)
-                    except Exception as e:
-                        print(f"[Scraper] Detail page failed for {tile['creativeId']}: {e}")
-                        # Fall back to tile-only data without crashing
-                        ad = self._build_ad_from_tile(tile, domain, session_id, brand_name, i)
-                        ads.append(ad)
+                            ads.append(ad)
 
-                    # Update in-memory session store
-                    prog = min(45 + int((i + 1) / len(tile_list) * 53), 98)
-                    session_store[session_id].update({
-                        "adsExtracted": len(ads),
-                        "imagesFound": sum(len(a.get("imageUrls", [])) for a in ads),
-                        "videosFound": sum(len(a.get("videoUrls", [])) for a in ads),
-                        "progress": prog,
-                        "currentAd": {
-                            "headline": ad.get("headline", ""),
-                            "ctaText": ad.get("ctaText", ""),
-                            "adFormat": ad.get("adFormat", "image"),
-                        },
-                    })
+                        # Update in-memory session store incrementally (including ads list)
+                        prog = min(45 + int((i + 1) / len(tile_list) * 53), 98)
+                        session_store[session_id].update({
+                            "ads": ads,
+                            "adsExtracted": len(ads),
+                            "imagesFound": sum(len(a.get("imageUrls", [])) for a in ads),
+                            "videosFound": sum(len(a.get("videoUrls", [])) for a in ads),
+                            "progress": prog,
+                            "currentAd": {
+                                "headline": ad.get("headline", ""),
+                                "ctaText": ad.get("ctaText", ""),
+                                "adFormat": ad.get("adFormat", "image"),
+                            },
+                        })
 
-                    # Update checkpoint state & save
-                    current_state.processed_ads = ads
-                    current_state.seen_hashes = list(self.seen_hashes)
-                    current_state.downloaded_media_urls = list(self.downloaded_media_urls)
-                    current_state.ads_extracted = len(ads)
-                    current_state.images_found = sum(len(a.get("imageUrls", [])) for a in ads)
-                    current_state.videos_found = sum(len(a.get("videoUrls", [])) for a in ads)
-                    current_state.progress = prog
-                    
-                    await self.checkpoint_mgr.save_checkpoint(current_state)
+                        # Update checkpoint state & save
+                        current_state.processed_ads = ads
+                        current_state.seen_hashes = list(self.seen_hashes)
+                        current_state.downloaded_media_urls = list(self.downloaded_media_urls)
+                        current_state.ads_extracted = len(ads)
+                        current_state.images_found = sum(len(a.get("imageUrls", [])) for a in ads)
+                        current_state.videos_found = sum(len(a.get("videoUrls", [])) for a in ads)
+                        current_state.progress = prog
+                        
+                        await self.checkpoint_mgr.save_checkpoint(current_state)
 
-                    # Incremental CSV logs
-                    await self.csv_writer.append_processed_ad(session_id, tile["creativeId"], content_hash, success=True)
-                    await self.csv_writer.append_ad_data(ad)
-                    await self.csv_writer.append_session(current_state.model_dump())
+                        # Incremental CSV logs
+                        await self.csv_writer.append_processed_ad(session_id, tile["creativeId"], content_hash, success=True)
+                        await self.csv_writer.append_ad_data(ad)
+                        await self.csv_writer.append_session(current_state.model_dump())
 
-                    # Rate-limit protection: optimized delay between detail pages
-                    await human_delay(0.4, 0.8)
-                    # Extra pause every 50 ads instead of 20
-                    if (i + 1) % 50 == 0:
-                        pause = random.uniform(1.5, 3.0)
-                        print(f"[Scraper] Brief rate-limit pause: {pause:.1f}s after {i+1} ads")
-                        await asyncio.sleep(pause)
+                        # Rate-limit protection: optimized delay between detail pages
+                        await human_delay(0.4, 0.8)
+                        # Extra pause every 50 ads instead of 20
+                        if (i + 1) % 50 == 0:
+                            pause = random.uniform(1.5, 3.0)
+                            print(f"[Scraper] Brief rate-limit pause: {pause:.1f}s after {i+1} ads")
+                            await asyncio.sleep(pause)
 
-                await detail_page.close()
+                    await detail_page.close()
 
                 # ── Phase 5: Save snapshot + persist ─────────────────────
                 await self._save_snapshot(session_id, domain, ads)
@@ -515,8 +566,10 @@ class PlaywrightScraper:
                 except Exception as db_err:
                     print(f"[Scraper] DB persistence failed (non-fatal): {db_err}")
 
+                status_to_set = "paused" if session_store[session_id].get("status") in ("paused", "stopped") else "complete"
                 session_store[session_id].update({
-                    "status": "complete", "progress": 100,
+                    "status": status_to_set, 
+                    "progress": 100 if status_to_set == "complete" else session_store[session_id].get("progress", 100),
                     "completedAt": datetime.utcnow().isoformat(),
                     "ads": ads, "adsExtracted": len(ads),
                     "imagesFound": sum(len(a.get("imageUrls", [])) for a in ads),
@@ -524,13 +577,13 @@ class PlaywrightScraper:
                 })
                 
                 # Update final session complete checkpoint
-                current_state.status = "complete"
-                current_state.progress = 100
+                current_state.status = status_to_set
+                current_state.progress = 100 if status_to_set == "complete" else current_state.progress
                 current_state.completed_at = datetime.utcnow().isoformat()
                 await self.checkpoint_mgr.save_checkpoint(current_state)
                 await self.csv_writer.append_session(current_state.model_dump())
                 
-                print(f"[Scraper] ✓ Session {session_id}: {len(ads)} ads extracted")
+                print(f"[Scraper] ✓ Session {session_id}: {len(ads)} ads extracted (status: {status_to_set})")
 
         except Exception as e:
             import traceback

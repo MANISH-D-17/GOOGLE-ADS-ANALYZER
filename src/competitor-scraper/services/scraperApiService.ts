@@ -35,6 +35,13 @@ export const scraperApiService = {
     });
   },
 
+  /** Stop a running scraping session */
+  async stopScraping(sessionId: string): Promise<ScraperSession> {
+    return apiCall<ScraperSession>(`/api/scraper/stop?session_id=${sessionId}`, {
+      method: 'POST',
+    });
+  },
+
   /** Get current status of a session */
   async getStatus(sessionId: string): Promise<ScraperSession> {
     return apiCall<ScraperSession>(`/api/scraper/status?session_id=${sessionId}`);

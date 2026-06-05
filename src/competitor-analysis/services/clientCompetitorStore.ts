@@ -90,6 +90,7 @@ const PRESET_COMPETITORS: {
   creatives: AdCreative[];
   comparison: BenchmarkReport;
   recommendations: AIRecommendation[];
+  negatives?: any[];
 }[] = [
   {
     overview: {
@@ -189,6 +190,15 @@ const PRESET_COMPETITORS: {
         isActioned: false,
         createdAt: new Date().toISOString()
       }
+    ],
+    negatives: [
+      { term: 'kids activewear', category: 'Target Demographics', matchType: 'Phrase', savings: 'Medium', rationale: 'Twin Birds focuses exclusively on adult women wear. Exclude children\'s activewear searches.' },
+      { term: 'mens leggings', category: 'Target Demographics', matchType: 'Phrase', savings: 'High', rationale: 'Twin Birds designs products only for women. Block male-focused queries to avoid ad waste.' },
+      { term: 'cheap leggings duplicate', category: 'Bargain / Price Intent', matchType: 'Phrase', savings: 'High', rationale: 'Twin Birds is a premium-tier brand. Clicks from bargain/duplicate searches convert poorly.' },
+      { term: 'free leggings sample', category: 'Bargain / Price Intent', matchType: 'Exact', savings: 'Low', rationale: 'Users seeking free samples are low-intent and waste pay-per-click budget.' },
+      { term: 'twin birds restaurant', category: 'Ambiguous Intent', matchType: 'Phrase', savings: 'High', rationale: 'Avoid overlaps on food/hospitality searches containing the brand name.' },
+      { term: 'angry birds toys', category: 'Ambiguous Intent', matchType: 'Broad', savings: 'High', rationale: 'Block toys and gaming queries containing birds keywords that trigger ad matches.' },
+      { term: 'denim jeans stretch', category: 'Out of Scope Products', matchType: 'Phrase', savings: 'Medium', rationale: 'Twin Birds sells knitted bottomwear and shapewear, not denim jeans.' }
     ]
   }
 ];
@@ -229,6 +239,12 @@ export class ClientCompetitorStore {
     const list = this.getCompetitors();
     if (!domain) return list[0] || PRESET_COMPETITORS[0];
     return list.find((c: any) => c.overview.domain === domain) || PRESET_COMPETITORS[0];
+  }
+
+  // Find negatives by domain
+  static findNegativesByDomain(domain?: string) {
+    const data = this.findByDomain(domain) as any;
+    return data.negatives || PRESET_COMPETITORS[0].negatives || [];
   }
 
   // Generate overview response
@@ -441,7 +457,16 @@ export class ClientCompetitorStore {
       keywords,
       creatives: ads,
       comparison: benchmark,
-      recommendations
+      recommendations,
+      negatives: [
+        { term: 'kids activewear', category: 'Target Demographics', matchType: 'Phrase', savings: 'Medium', rationale: 'Twin Birds focuses exclusively on adult women wear. Exclude children\'s clothing searches.' },
+        { term: 'mens leggings', category: 'Target Demographics', matchType: 'Phrase', savings: 'High', rationale: 'Twin Birds designs products only for women. Block male-focused queries to avoid waste.' },
+        { term: 'cheap leggings duplicate', category: 'Bargain / Price Intent', matchType: 'Phrase', savings: 'High', rationale: 'Twin Birds is a premium-tier brand. Replica or cheap queries convert poorly.' },
+        { term: 'free leggings sample', category: 'Bargain / Price Intent', matchType: 'Exact', savings: 'Low', rationale: 'Users seeking free samples are low-intent and waste pay-per-click budget.' },
+        { term: `${brand.toLowerCase()} coupons`, category: 'Bargain / Price Intent', matchType: 'Phrase', savings: 'Medium', rationale: `Avoid bidding on coupons or codes for competitor brand ${brand}.` },
+        { term: 'twin birds restaurant', category: 'Ambiguous Intent', matchType: 'Phrase', savings: 'High', rationale: 'Avoid overlaps on food/hospitality searches containing the brand name.' },
+        { term: 'denim jeans stretch', category: 'Out of Scope Products', matchType: 'Phrase', savings: 'Medium', rationale: 'Twin Birds sells knitted bottomwear and shapewear, not denim jeans.' }
+      ]
     };
 
     // Save and register competitor local override

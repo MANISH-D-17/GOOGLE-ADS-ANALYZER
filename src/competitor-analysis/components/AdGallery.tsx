@@ -11,7 +11,8 @@ import {
   CheckCircle2,
   ChevronRight,
   Search,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Sparkles
 } from 'lucide-react';
 import { AdCreative } from '../services/competitorApiService';
 
@@ -32,6 +33,21 @@ const AdGallery: React.FC<AdGalleryProps> = ({ creatives, loading }) => {
     return fmtMatch && catMatch;
   });
 
+  // Dynamic Insights Calculation
+  const totalCreatives = creatives.length;
+  const imageAdsCount = creatives.filter(c => c.adFormat.toLowerCase() === 'image').length;
+  const imagePercentage = totalCreatives > 0 ? Math.round((imageAdsCount / totalCreatives) * 100) : 0;
+  
+  // Find top CTA
+  const ctas = creatives.map(c => c.ctaText).filter(Boolean);
+  const topCta = ctas.length > 0
+    ? ctas.reduce((a, b, _, arr) => arr.filter(v => v === a).length >= arr.filter(v => v === b).length ? a : b)
+    : 'N/A';
+
+  // Emotional triggers
+  const allTriggers = creatives.flatMap(c => c.emotionalTriggers || []);
+  const uniqueTriggers = Array.from(new Set(allTriggers)).slice(0, 3);
+
   if (loading && creatives.length === 0) {
     return (
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -44,6 +60,63 @@ const AdGallery: React.FC<AdGalleryProps> = ({ creatives, loading }) => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
+      {/* AI Creative Insights Card */}
+      {totalCreatives > 0 && (
+        <div className="rounded-[2.5rem] border border-gray-100 bg-white p-8 shadow-sm grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="md:col-span-1 flex flex-col justify-between">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-2xl bg-indigo-50 text-indigo-600">
+                <Sparkles className="h-6 w-6" />
+              </div>
+              <h3 className="text-base font-black text-gray-900 uppercase tracking-[2px]">Creative Insights</h3>
+            </div>
+            <div className="mt-6">
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Composite Index</p>
+              <h4 className="text-3xl font-black text-indigo-900 mt-2">
+                {(creatives.reduce((acc, c) => acc + (c.scores?.composite || 7.5), 0) / totalCreatives).toFixed(1)}/10
+              </h4>
+              <p className="text-[10px] text-indigo-400 font-bold uppercase tracking-tight mt-1">AI Rating Avg</p>
+            </div>
+          </div>
+
+          <div className="md:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="rounded-2xl bg-gray-50/50 p-6 border border-gray-50 flex flex-col justify-between">
+              <div>
+                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Visual Preference</p>
+                <h5 className="text-lg font-black text-gray-900 mt-2">{imagePercentage}% Image Ads</h5>
+              </div>
+              <p className="text-[10px] text-gray-400 font-bold mt-4 leading-relaxed">
+                Heavy focus on catalog shots over text/video formats. Recommendation: Increase image assets.
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-gray-50/50 p-6 border border-gray-50 flex flex-col justify-between">
+              <div>
+                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Dominant Call-To-Action</p>
+                <h5 className="text-lg font-black text-indigo-600 mt-2">"{topCta}"</h5>
+              </div>
+              <p className="text-[10px] text-gray-400 font-bold mt-4 leading-relaxed">
+                Standardizes on direct conversion intent triggers to funnel organic searches immediately.
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-gray-50/50 p-6 border border-gray-50 flex flex-col justify-between">
+              <div>
+                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Psychological Anchors</p>
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {uniqueTriggers.map(t => (
+                    <span key={t} className="px-2 py-0.5 rounded bg-indigo-50 border border-indigo-100 text-[9px] font-black uppercase text-indigo-700">{t}</span>
+                  ))}
+                </div>
+              </div>
+              <p className="text-[10px] text-gray-400 font-bold mt-4 leading-relaxed">
+                Connects product style directly with customer comfort signals to build brand utility.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Filters bar */}
       <div className="flex flex-wrap items-center justify-between gap-6 rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
         <div className="flex items-center gap-8">

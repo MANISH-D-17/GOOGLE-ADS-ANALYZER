@@ -343,7 +343,7 @@ const CompetitorAnalysisPage: React.FC = () => {
             <AdGallery creatives={creatives} loading={loading} />
           )}
           {activeTab === 'keywords' && (
-            <KeywordIntelligence keywords={keywords} loading={loading} />
+            <KeywordIntelligence keywords={keywords} loading={loading} domain={selectedDomain} />
           )}
           {activeTab === 'campaigns' && (
             <CampaignTimeline domain={selectedDomain} loading={loading} />

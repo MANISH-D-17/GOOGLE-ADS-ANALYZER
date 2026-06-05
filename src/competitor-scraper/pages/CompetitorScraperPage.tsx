@@ -257,7 +257,7 @@ const CompetitorScraperPage: React.FC = () => {
 
       {/* ── Export ── */}
       <AnimatePresence>
-        {(hasResults || status === 'complete') && (
+        {(hasResults || status === 'complete' || status === 'paused') && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
             <div className="flex items-center gap-4">
                <div className="h-2 w-12 bg-rose-600 rounded-full" />

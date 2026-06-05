@@ -188,6 +188,11 @@ export const competitorApiService = {
     return { metrics };
   },
 
+  getNegativeKeywords: async (domain?: string): Promise<{ negatives: any[] }> => {
+    const negatives = ClientCompetitorStore.findNegativesByDomain(domain);
+    return { negatives };
+  },
+
   importZip: async (file: File): Promise<{ status: string, domain: string, brand: string, sessionId: string, competitorId: string }> => {
     try {
       const res = await ClientCompetitorStore.importCompetitorZip(file);

@@ -132,6 +132,9 @@ export function useScraperSession(): UseScraperSessionReturn {
     const { sessionId } = await scraperApiService.startScraping({ domain, region, maxAds: maxAds ?? 200, downloadMedia: true });
     sessionIdRef.current = sessionId;
 
+    let pollCount = 0;
+    let lastAdCount = 0;
+
     pollIntervalRef.current = setInterval(async () => {
       try {
         if (!isPollingRef.current) return;
@@ -140,33 +143,75 @@ export function useScraperSession(): UseScraperSessionReturn {
         
         setSession(sess);
         setStatus(sess.status);
+        pollCount++;
 
-        // Dynamic live feed items
-        if (sess.currentAd && sess.currentAd.headline) {
+        const phase = sess.currentPhase || 'init';
+
+        // ── Phase 3: Scrolling — show live scanning feed items ──
+        if (phase === 'scrolling' && sess.currentAd?.headline) {
+          const headlineStr = sess.currentAd.headline;
+          setFeedItems(prev => {
+            const exists = prev.find(item => item.headline === headlineStr);
+            if (exists) return prev;
+            const newItem = {
+              id: `feed_scroll_${Date.now()}_${Math.random()}`,
+              timestamp: new Date().toLocaleTimeString(),
+              headline: headlineStr,
+              cta: sess.currentAd?.ctaText || `${sess.adsExtracted} tiles`,
+              assetType: 'image' as any,
+              brand: sess.domain || domain,
+              status: 'processing' as const
+            };
+            return [newItem, ...prev].slice(0, 20);
+          });
+        }
+
+        // ── Phase 4: Extracting — show real ad feed items ──
+        if (phase === 'extracting' && sess.currentAd?.headline) {
           const headlineStr = sess.currentAd.headline;
           const ctaStr = sess.currentAd.ctaText || 'Shop Now';
           const formatStr = (sess.currentAd.adFormat || 'image') as any;
           
           setFeedItems(prev => {
-            const exists = prev.find(item => item.headline === headlineStr);
+            const exists = prev.find(item => item.headline === headlineStr && item.status === 'complete');
             if (exists) return prev;
-            
             const newItem = {
-              id: `feed_${Date.now()}_${Math.random()}`,
+              id: `feed_ext_${Date.now()}_${Math.random()}`,
               timestamp: new Date().toLocaleTimeString(),
               headline: headlineStr,
               cta: ctaStr,
               assetType: formatStr,
-              brand: sess.domain || 'Competitor',
+              brand: sess.domain || domain,
               status: 'complete' as const
             };
             return [newItem, ...prev].slice(0, 20);
           });
         }
 
-        if (sess.status === 'complete' || sess.status === 'error') {
+        // ── Fetch partial results every 5 polls during extraction ──
+        if (phase === 'extracting' && sess.adsExtracted !== lastAdCount && pollCount % 3 === 0) {
+          lastAdCount = sess.adsExtracted;
+          try {
+            const partialResults = await scraperApiService.getResults(sessionId);
+            if (partialResults && partialResults.length > 0) {
+              setAds(partialResults);
+              setStats({
+                totalAds: partialResults.length,
+                totalImages: partialResults.flatMap(a => a.imageUrls || []).length,
+                totalVideos: partialResults.flatMap(a => a.videoUrls || []).length,
+                totalKeywords: 0,
+                totalCategories: new Set(partialResults.map(a => a.fashionCategory || 'General')).size,
+                activeCampaigns: sess.adsExtracted,
+              });
+            }
+          } catch {
+            // Silently ignore partial fetch errors
+          }
+        }
+
+        if (sess.status === 'complete' || sess.status === 'error' || sess.status === 'paused') {
           stopPolling();
-          if (sess.status === 'complete') {
+          if (sess.status === 'complete' || sess.status === 'paused') {
             const [results, kws] = await Promise.all([
               scraperApiService.getResults(sessionId),
               scraperApiService.getKeywords(sessionId),
@@ -204,6 +249,7 @@ export function useScraperSession(): UseScraperSessionReturn {
     }, 2000);
   }, [stopPolling]);
 
+
   const startScraping = useCallback(async (domain: string, region: string, maxAds?: number) => {
     stopPolling();
     setAds([]); setKeywords([]); setFeedItems([]); setStats(DEFAULT_STATS);
@@ -218,11 +264,52 @@ export function useScraperSession(): UseScraperSessionReturn {
     }
   }, [backendOnline, startLiveMode, startDemoMode, stopPolling]);
 
-  const stopScraping = useCallback(() => {
+  const stopScraping = useCallback(async () => {
     stopPolling();
     setStatus('paused');
     setSession(prev => prev ? { ...prev, status: 'paused' } : null);
-  }, [stopPolling]);
+
+    if (isDemoMode) return;
+
+    try {
+      if (sessionIdRef.current && backendOnline) {
+        const sess = await scraperApiService.stopScraping(sessionIdRef.current);
+        setSession(sess);
+
+        // Immediately fetch whatever results have been accumulated so far
+        const [results, kws] = await Promise.all([
+          scraperApiService.getResults(sessionIdRef.current),
+          scraperApiService.getKeywords(sessionIdRef.current),
+        ]);
+
+        if (results && results.length > 0) {
+          setAds(results);
+          setKeywords(kws || []);
+          setStats({
+            totalAds: results.length,
+            totalImages: results.flatMap(a => a.imageUrls || []).length,
+            totalVideos: results.flatMap(a => a.videoUrls || []).length,
+            totalKeywords: (kws || []).length,
+            totalCategories: new Set(results.map(a => a.fashionCategory || 'General')).size,
+            activeCampaigns: sess.adsExtracted,
+          });
+
+          const finalFeed = results.slice(0, 20).map((ad, idx) => ({
+            id: `feed_${ad.id || idx}_${idx}`,
+            timestamp: new Date(new Date().getTime() - idx * 1000).toLocaleTimeString(),
+            headline: ad.headline || 'Competitor ad campaign item',
+            cta: ad.ctaText || 'Shop Now',
+            assetType: (ad.adFormat || 'image') as any,
+            brand: ad.brand || sess.domain,
+            status: 'complete' as const
+          }));
+          setFeedItems(finalFeed);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to stop scraping on backend:', err);
+    }
+  }, [backendOnline, isDemoMode, stopPolling]);
 
   const resetScraper = useCallback(() => {
     stopPolling();
