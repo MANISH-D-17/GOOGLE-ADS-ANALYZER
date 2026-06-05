@@ -220,8 +220,22 @@ const BrandComparisonPage: React.FC = () => {
           <select
             value={competitorDomain}
             onChange={(event) => {
-              setCompetitorDomain(event.target.value);
+              const newDomain = event.target.value;
+              setCompetitorDomain(newDomain);
               setComparison(null);
+              if (activeTab === 'comparison') {
+                setLoading(true);
+                setError(null);
+                fetchJson<ComparisonData>(`/api/keywords/comparison?competitor_domain=${encodeURIComponent(newDomain)}`)
+                  .then((data) => {
+                    setComparison(data);
+                    setLoading(false);
+                  })
+                  .catch((err) => {
+                    setError(err.message || 'Failed to load DataForSEO intelligence');
+                    setLoading(false);
+                  });
+              }
             }}
             className="text-xs font-black bg-white border border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-100"
           >
