@@ -49,7 +49,11 @@ BUYING_SEEDS = [
 COMPETITORS = [
     "gocolors.com",
     "zivame.com",
-    "clovia.com"
+    "clovia.com",
+    "jockey.in",
+    "lymio.com",
+    "ajio.com",
+    "myntra.com"
 ]
 
 class KeywordService:
@@ -275,6 +279,26 @@ class KeywordService:
                         elif (val_base % 4) == 0:
                             ranks_for_keyword = True
                             rank = 12 + (val_base % 30)
+                            
+                    elif "ajio" in domain.lower():
+                        # Ajio: Marketplace specialist
+                        if any(x in kw_lower for x in ["online", "price", "sale", "churidar"]):
+                            ranks_for_keyword = True
+                            rank = 1 + (val_base % 5)
+                            is_boosted = True
+                        elif (val_base % 4) == 0:
+                            ranks_for_keyword = True
+                            rank = 10 + (val_base % 30)
+                            
+                    elif "myntra" in domain.lower():
+                        # Myntra: Fashion marketplace specialist
+                        if any(x in kw_lower for x in ["buy", "brand", "style", "activewear"]):
+                            ranks_for_keyword = True
+                            rank = 1 + (val_base % 5)
+                            is_boosted = True
+                        elif (val_base % 4) == 0:
+                            ranks_for_keyword = True
+                            rank = 10 + (val_base % 30)
             
             if ranks_for_keyword:
                 # Determine dynamic volume and traffic estimates

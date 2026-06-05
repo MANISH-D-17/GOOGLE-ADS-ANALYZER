@@ -213,38 +213,44 @@ const BrandComparisonPage: React.FC = () => {
         <div>
           <h1 className="text-2xl font-black text-gray-900 tracking-tight">Brand vs Competitor Intelligence</h1>
           <p className="text-gray-400 mt-1 text-sm font-medium">
-            Twin Birds vs {competitorDomain} - DataForSEO India market keyword and shopping rank intelligence
+            {activeTab === 'comparison'
+              ? `Twin Birds vs ${competitorDomain} - DataForSEO India market keyword and comparison intelligence`
+              : 'Twin Birds - DataForSEO India market keyword and shopping rank intelligence'}
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <select
-            value={competitorDomain}
-            onChange={(event) => {
-              const newDomain = event.target.value;
-              setCompetitorDomain(newDomain);
-              setComparison(null);
-              if (activeTab === 'comparison') {
-                setLoading(true);
-                setError(null);
-                fetchJson<ComparisonData>(`/api/keywords/comparison?competitor_domain=${encodeURIComponent(newDomain)}`)
-                  .then((data) => {
-                    setComparison(data);
-                    setLoading(false);
-                  })
-                  .catch((err) => {
-                    setError(err.message || 'Failed to load DataForSEO intelligence');
-                    setLoading(false);
-                  });
-              }
-            }}
-            className="text-xs font-black bg-white border border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-100"
-          >
-            <option value="gocolors.com">vs Go Colors</option>
-            <option value="jockey.in">vs Jockey</option>
-            <option value="lymio.com">vs Lymio</option>
-            <option value="zivame.com">vs Zivame</option>
-            <option value="clovia.com">vs Clovia</option>
-          </select>
+          {activeTab === 'comparison' && (
+            <select
+              value={competitorDomain}
+              onChange={(event) => {
+                const newDomain = event.target.value;
+                setCompetitorDomain(newDomain);
+                setComparison(null);
+                if (activeTab === 'comparison') {
+                  setLoading(true);
+                  setError(null);
+                  fetchJson<ComparisonData>(`/api/keywords/comparison?competitor_domain=${encodeURIComponent(newDomain)}`)
+                    .then((data) => {
+                      setComparison(data);
+                      setLoading(false);
+                    })
+                    .catch((err) => {
+                      setError(err.message || 'Failed to load DataForSEO intelligence');
+                      setLoading(false);
+                    });
+                }
+              }}
+              className="text-xs font-black bg-white border border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+            >
+              <option value="gocolors.com">vs Go Colors</option>
+              <option value="jockey.in">vs Jockey</option>
+              <option value="lymio.com">vs Lymio</option>
+              <option value="zivame.com">vs Zivame</option>
+              <option value="clovia.com">vs Clovia</option>
+              <option value="ajio.com">vs Ajio</option>
+              <option value="myntra.com">vs Myntra</option>
+            </select>
+          )}
           <button
             onClick={refreshActiveTab}
             className="flex items-center gap-2 rounded-xl bg-gray-900 px-4 py-2 text-xs font-black text-white hover:bg-gray-800 transition-colors"
