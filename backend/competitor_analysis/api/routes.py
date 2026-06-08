@@ -15,6 +15,7 @@ from pydantic import BaseModel
 from sqlalchemy import select, func, desc
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Optional
 
 from database.connection import get_db, ping_db
 from database.models import (
@@ -38,7 +39,7 @@ class TriggerScrapeRequest(BaseModel):
     domain: str
     region: str = "IN"
     maxAds: int = 30
-    sessionId: str | None = None
+    sessionId: Optional[str] = None
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -143,7 +144,7 @@ def _load_snapshot_ads_fallback(session_id: str) -> list:
 
 @router.get("/overview")
 async def get_overview(
-    domain: str | None = None,
+    domain: Optional[str] = None,
     db: AsyncSession = Depends(get_db)
 ):
     """Aggregated competitor overview stats with local snapshot fallback."""
@@ -246,7 +247,7 @@ async def get_overview(
 
 @router.get("/keywords")
 async def get_keywords(
-    domain: str | None = None,
+    domain: Optional[str] = None,
     limit: int = 30,
     db: AsyncSession = Depends(get_db)
 ):
@@ -293,9 +294,9 @@ async def get_keywords(
 
 @router.get("/creatives")
 async def get_creatives(
-    domain: str | None = None,
-    format: str | None = None,
-    category: str | None = None,
+    domain: Optional[str] = None,
+    format: Optional[str] = None,
+    category: Optional[str] = None,
     limit: int = 50,
     offset: int = 0,
     db: AsyncSession = Depends(get_db)
@@ -381,7 +382,7 @@ async def get_creatives(
 
 @router.get("/comparison")
 async def get_comparison(
-    domain: str | None = None,
+    domain: Optional[str] = None,
     db: AsyncSession = Depends(get_db)
 ):
     try:
@@ -454,7 +455,7 @@ async def get_comparison(
 
 @router.get("/recommendations")
 async def get_recommendations(
-    domain: str | None = None,
+    domain: Optional[str] = None,
     db: AsyncSession = Depends(get_db)
 ):
     try:
@@ -579,7 +580,7 @@ async def get_snapshots(db: AsyncSession = Depends(get_db)):
 @router.get("/export")
 async def export_data(
     format: str = Query("json", enum=["json", "csv"]),
-    domain: str | None = None,
+    domain: Optional[str] = None,
     db: AsyncSession = Depends(get_db)
 ):
     query = select(ScrapedAd).order_by(desc(ScrapedAd.created_at)).limit(500)
