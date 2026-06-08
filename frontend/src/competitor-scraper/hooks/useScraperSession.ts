@@ -245,8 +245,17 @@ export function useScraperSession(): UseScraperSessionReturn {
           }
           return; // Stop the polling loop
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error('Polling error:', err);
+        // If we get a 404 (Session not found) or 502 (Bad Gateway due to OOM crash),
+        // we should stop polling and update the UI so it doesn't hang forever.
+        const isServerCrash = err?.response?.status === 404 || err?.response?.status === 502 || err?.status === 404 || err?.status === 502;
+        if (isServerCrash || pollCount > 100) { // Also stop if it's been polling for way too long
+           setStatus('error');
+           setSession(prev => prev ? { ...prev, status: 'error', errorsCount: (prev.errorsCount || 0) + 1 } : null);
+           stopPolling();
+           return;
+        }
       }
 
       // Schedule the next poll only after the current one has finished

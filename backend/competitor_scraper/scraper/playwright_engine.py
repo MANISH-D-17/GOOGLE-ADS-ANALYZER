@@ -170,7 +170,11 @@ class PlaywrightScraper:
                         "--disable-dev-shm-usage",
                         "--disable-gpu",
                         "--disable-software-rasterizer",
-                        "--disable-blink-features=AutomationControlled"
+                        "--disable-blink-features=AutomationControlled",
+                        "--js-flags='--max-old-space-size=150'",
+                        "--disable-extensions",
+                        "--no-zygote",
+                        "--single-process"
                     ]
                 )
                 context = await browser.new_context(
