@@ -50,14 +50,14 @@ export function useScraperSession(): UseScraperSessionReturn {
     scraperApiService.healthCheck().then(setBackendOnline);
     return () => {
       isPollingRef.current = false;
-      if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+      if (pollIntervalRef.current) clearTimeout(pollIntervalRef.current);
       if (demoIntervalRef.current) clearInterval(demoIntervalRef.current);
     };
   }, []);
 
   const stopPolling = useCallback(() => {
     isPollingRef.current = false;
-    if (pollIntervalRef.current) { clearInterval(pollIntervalRef.current); pollIntervalRef.current = null; }
+    if (pollIntervalRef.current) { clearTimeout(pollIntervalRef.current); pollIntervalRef.current = null; }
     if (demoIntervalRef.current) { clearInterval(demoIntervalRef.current); demoIntervalRef.current = null; }
   }, []);
 
@@ -135,9 +135,10 @@ export function useScraperSession(): UseScraperSessionReturn {
     let pollCount = 0;
     let lastAdCount = 0;
 
-    pollIntervalRef.current = setInterval(async () => {
+    const poll = async () => {
+      if (!isPollingRef.current) return;
+      
       try {
-        if (!isPollingRef.current) return;
         const sess = await scraperApiService.getStatus(sessionId);
         if (!isPollingRef.current) return;
         
@@ -242,11 +243,20 @@ export function useScraperSession(): UseScraperSessionReturn {
               setFeedItems(finalFeed);
             }
           }
+          return; // Stop the polling loop
         }
       } catch (err) {
         console.error('Polling error:', err);
       }
-    }, 2000);
+
+      // Schedule the next poll only after the current one has finished
+      if (isPollingRef.current) {
+        pollIntervalRef.current = setTimeout(poll, 2000) as any;
+      }
+    };
+
+    // Start the first poll
+    pollIntervalRef.current = setTimeout(poll, 2000) as any;
   }, [stopPolling]);
 
 
