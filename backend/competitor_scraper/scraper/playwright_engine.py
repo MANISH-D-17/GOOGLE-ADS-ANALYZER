@@ -164,8 +164,14 @@ class PlaywrightScraper:
                 ua = random.choice(USER_AGENTS)
                 browser = await pw.chromium.launch(
                     headless=True,
-                    args=["--no-sandbox", "--disable-dev-shm-usage",
-                          "--disable-blink-features=AutomationControlled"]
+                    args=[
+                        "--no-sandbox",
+                        "--disable-setuid-sandbox",
+                        "--disable-dev-shm-usage",
+                        "--disable-gpu",
+                        "--disable-software-rasterizer",
+                        "--disable-blink-features=AutomationControlled"
+                    ]
                 )
                 context = await browser.new_context(
                     locale="en-IN",
@@ -184,10 +190,13 @@ class PlaywrightScraper:
                     
                     if not advertiser_id:
                         domain_url = f"https://adstransparency.google.com/?region={region}&domain={domain}"
+                        print(f"[Scraper] Navigating to domain URL: {domain_url}")
+                        session_store[session_id]["progress"] = 5
                         await self._goto_with_retry(page, domain_url)
                         await human_delay(2, 5)
 
                         try:
+                            print(f"[Scraper] Waiting for creative-preview for domain {domain}...")
                             await page.wait_for_selector("creative-preview", timeout=25000)
                         except Exception:
                             print("[Scraper] No creative-preview elements found on domain page")
