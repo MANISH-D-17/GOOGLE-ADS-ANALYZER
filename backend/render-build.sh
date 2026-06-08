@@ -8,5 +8,5 @@ pip install -r requirements.txt
 # Download Playwright Chromium browser binary
 playwright install chromium
 
-# Install operating system dependencies required by Chromium (fonts, libraries, etc.)
-playwright install-deps
+# Playwright install-deps is removed because Render native environment pre-installs OS dependencies
+# and does not allow root/su access.
