@@ -482,3 +482,19 @@ class RelatedKeyword(Base):
     relevance_score: Mapped[float] = mapped_column(Float)
     search_volume: Mapped[Optional[int]] = mapped_column(Integer)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+# ────────────────────────────────────────────────────────────
+# 24. serp_cache_snapshots
+# ────────────────────────────────────────────────────────────
+class SERPCacheSnapshot(Base):
+    __tablename__ = "serp_cache_snapshots"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_uuid)
+    fetched_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    keywords: Mapped[list] = mapped_column(JSON)
+    results: Mapped[dict] = mapped_column(JSON)
+    keyword_count: Mapped[int] = mapped_column(Integer, default=0)
+    triggered_by: Mapped[str] = mapped_column(String(50), default="first_fetch")
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+

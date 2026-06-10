@@ -362,7 +362,7 @@ export class ClientCompetitorStore {
       ? compCtas.reduce((a, b, _, arr) => arr.filter(v => v === a).length >= arr.filter(v => v === b).length ? a : b)
       : 'Shop Now';
 
-    const compOffers = ads.map(a => a.offerText).filter(Boolean);
+    const compOffers = ads.map(a => a.offerText).filter(Boolean) as string[];
     const hasDiscount = compOffers.some(o => o.includes('%') || o.toLowerCase().includes('off'));
 
     const benchmark: BenchmarkReport = {

@@ -1,17 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { DashboardLayout } from './components/layout/DashboardLayout';
-import { ExecutiveDashboard } from './dashboards/executive/ExecutiveDashboard';
-import { ProductDashboard } from './dashboards/product/ProductDashboard';
-import { KeywordDashboard } from './dashboards/keywords/KeywordDashboard';
-import { CampaignDashboard } from './dashboards/campaigns/CampaignDashboard';
-import { CreativeDashboard } from './dashboards/creatives/CreativeDashboard';
-import SKUDetailPage from './pages/SKUDetailPage';
-import CompetitorScraperPage from './competitor-scraper/pages/CompetitorScraperPage';
-import CompetitorAnalysisPage from './competitor-analysis/pages/CompetitorAnalysisPage';
-import BrandComparisonPage from './brand-comparison/pages/BrandComparisonPage';
 import { PageLoader } from './components/reusable/PageLoader';
+import { ErrorBoundary } from './components/reusable/ErrorBoundary';
 import { ServerIcon } from 'lucide-react';
+import { Toaster } from 'sonner';
+
+// Lazy loaded routes
+const ExecutiveDashboard = React.lazy(() => import('./dashboards/executive/ExecutiveDashboard').then(m => ({ default: m.ExecutiveDashboard })));
+const ProductDashboard = React.lazy(() => import('./dashboards/product/ProductDashboard').then(m => ({ default: m.ProductDashboard })));
+const KeywordDashboard = React.lazy(() => import('./dashboards/keywords/KeywordDashboard').then(m => ({ default: m.KeywordDashboard })));
+const CampaignDashboard = React.lazy(() => import('./dashboards/campaigns/CampaignDashboard').then(m => ({ default: m.CampaignDashboard })));
+const CreativeDashboard = React.lazy(() => import('./dashboards/creatives/CreativeDashboard').then(m => ({ default: m.CreativeDashboard })));
+const SKUDetailPage = React.lazy(() => import('./pages/SKUDetailPage'));
+const CompetitorScraperPage = React.lazy(() => import('./competitor-scraper/pages/CompetitorScraperPage'));
+const CompetitorAnalysisPage = React.lazy(() => import('./competitor-analysis/pages/CompetitorAnalysisPage'));
+const BrandComparisonPage = React.lazy(() => import('./brand-comparison/pages/BrandComparisonPage'));
 
 const BACKEND = (import.meta as any).env?.VITE_SCRAPER_BACKEND_URL || 'http://localhost:8001';
 const MAX_WAIT_MS = 15_000;   // give up after 15 s
@@ -61,19 +65,25 @@ function App() {
 
   return (
     <DashboardLayout dateRange={dateRange} setDateRange={setDateRange}>
-      <Routes>
-        <Route path="/" element={<ProductDashboard dateRange={dateRange} />} />
-        <Route path="/executive" element={<ExecutiveDashboard dateRange={dateRange} />} />
-        <Route path="/keywords" element={<KeywordDashboard dateRange={dateRange} />} />
-        <Route path="/campaigns" element={<CampaignDashboard dateRange={dateRange} />} />
-        <Route path="/creatives" element={<CreativeDashboard dateRange={dateRange} />} />
-        <Route path="/sku/:id" element={<SKUDetailPage dateRange={dateRange} />} />
-        <Route path="/competitor-scraper" element={<CompetitorScraperPage />} />
-        <Route path="/competitor-analysis" element={<CompetitorAnalysisPage />} />
-        <Route path="/brand-vs-competitor" element={<BrandComparisonPage />} />
-        <Route path="/competitors" element={<Navigate to="/competitor-analysis" replace />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <Toaster position="top-right" richColors />
+      <ErrorBoundary>
+        <Suspense fallback={<PageLoader icon={<ServerIcon />} gradient="from-indigo-600 to-violet-600" color="indigo" label="Loading..." />}>
+          <Routes>
+            <Route path="/" element={<ProductDashboard dateRange={dateRange} />} />
+            <Route path="/executive" element={<ExecutiveDashboard dateRange={dateRange} />} />
+            <Route path="/keywords" element={<KeywordDashboard dateRange={dateRange} />} />
+            <Route path="/campaigns" element={<CampaignDashboard dateRange={dateRange} />} />
+            <Route path="/creatives" element={<CreativeDashboard dateRange={dateRange} />} />
+            <Route path="/sku/:id" element={<SKUDetailPage dateRange={dateRange} />} />
+            <Route path="/competitor-scraper" element={<CompetitorScraperPage />} />
+            <Route path="/competitor-analysis" element={<CompetitorAnalysisPage />} />
+
+            <Route path="/brand-vs-competitor" element={<BrandComparisonPage />} />
+            <Route path="/competitors" element={<Navigate to="/competitor-analysis" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
+      </ErrorBoundary>
     </DashboardLayout>
   );
 }

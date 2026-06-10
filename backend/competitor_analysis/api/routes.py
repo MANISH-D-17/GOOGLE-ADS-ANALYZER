@@ -99,14 +99,19 @@ async def trigger_scrape(
 
     # If sessionId provided, pipe that session's data into PostgreSQL immediately
     if req.sessionId:
-        from api.routes import SESSION_STORE
-        session_data = SESSION_STORE.get(req.sessionId)
-        if session_data and session_data.get("ads"):
-            ads = session_data["ads"]
-            pipeline = StoragePipelineService(db)
-            result = await pipeline.store(req.sessionId, req.domain, req.region, ads)
-            print("[API] Overview end"); return {"status": "stored", "result": result}
-        raise HTTPException(404, "Session not found or has no ads")
+        try:
+            from api.routes import SESSION_STORE
+            session_data = SESSION_STORE.get(req.sessionId)
+            if session_data and session_data.get("ads"):
+                ads = session_data["ads"]
+                pipeline = StoragePipelineService(db)
+                result = await pipeline.store(req.sessionId, req.domain, req.region, ads)
+                print("[API] Overview end"); return {"status": "stored", "result": result}
+            raise HTTPException(404, "Session not found or has no ads")
+        except HTTPException:
+            raise
+        except Exception as db_err:
+            raise HTTPException(status_code=500, detail={"error": str(db_err), "code": "DB_ERROR"})
 
     print("[API] Overview end"); return {"status": "use_sessionId", "message": "Provide a completed sessionId to store data"}
 
@@ -583,80 +588,89 @@ async def export_data(
     domain: Optional[str] = None,
     db: AsyncSession = Depends(get_db)
 ):
-    query = select(ScrapedAd).order_by(desc(ScrapedAd.created_at)).limit(500)
-    if domain:
-        comp = await CompetitorRepository(db).get_by_domain(domain)
-        if comp:
-            query = query.where(ScrapedAd.competitor_id == comp.id)
-    result = await db.execute(query)
-    ads = list(result.scalars().all())
+    try:
+        query = select(ScrapedAd).order_by(desc(ScrapedAd.created_at)).limit(500)
+        if domain:
+            comp = await CompetitorRepository(db).get_by_domain(domain)
+            if comp:
+                query = query.where(ScrapedAd.competitor_id == comp.id)
+        result = await db.execute(query)
+        ads = list(result.scalars().all())
 
-    if format == "json":
-        data = json.dumps([_ad_to_dict(a) for a in ads], indent=2, default=str)
+        if format == "json":
+            data = json.dumps([_ad_to_dict(a) for a in ads], indent=2, default=str)
+            return StreamingResponse(
+                iter([data]), media_type="application/json",
+                headers={"Content-Disposition": f"attachment; filename=competitor_intel_{datetime.utcnow().date()}.json"}
+            )
+
+        # CSV
+        output = io.StringIO()
+        fieldnames = ["id", "brand", "headline", "description", "ctaText", "adFormat",
+                      "fashionCategory", "offerText", "firstSeen", "lastSeen", "composite_score"]
+        writer = csv.DictWriter(output, fieldnames=fieldnames)
+        writer.writeheader()
+        for ad in ads:
+            writer.writerow({
+                "id": ad.id, "brand": ad.brand, "headline": ad.headline,
+                "description": ad.description or "", "ctaText": ad.cta_text or "",
+                "adFormat": ad.ad_format, "fashionCategory": ad.fashion_category or "",
+                "offerText": ad.offer_text or "", "firstSeen": ad.first_seen or "",
+                "lastSeen": ad.last_seen or "", "composite_score": ad.composite_score or 0,
+            })
         return StreamingResponse(
-            iter([data]), media_type="application/json",
-            headers={"Content-Disposition": f"attachment; filename=competitor_intel_{datetime.utcnow().date()}.json"}
+            iter([output.getvalue()]), media_type="text/csv",
+            headers={"Content-Disposition": f"attachment; filename=competitor_intel_{datetime.utcnow().date()}.csv"}
         )
-
-    # CSV
-    output = io.StringIO()
-    fieldnames = ["id", "brand", "headline", "description", "ctaText", "adFormat",
-                  "fashionCategory", "offerText", "firstSeen", "lastSeen", "composite_score"]
-    writer = csv.DictWriter(output, fieldnames=fieldnames)
-    writer.writeheader()
-    for ad in ads:
-        writer.writerow({
-            "id": ad.id, "brand": ad.brand, "headline": ad.headline,
-            "description": ad.description or "", "ctaText": ad.cta_text or "",
-            "adFormat": ad.ad_format, "fashionCategory": ad.fashion_category or "",
-            "offerText": ad.offer_text or "", "firstSeen": ad.first_seen or "",
-            "lastSeen": ad.last_seen or "", "composite_score": ad.composite_score or 0,
-        })
-    return StreamingResponse(
-        iter([output.getvalue()]), media_type="text/csv",
-        headers={"Content-Disposition": f"attachment; filename=competitor_intel_{datetime.utcnow().date()}.csv"}
-    )
+    except Exception as db_err:
+        raise HTTPException(status_code=500, detail={"error": str(db_err), "code": "DB_ERROR"})
 
 # ── 9. Delete Session ─────────────────────────────────────────────────────────
 
 @router.delete("/session/{session_id}")
 async def delete_session(session_id: str, db: AsyncSession = Depends(get_db)):
     """Delete a scrape session and all its associated data."""
-    from sqlalchemy import text
-    
-    # Find the session
-    result = await db.execute(select(ScrapeSession).where(ScrapeSession.id == session_id))
-    session = result.scalar_one_or_none()
-    if not session:
-        # Also check by session_key
-        result = await db.execute(select(ScrapeSession).where(ScrapeSession.session_key == session_id))
+    try:
+        from sqlalchemy import text
+        
+        # Find the session
+        result = await db.execute(select(ScrapeSession).where(ScrapeSession.id == session_id))
         session = result.scalar_one_or_none()
-    
-    if not session:
-        raise HTTPException(404, "Session not found")
+        if not session:
+            # Also check by session_key
+            result = await db.execute(select(ScrapeSession).where(ScrapeSession.session_key == session_id))
+            session = result.scalar_one_or_none()
+        
+        if not session:
+            raise HTTPException(404, "Session not found")
 
-    # 1. Delete analysis records
-    ads_result = await db.execute(select(ScrapedAd.id).where(ScrapedAd.session_id == session.id))
-    ad_ids = [r[0] for r in ads_result.all()]
-    
-    if ad_ids:
-        # Use tuple conversion for SQLAlchemy 'IN' clause
-        ids_tuple = tuple(ad_ids)
-        await db.execute(text("DELETE FROM creative_analysis WHERE ad_id IN :ids"), {"ids": ids_tuple})
-        await db.execute(text("DELETE FROM emotional_analysis WHERE ad_id IN :ids"), {"ids": ids_tuple})
-        await db.execute(text("DELETE FROM color_analysis WHERE ad_id IN :ids"), {"ids": ids_tuple})
-        await db.execute(text("DELETE FROM cta_analysis WHERE ad_id IN :ids"), {"ids": ids_tuple})
-        await db.execute(text("DELETE FROM scraped_images WHERE ad_id IN :ids"), {"ids": ids_tuple})
-        await db.execute(text("DELETE FROM inferred_keywords WHERE ad_id IN :ids"), {"ids": ids_tuple})
-        await db.execute(text("DELETE FROM scraped_ads WHERE session_id = :sid"), {"sid": session.id})
+        # 1. Delete analysis records
+        ads_result = await db.execute(select(ScrapedAd.id).where(ScrapedAd.session_id == session.id))
+        ad_ids = [r[0] for r in ads_result.all()]
+        
+        if ad_ids:
+            # Use tuple conversion for SQLAlchemy 'IN' clause
+            ids_tuple = tuple(ad_ids)
+            await db.execute(text("DELETE FROM creative_analysis WHERE ad_id IN :ids"), {"ids": ids_tuple})
+            await db.execute(text("DELETE FROM emotional_analysis WHERE ad_id IN :ids"), {"ids": ids_tuple})
+            await db.execute(text("DELETE FROM color_analysis WHERE ad_id IN :ids"), {"ids": ids_tuple})
+            await db.execute(text("DELETE FROM cta_analysis WHERE ad_id IN :ids"), {"ids": ids_tuple})
+            await db.execute(text("DELETE FROM scraped_images WHERE ad_id IN :ids"), {"ids": ids_tuple})
+            await db.execute(text("DELETE FROM inferred_keywords WHERE ad_id IN :ids"), {"ids": ids_tuple})
+            await db.execute(text("DELETE FROM scraped_ads WHERE session_id = :sid"), {"sid": session.id})
 
-    # 2. Delete snapshots and session
-    await db.execute(text("DELETE FROM competitor_snapshots WHERE session_id = :sid"), {"sid": session.id})
-    await db.execute(text("DELETE FROM ai_recommendations WHERE session_id = :sid"), {"sid": session.id})
-    await db.execute(text("DELETE FROM scrape_sessions WHERE id = :sid"), {"sid": session.id})
-    
-    await db.commit()
-    print("[API] Overview end"); return {"status": "deleted", "sessionId": session_id}
+        # 2. Delete snapshots and session
+        await db.execute(text("DELETE FROM competitor_snapshots WHERE session_id = :sid"), {"sid": session.id})
+        await db.execute(text("DELETE FROM ai_recommendations WHERE session_id = :sid"), {"sid": session.id})
+        await db.execute(text("DELETE FROM scrape_sessions WHERE id = :sid"), {"sid": session.id})
+        
+        await db.commit()
+        print("[API] Overview end"); return {"status": "deleted", "sessionId": session_id}
+    except HTTPException:
+        raise
+    except Exception as db_err:
+        await db.rollback()
+        raise HTTPException(status_code=500, detail={"error": str(db_err), "code": "DB_ERROR"})
 
 
 @router.post("/import-zip")
@@ -811,7 +825,7 @@ async def import_zip_data(
         await db.rollback()
         if os.path.exists(processing_dir):
             shutil.rmtree(processing_dir)
-        raise HTTPException(status_code=500, detail=f"Database import failed: {str(db_err)}")
+        raise HTTPException(status_code=500, detail={"error": str(db_err), "code": "DB_ERROR"})
         
     # Clean up unzipped folder in processing
     if os.path.exists(processing_dir):

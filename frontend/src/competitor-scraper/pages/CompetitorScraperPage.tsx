@@ -5,6 +5,7 @@ import {
   Wifi, WifiOff, ShoppingBag, Image, Video, Tag, Grid, Zap, BarChart2,
   Trash2, History, ChevronRight, Download
 } from 'lucide-react';
+import { toast } from 'sonner';
 import '../styles/scraper.css';
 import { useScraperSession } from '../hooks/useScraperSession';
 import { ScraperStatusPanel } from '../components/ScraperStatusPanel';
@@ -76,7 +77,7 @@ const CompetitorScraperPage: React.FC = () => {
       await competitorApiService.deleteSession(sessionId);
       await fetchHistory();
     } catch (err) {
-      alert('Failed to delete session');
+      toast.error('Failed to delete session');
     }
   };
 

@@ -4,6 +4,8 @@ import {
   AlertCircle,
   ArrowRight,
   BarChart3,
+  CheckCircle,
+  Clock,
   Crown,
   Info,
   ExternalLink,
@@ -16,6 +18,9 @@ import {
   Zap,
   type LucideIcon,
 } from 'lucide-react';
+import { keywordCacheService } from '../services/keywordCacheService';
+import { competitorApiService } from '../../competitor-analysis/services/competitorApiService';
+import SERPSnapshotTab from '../components/SERPSnapshotTab';
 import {
   Bar,
   BarChart,
@@ -78,6 +83,7 @@ const TABS = [
   { id: 'buying', label: 'Buying Keywords', icon: ShoppingBag },
   { id: 'shopping-rank', label: 'Google Shopping Rank', icon: Crown },
   { id: 'comparison', label: 'vs Competitor', icon: BarChart3 },
+  { id: 'serp-snapshots', label: 'SERP Snapshots', icon: BarChart3 },
 ];
 
 function tierColor(tier?: string) {
@@ -140,6 +146,8 @@ const NoDataState: React.FC<{ setup?: Record<string, string>; tab?: string }> = 
 const BrandComparisonPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('recommendations');
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [refreshStatus, setRefreshStatus] = useState<null | 'success' | 'error'>(null);
   const [shoppingLoading, setShoppingLoading] = useState(false);
   const [recommendations, setRecommendations] = useState<KeywordRow[]>([]);
   const [infoKeywords, setInfoKeywords] = useState<KeywordRow[]>([]);
@@ -151,71 +159,75 @@ const BrandComparisonPage: React.FC = () => {
   const [summaryRec, setSummaryRec] = useState<Record<string, any>>({});
   const [error, setError] = useState<string | null>(null);
   const [glossaryOpen, setGlossaryOpen] = useState(false);
+  const [cacheLabel, setCacheLabel] = useState<string | null>(null);
+  const [isStale, setIsStale] = useState(false);
+  const [latestSerpSnapshotId, setLatestSerpSnapshotId] = useState<string | null>(null);
 
-  const loadBuyingKeywords = async () => {
-    if (buyingKeywords.length > 0) return buyingKeywords;
-    const data = await fetchJson<{ keywords: KeywordRow[] }>('/api/keywords/buying');
-    setBuyingKeywords(data.keywords || []);
-    return data.keywords || [];
-  };
-
-  const loadTab = async (tab: string, force = false) => {
-    setLoading(true);
-    setError(null);
-    try {
-      if (tab === 'recommendations' && (force || recommendations.length === 0)) {
-        const data = await fetchJson<{ recommendations: KeywordRow[]; summary: Record<string, any> }>('/api/keywords/recommendations');
-        setRecommendations(data.recommendations || []);
-        setSummaryRec(data.summary || {});
-      }
-      if (tab === 'informational' && (force || infoKeywords.length === 0)) {
-        const data = await fetchJson<{ keywords: KeywordRow[] }>('/api/keywords/informational');
-        setInfoKeywords(data.keywords || []);
-      }
-      if (tab === 'buying' && (force || buyingKeywords.length === 0)) {
-        await loadBuyingKeywords();
-      }
-      if (tab === 'shopping-rank') {
-        await loadBuyingKeywords();
-      }
-      if (tab === 'comparison' && (force || !comparison)) {
-        const data = await fetchJson<ComparisonData>(`/api/keywords/comparison?competitor_domain=${encodeURIComponent(competitorDomain)}`);
-        setComparison(data);
-      }
-    } catch (err: any) {
-      setError(err.message || 'Failed to load DataForSEO intelligence');
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // ── Hydrate from localStorage on mount — NO API call ─────────────────────
   useEffect(() => {
-    loadTab('recommendations');
+    const cached = keywordCacheService.load();
+    if (cached) {
+      setRecommendations(cached.recommendations || []);
+      setSummaryRec(cached.summaryRec || {});
+      setInfoKeywords(cached.infoKeywords || []);
+      setBuyingKeywords(cached.buyingKeywords || []);
+      if (cached.comparison?.[competitorDomain]) {
+        setComparison(cached.comparison[competitorDomain]);
+      }
+      setLatestSerpSnapshotId(cached.serpSnapshotId || null);
+      setCacheLabel(keywordCacheService.formatSavedAt(cached));
+      setIsStale(keywordCacheService.isStale(cached));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const radarData = useMemo(() => {
-    if (!comparison) return [];
-    const summary = comparison.summary;
-    return [
-      { subject: 'Keyword Count', mine: summary.my_keyword_count || 0, comp: summary.competitor_keyword_count || 0 },
-      { subject: 'Buying KW', mine: summary.my_buying_keywords || 0, comp: Math.round((summary.competitor_keyword_count || 0) * 0.3) },
-      { subject: 'Info KW', mine: summary.my_info_keywords || 0, comp: Math.round((summary.competitor_keyword_count || 0) * 0.4) },
-      { subject: 'Shared KW', mine: summary.shared_count || 0, comp: summary.shared_count || 0 },
-    ];
-  }, [comparison]);
+  // ── Refresh ALL tabs + SERP snapshot in parallel ──────────────────────────
+  const refreshAll = async () => {
+    setRefreshing(true);
+    setRefreshStatus(null);
+    setError(null);
+    try {
+      const [recData, infoData, buyData, compData, serpRes] = await Promise.allSettled([
+        fetchJson<{ recommendations: KeywordRow[]; summary: Record<string, any> }>('/api/keywords/recommendations'),
+        fetchJson<{ keywords: KeywordRow[] }>('/api/keywords/informational'),
+        fetchJson<{ keywords: KeywordRow[] }>('/api/keywords/buying'),
+        fetchJson<ComparisonData>(`/api/keywords/comparison?competitor_domain=${encodeURIComponent(competitorDomain)}`),
+        competitorApiService.refreshSERP(),
+      ]);
 
-  const handleTabChange = (tab: string) => {
-    setActiveTab(tab);
-    loadTab(tab);
-  };
+      const newRec = recData.status === 'fulfilled' ? recData.value.recommendations || [] : recommendations;
+      const newSummary = recData.status === 'fulfilled' ? recData.value.summary || {} : summaryRec;
+      const newInfo = infoData.status === 'fulfilled' ? infoData.value.keywords || [] : infoKeywords;
+      const newBuy = buyData.status === 'fulfilled' ? buyData.value.keywords || [] : buyingKeywords;
+      const newComp = compData.status === 'fulfilled' ? compData.value : comparison;
+      const newSerpId = serpRes.status === 'fulfilled' && serpRes.value?.snapshot_id ? serpRes.value.snapshot_id : null;
 
-  const refreshActiveTab = () => {
-    if (activeTab === 'recommendations') setRecommendations([]);
-    if (activeTab === 'informational') setInfoKeywords([]);
-    if (activeTab === 'buying') setBuyingKeywords([]);
-    if (activeTab === 'comparison') setComparison(null);
-    loadTab(activeTab, true);
+      setRecommendations(newRec);
+      setSummaryRec(newSummary);
+      setInfoKeywords(newInfo);
+      setBuyingKeywords(newBuy);
+      if (newComp) setComparison(newComp);
+      if (newSerpId) setLatestSerpSnapshotId(newSerpId);
+
+      const saved = keywordCacheService.save({
+        recommendations: newRec,
+        summaryRec: newSummary,
+        infoKeywords: newInfo,
+        buyingKeywords: newBuy,
+        comparison: { [competitorDomain]: newComp },
+        serpSnapshotId: newSerpId,
+      });
+
+      setCacheLabel(keywordCacheService.formatSavedAt(saved));
+      setIsStale(false);
+      setRefreshStatus('success');
+      setTimeout(() => setRefreshStatus(null), 5000);
+    } catch (err: any) {
+      setError(err.message || 'Refresh failed');
+      setRefreshStatus('error');
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   const loadShoppingRank = async (keyword: string) => {
@@ -236,6 +248,59 @@ const BrandComparisonPage: React.FC = () => {
     }
   };
 
+  const radarData = useMemo(() => {
+    if (!comparison) return [];
+    const summary = comparison.summary;
+    return [
+      { subject: 'Keyword Count', mine: summary.my_keyword_count || 0, comp: summary.competitor_keyword_count || 0 },
+      { subject: 'Buying KW', mine: summary.my_buying_keywords || 0, comp: Math.round((summary.competitor_keyword_count || 0) * 0.3) },
+      { subject: 'Info KW', mine: summary.my_info_keywords || 0, comp: Math.round((summary.competitor_keyword_count || 0) * 0.4) },
+      { subject: 'Shared KW', mine: summary.shared_count || 0, comp: summary.shared_count || 0 },
+    ];
+  }, [comparison]);
+
+  // ── Switch tabs + fetch from API if this tab has no cached data ────────────
+  const handleTabChange = async (tab: string) => {
+    setActiveTab(tab);
+    // SERP Snapshots tab has its own internal data fetching
+    if (tab === 'serp-snapshots') return;
+
+    // If we already have data for this tab (from cache or prior fetch), skip API call
+    if (tab === 'recommendations' && recommendations.length > 0) return;
+    if (tab === 'informational' && infoKeywords.length > 0) return;
+    if (tab === 'buying' && buyingKeywords.length > 0) return;
+    if (tab === 'shopping-rank' && buyingKeywords.length > 0) return;
+    if (tab === 'comparison' && comparison) return;
+
+    // Data missing — fetch from API for this specific tab
+    setLoading(true);
+    setError(null);
+    try {
+      if (tab === 'recommendations') {
+        const data = await fetchJson<{ recommendations: KeywordRow[]; summary: Record<string, any> }>('/api/keywords/recommendations');
+        setRecommendations(data.recommendations || []);
+        setSummaryRec(data.summary || {});
+      }
+      if (tab === 'informational') {
+        const data = await fetchJson<{ keywords: KeywordRow[] }>('/api/keywords/informational');
+        setInfoKeywords(data.keywords || []);
+      }
+      if (tab === 'buying' || tab === 'shopping-rank') {
+        const data = await fetchJson<{ keywords: KeywordRow[] }>('/api/keywords/buying');
+        setBuyingKeywords(data.keywords || []);
+      }
+      if (tab === 'comparison') {
+        const data = await fetchJson<ComparisonData>(`/api/keywords/comparison?competitor_domain=${encodeURIComponent(competitorDomain)}`);
+        setComparison(data);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Failed to load keyword data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   return (
     <div className="space-y-8 pb-20 animate-in fade-in duration-500">
       <div className="flex items-start justify-between gap-4 flex-wrap">
@@ -243,31 +308,38 @@ const BrandComparisonPage: React.FC = () => {
           <h1 className="text-2xl font-black text-gray-900 tracking-tight">Brand vs Competitor Intelligence</h1>
           <p className="text-gray-400 mt-1 text-sm font-medium">
             {activeTab === 'comparison'
-              ? `Twin Birds vs ${competitorDomain} - DataForSEO India market keyword and comparison intelligence`
-              : 'Twin Birds - DataForSEO India market keyword and shopping rank intelligence'}
+              ? `Twin Birds vs ${competitorDomain} — SerpApi India keyword intelligence`
+              : 'Twin Birds — keyword and shopping rank intelligence'}
           </p>
+          {/* Cache timestamp */}
+          {cacheLabel && (
+            <div className="mt-2 flex items-center gap-2">
+              <span className={cn(
+                'flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-lg',
+                isStale ? 'bg-amber-50 text-amber-600' : 'bg-gray-50 text-gray-400'
+              )}>
+                <Clock size={10} />
+                {isStale ? 'Data may be outdated — ' : 'Saved: '}{cacheLabel}
+              </span>
+              {refreshStatus === 'success' && (
+                <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-lg bg-emerald-50 text-emerald-600">
+                  <CheckCircle size={10} /> All data refreshed!
+                </span>
+              )}
+            </div>
+          )}
+          {!cacheLabel && (
+            <p className="mt-2 text-[10px] text-amber-600 font-bold uppercase tracking-widest">
+              ⚠ No saved data — click Refresh All Data to load.
+            </p>
+          )}
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           {activeTab === 'comparison' && (
             <select
               value={competitorDomain}
               onChange={(event) => {
-                const newDomain = event.target.value;
-                setCompetitorDomain(newDomain);
-                setComparison(null);
-                if (activeTab === 'comparison') {
-                  setLoading(true);
-                  setError(null);
-                  fetchJson<ComparisonData>(`/api/keywords/comparison?competitor_domain=${encodeURIComponent(newDomain)}`)
-                    .then((data) => {
-                      setComparison(data);
-                      setLoading(false);
-                    })
-                    .catch((err) => {
-                      setError(err.message || 'Failed to load DataForSEO intelligence');
-                      setLoading(false);
-                    });
-                }
+                setCompetitorDomain(event.target.value);
               }}
               className="text-xs font-black bg-white border border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-100"
             >
@@ -281,11 +353,12 @@ const BrandComparisonPage: React.FC = () => {
             </select>
           )}
           <button
-            onClick={refreshActiveTab}
-            className="flex items-center gap-2 rounded-xl bg-gray-900 px-4 py-2 text-xs font-black text-white hover:bg-gray-800 transition-colors"
+            onClick={refreshAll}
+            disabled={refreshing}
+            className="flex items-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 px-5 py-2.5 text-xs font-black text-white transition-colors disabled:opacity-60"
           >
-            <RefreshCcw size={12} className={loading ? 'animate-spin' : ''} />
-            Refresh
+            <RefreshCcw size={12} className={refreshing ? 'animate-spin' : ''} />
+            {refreshing ? 'Refreshing…' : 'Refresh All Data'}
           </button>
         </div>
       </div>
@@ -407,6 +480,9 @@ const BrandComparisonPage: React.FC = () => {
             )}
             {activeTab === 'comparison' && comparison && (
               <ComparisonTab comparison={comparison} competitorDomain={competitorDomain} radarData={radarData} />
+            )}
+            {activeTab === 'serp-snapshots' && (
+              <SERPSnapshotTab latestSnapshotId={latestSerpSnapshotId} />
             )}
           </motion.div>
         </AnimatePresence>

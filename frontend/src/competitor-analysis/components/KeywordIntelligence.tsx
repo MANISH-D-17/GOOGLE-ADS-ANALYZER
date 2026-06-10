@@ -23,6 +23,9 @@ import KeywordGapAnalysis from './keywords/KeywordGapAnalysis';
 import SERPPositionTable from './keywords/SERPPositionTable';
 import SearchIntentDistribution from './keywords/SearchIntentDistribution';
 import KeywordNegativeSuggestions from './keywords/KeywordNegativeSuggestions';
+import { serpCacheStore } from '../services/serpCacheStore';
+import { RefreshCw, Clock } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface KeywordIntelligenceProps {
   keywords: KeywordIntel[];
@@ -34,6 +37,8 @@ const KeywordIntelligence: React.FC<KeywordIntelligenceProps> = ({ keywords, loa
   const [activeView, setActiveView] = useState<'nlp' | 'volume' | 'serp' | 'gap' | 'negative'>('nlp');
   const [negatives, setNegatives] = useState<any[]>([]);
   const [negativesLoading, setNegativesLoading] = useState(false);
+  const [serpLoading, setSerpLoading] = useState(false);
+  const [serpRefreshed, setSerpRefreshed] = useState(0); // to force re-render on store update
 
   useEffect(() => {
     const fetchNegatives = async () => {
@@ -48,6 +53,15 @@ const KeywordIntelligence: React.FC<KeywordIntelligenceProps> = ({ keywords, loa
       }
     };
     fetchNegatives();
+
+    // Load SERP cache on mount
+    const loadSerp = async () => {
+      setSerpLoading(true);
+      await serpCacheStore.loadFromCache();
+      setSerpLoading(false);
+      setSerpRefreshed(Date.now());
+    };
+    loadSerp();
   }, [domain]);
 
   if (loading && keywords.length === 0) {
@@ -75,7 +89,24 @@ const KeywordIntelligence: React.FC<KeywordIntelligenceProps> = ({ keywords, loa
     opportunity_level: (k.opportunity_level === 'high' || k.opportunity_level === 'medium' || k.opportunity_level === 'low' ? k.opportunity_level : 'low') as 'high' | 'medium' | 'low'
   }));
 
-  const serpData: any[] = []; // This should come from a separate API call or prop
+  const rawItems = serpCacheStore.currentSnapshot?.data?.tasks?.[0]?.result?.[0]?.items || [];
+  const serpData = rawItems.map((item: any) => ({
+    position: item.rank_group || item.position || 0,
+    url: item.url || '',
+    domain: item.domain || '',
+    title: item.title || '',
+    is_featured: item.is_featured || item.type === 'featured_snippet' || false,
+  }));
+  
+  const handleRefreshSERP = async () => {
+    setSerpLoading(true);
+    try {
+      await serpCacheStore.triggerRefresh();
+      setSerpRefreshed(Date.now());
+    } finally {
+      setSerpLoading(false);
+    }
+  };
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
@@ -242,9 +273,36 @@ const KeywordIntelligence: React.FC<KeywordIntelligenceProps> = ({ keywords, loa
 
       {activeView === 'serp' && (
         <div className="rounded-[2.5rem] border border-gray-100 bg-white p-10 shadow-sm">
-          <div className="mb-10">
-            <h3 className="text-xl font-black text-gray-900 tracking-tight uppercase">SERP Intelligence</h3>
-            <p className="mt-1 text-xs font-bold text-gray-400 uppercase tracking-widest">Real-time organic search rankings and featured snippet status.</p>
+          <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h3 className="text-xl font-black text-gray-900 tracking-tight uppercase">SERP Intelligence</h3>
+              <p className="mt-1 text-xs font-bold text-gray-400 uppercase tracking-widest">Real-time organic search rankings and featured snippet status.</p>
+            </div>
+            
+            <div className="flex flex-wrap items-center gap-4 bg-gray-50 px-4 py-3 rounded-2xl border border-gray-100">
+              <div className="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase tracking-widest">
+                <Clock className="w-4 h-4" />
+                Data last refreshed: {serpCacheStore.lastRefreshedAt ? new Date(serpCacheStore.lastRefreshedAt).toLocaleString() : 'Never'}
+              </div>
+              
+              <button 
+                onClick={handleRefreshSERP}
+                disabled={serpLoading}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-xs font-black uppercase tracking-widest rounded-xl hover:bg-gray-800 transition-colors disabled:opacity-50"
+              >
+                <RefreshCw className={cn("w-4 h-4", serpLoading && "animate-spin")} />
+                {serpLoading ? 'Refreshing...' : 'Refresh Data'}
+              </button>
+
+              {serpCacheStore.previousSnapshot && (
+                <Link 
+                  to={`/serp-comparison?a=${serpCacheStore.previousSnapshot.snapshot_id}&b=${serpCacheStore.currentSnapshot?.snapshot_id}`}
+                  className="text-xs font-black text-blue-600 hover:text-blue-800 uppercase tracking-widest underline"
+                >
+                  Compare with previous
+                </Link>
+              )}
+            </div>
           </div>
           <SERPPositionTable results={serpData} />
         </div>

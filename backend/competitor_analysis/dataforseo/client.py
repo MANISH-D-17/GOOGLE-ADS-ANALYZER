@@ -36,7 +36,7 @@ class DataForSEORestClient:
             "Accept-Encoding": "gzip"
         }
         
-        async with httpx.AsyncClient(timeout=60.0) as client:
+        async with httpx.AsyncClient(timeout=30.0) as client:
             if isinstance(data, (dict, list)):
                 data = json.dumps(data)
             

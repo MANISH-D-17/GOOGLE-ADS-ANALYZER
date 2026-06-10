@@ -7,6 +7,7 @@ import { Search, Users, Activity, BarChart2 } from 'lucide-react';
 import { PieChart, Pie, Cell, Tooltip as RechartsTooltip, ResponsiveContainer, Legend } from 'recharts';
 import { cn } from '../../lib/utils';
 import { competitorApiService } from '../../competitor-analysis/services/competitorApiService';
+import { ChannelAttributionPanel } from './components/ChannelAttributionPanel';
 
 const getScaleFactor = (range?: string): number => {
   switch (range) {
@@ -364,6 +365,10 @@ export const KeywordDashboard: React.FC<{ dateRange: string }> = ({ dateRange })
           icon={<BarChart2 />}
           isLoading={isLoading}
         />
+      </div>
+
+      <div className="mt-8">
+        <ChannelAttributionPanel trafficData={data} />
       </div>
 
       {!isLoading && (

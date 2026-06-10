@@ -21,14 +21,20 @@ from api.routes import router as scraper_router
 from competitor_analysis.api.routes import router as analysis_router
 from competitor_analysis.api.keyword_routes import router as kw_router
 from competitor_analysis.api.serp_routes import router as serp_router
+from competitor_analysis.api.serp_cache_routes import router as serp_cache_router
 
 
 from fastapi.staticfiles import StaticFiles
 
+from database.connection import init_db
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # PostgreSQL bypassed for in-browser client competitor analysis
-    print("[Server] PostgreSQL startup bypassed. Running GADS in browser-only mode.")
+    print("[Server] Starting up. Initializing PostgreSQL Database...")
+    try:
+        await init_db()
+    except Exception as e:
+        print(f"[Server] Failed to initialize database: {e}")
     yield
     print("[Server] Shutting down.")
 
@@ -68,6 +74,7 @@ app.include_router(analysis_router, prefix="/api/competitor-analysis")
 # DataForSEO Intelligence routes
 app.include_router(kw_router, prefix="/api/keywords", tags=["Keywords"])
 app.include_router(serp_router, prefix="/api/serp", tags=["SERP"])
+app.include_router(serp_cache_router, prefix="/api/serp-cache", tags=["SERP Cache"])
 
 
 @app.get("/health")

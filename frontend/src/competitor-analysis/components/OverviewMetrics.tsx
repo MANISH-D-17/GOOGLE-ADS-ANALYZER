@@ -9,8 +9,10 @@ import {
   Activity,
   ArrowUpRight,
   ArrowDownRight,
-  Brain
+  Brain,
+  Search
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { OverviewResponse, CompetitorOverview } from '../services/competitorApiService';
 
 const colorClasses: Record<string, { bg: string; text: string; bgBar: string }> = {
@@ -69,23 +71,27 @@ const OverviewMetrics: React.FC<OverviewMetricsProps> = ({ overview, activeCompe
       trend: '-2%',
       trendUp: false
     },
+    {
+      label: 'Keyword Gaps Discovered',
+      value: '24',
+      icon: Search,
+      color: 'rose',
+      trend: 'New',
+      trendUp: true,
+      link: '/serp-comparison'
+    }
   ];
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       {/* KPI Grid */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-5">
         {stats.map((stat, i) => {
           const Icon = stat.icon;
           const colors = colorClasses[stat.color] || { bg: 'bg-gray-50', text: 'text-gray-600', bgBar: 'bg-gray-600' };
-          return (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="group relative overflow-hidden rounded-3xl border border-gray-100 bg-white p-6 shadow-sm transition-all hover:shadow-md"
-            >
+          
+          const CardContent = (
+            <>
               <div className="flex items-center justify-between">
                 <div className={`rounded-2xl p-3 ${colors.bg} ${colors.text}`}>
                   <Icon className="h-5 w-5" />
@@ -100,6 +106,29 @@ const OverviewMetrics: React.FC<OverviewMetricsProps> = ({ overview, activeCompe
                 <h3 className="mt-1 text-2xl font-black text-gray-900 tracking-tight">{stat.value}</h3>
               </div>
               <div className={`absolute bottom-0 left-0 h-1 w-full ${colors.bgBar} opacity-0 transition-opacity group-hover:opacity-100`} />
+            </>
+          );
+
+          return stat.link ? (
+            <Link key={stat.label} to={stat.link} className="block cursor-pointer">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="group relative overflow-hidden rounded-3xl border border-gray-100 bg-white p-6 shadow-sm transition-all hover:shadow-md h-full"
+              >
+                {CardContent}
+              </motion.div>
+            </Link>
+          ) : (
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className="group relative overflow-hidden rounded-3xl border border-gray-100 bg-white p-6 shadow-sm transition-all hover:shadow-md"
+            >
+              {CardContent}
             </motion.div>
           );
         })}

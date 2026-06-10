@@ -7,8 +7,8 @@ import { Package, Activity, DollarSign, TrendingUp, TrendingDown } from 'lucide-
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend } from 'recharts';
 import { cn } from '../../lib/utils';
 import { colors } from '../../theme/colors';
-
 import { useNavigate } from 'react-router-dom';
+import { SKUOpportunityMatrix } from './components/SKUOpportunityMatrix';
 
 export const ProductDashboard: React.FC<{ dateRange: string }> = ({ dateRange }) => {
   const [data, setData] = useState<ProductData[]>([]);
@@ -302,14 +302,19 @@ export const ProductDashboard: React.FC<{ dateRange: string }> = ({ dateRange })
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
           </div>
         ) : (
-          <DataTable 
-            data={filteredData} 
-            columns={columns} 
+          <>
+            <div className="mb-8">
+              <SKUOpportunityMatrix products={filteredData} />
+            </div>
+            <DataTable 
+              data={filteredData} 
+              columns={columns} 
             onRowClick={(row) => navigate(`/sku/${encodeURIComponent(row.id)}`)}
             filterSlot={filterSlot}
             defaultSortKey="title"
             defaultSortDir="asc"
           />
+          </>
         )}
       </div>
     </div>
