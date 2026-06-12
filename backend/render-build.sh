@@ -5,9 +5,7 @@ set -o errexit
 # Install Python dependencies
 pip install -r requirements.txt
 
-# Force Playwright to install binaries into the project folder instead of the global cache,
-# so they are successfully carried over from the Render build container to the runtime container.
-export PLAYWRIGHT_BROWSERS_PATH=0
+# Playwright will use the default global cache, which Render automatically preserves.
 
 # Download Playwright Chromium browser binary
 playwright install chromium
