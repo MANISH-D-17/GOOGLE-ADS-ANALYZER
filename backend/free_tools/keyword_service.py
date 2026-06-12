@@ -425,16 +425,13 @@ async def get_shopping_rank_playwright(keyword: str) -> Dict[str, Any]:
                                 "reviews_count": item.get("reviews", 0),
                             })
                     elif resp.status == 429:
-                        print(f"[Shopping] SerpApi error 429. Using fallback data for '{keyword}'")
-                        raw_results = _get_fallback_shopping_data(keyword)
+                        print(f"[Shopping] SerpApi error 429 for '{keyword}'")
                     else:
                         print(f"[Shopping] SerpApi error {resp.status}")
         except Exception as e:
             print(f"[Shopping] Scrape failed for '{keyword}': {e}")
-            raw_results = _get_fallback_shopping_data(keyword)
     else:
-        print("[Shopping] SERPAPI_KEY not set — using fallback data.")
-        raw_results = _get_fallback_shopping_data(keyword)
+        print("[Shopping] SERPAPI_KEY not set.")
 
     # Classify results
     results: List[Dict[str, Any]] = []
@@ -496,67 +493,6 @@ def _shopping_recommendation(rank: Optional[int], keyword: str) -> str:
         f"Twin Birds ranks #{rank} — low visibility. "
         "Fix product feed urgently and raise bid strategy target ROAS."
     )
-
-def _get_fallback_shopping_data(keyword: str) -> List[Dict[str, Any]]:
-    import random
-    is_branded = "twin" in keyword.lower() or "bird" in keyword.lower()
-    
-    competitors_pool = [
-        {"domain": "gocolors.com", "merchant": "Go Colors", "price": 899.0, "price_text": "₹899.00"},
-        {"domain": "jockey.in", "merchant": "Jockey", "price": 1099.0, "price_text": "₹1,099.00"},
-        {"domain": "zivame.com", "merchant": "Zivame", "price": 799.0, "price_text": "₹799.00"},
-        {"domain": "myntra.com", "merchant": "Myntra", "price": 699.0, "price_text": "₹699.00"},
-    ]
-    
-    results = []
-    positions = list(range(1, 10))
-    random.shuffle(positions)
-    
-    if is_branded:
-        results.append({
-            "position": positions.pop(0),
-            "title": f"{keyword.title()} - Premium Comfort",
-            "price": 999.0,
-            "price_text": "₹999.00",
-            "merchant": "Twin Birds",
-            "domain": "twinbirds.co.in",
-            "url": "https://twinbirds.co.in",
-            "image_url": "https://images.unsplash.com/photo-1506152983158-b4a74a01c721?w=200",
-            "rating": 4.5,
-            "reviews_count": 120,
-        })
-    else:
-        if random.random() > 0.5:
-            results.append({
-                "position": positions.pop(0),
-                "title": f"Twin Birds {keyword.title()}",
-                "price": 899.0,
-                "price_text": "₹899.00",
-                "merchant": "Twin Birds",
-                "domain": "twinbirds.co.in",
-                "url": "https://twinbirds.co.in",
-                "image_url": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=200",
-                "rating": 4.2,
-                "reviews_count": 85,
-            })
-            
-    for comp in random.sample(competitors_pool, 3):
-        results.append({
-            "position": positions.pop(0),
-            "title": f"{comp['merchant']} {keyword.title()}",
-            "price": comp["price"],
-            "price_text": comp["price_text"],
-            "merchant": comp["merchant"],
-            "domain": comp["domain"],
-            "url": f"https://{comp['domain']}",
-            "image_url": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=200",
-            "rating": round(random.uniform(3.5, 4.8), 1),
-            "reviews_count": random.randint(10, 500),
-        })
-        
-    results.sort(key=lambda x: x["position"])
-    return results
-
 
 # ── 5. Google Search Console CSV Parser ───────────────────────────────────────
 

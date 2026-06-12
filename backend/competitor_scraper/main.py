@@ -22,6 +22,8 @@ from competitor_analysis.api.routes import router as analysis_router
 from competitor_analysis.api.keyword_routes import router as kw_router
 from competitor_analysis.api.serp_routes import router as serp_router
 from competitor_analysis.api.serp_cache_routes import router as serp_cache_router
+from merchant.routes import router as merchant_router
+from gads.routes import router as gads_router
 
 
 from fastapi.staticfiles import StaticFiles
@@ -76,7 +78,9 @@ app.include_router(kw_router, prefix="/api/keywords", tags=["Keywords"])
 app.include_router(serp_router, prefix="/api/serp", tags=["SERP"])
 app.include_router(serp_cache_router, prefix="/api/serp-cache", tags=["SERP Cache"])
 
-
+# Product & Ad Editor routes
+app.include_router(merchant_router, prefix="/api/merchant", tags=["Merchant Center"])
+app.include_router(gads_router, prefix="/api/gads", tags=["Google Ads"])
 @app.get("/health")
 async def health_check():
     from database.connection import ping_db

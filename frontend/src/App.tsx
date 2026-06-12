@@ -16,7 +16,7 @@ const SKUDetailPage = React.lazy(() => import('./pages/SKUDetailPage'));
 const CompetitorScraperPage = React.lazy(() => import('./competitor-scraper/pages/CompetitorScraperPage'));
 const CompetitorAnalysisPage = React.lazy(() => import('./competitor-analysis/pages/CompetitorAnalysisPage'));
 const BrandComparisonPage = React.lazy(() => import('./brand-comparison/pages/BrandComparisonPage'));
-
+const ProductEditorPage = React.lazy(() => import('./product-editor/pages/ProductEditorPage').then(m => ({ default: m.ProductEditorPage })));
 const BACKEND = (import.meta as any).env?.VITE_SCRAPER_BACKEND_URL || 'http://localhost:8001';
 const MAX_WAIT_MS = 15_000;   // give up after 15 s
 const POLL_MS     = 1_500;    // retry every 1.5 s
@@ -79,6 +79,7 @@ function App() {
             <Route path="/competitor-analysis" element={<CompetitorAnalysisPage />} />
 
             <Route path="/brand-vs-competitor" element={<BrandComparisonPage />} />
+            <Route path="/product-editor" element={<ProductEditorPage />} />
             <Route path="/competitors" element={<Navigate to="/competitor-analysis" replace />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

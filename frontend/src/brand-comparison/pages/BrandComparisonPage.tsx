@@ -2,7 +2,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   AlertCircle,
+  ArrowDown,
   ArrowRight,
+  ArrowUp,
   BarChart3,
   CheckCircle,
   Clock,
@@ -20,7 +22,6 @@ import {
 } from 'lucide-react';
 import { keywordCacheService } from '../services/keywordCacheService';
 import { competitorApiService } from '../../competitor-analysis/services/competitorApiService';
-import SERPSnapshotTab from '../components/SERPSnapshotTab';
 import {
   Bar,
   BarChart,
@@ -83,7 +84,6 @@ const TABS = [
   { id: 'buying', label: 'Buying Keywords', icon: ShoppingBag },
   { id: 'shopping-rank', label: 'Google Shopping Rank', icon: Crown },
   { id: 'comparison', label: 'vs Competitor', icon: BarChart3 },
-  { id: 'serp-snapshots', label: 'SERP Snapshots', icon: BarChart3 },
 ];
 
 function tierColor(tier?: string) {
@@ -161,7 +161,8 @@ const BrandComparisonPage: React.FC = () => {
   const [glossaryOpen, setGlossaryOpen] = useState(false);
   const [cacheLabel, setCacheLabel] = useState<string | null>(null);
   const [isStale, setIsStale] = useState(false);
-  const [latestSerpSnapshotId, setLatestSerpSnapshotId] = useState<string | null>(null);
+  const [serpDiffMap, setSerpDiffMap] = useState<Record<string, number | null>>({});
+  const [serpDiffDates, setSerpDiffDates] = useState<{ latestAt: string | null; previousAt: string | null }>({ latestAt: null, previousAt: null });
 
   // ── Hydrate from localStorage on mount — NO API call ─────────────────────
   useEffect(() => {
@@ -174,11 +175,32 @@ const BrandComparisonPage: React.FC = () => {
       if (cached.comparison?.[competitorDomain]) {
         setComparison(cached.comparison[competitorDomain]);
       }
-      setLatestSerpSnapshotId(cached.serpSnapshotId || null);
       setCacheLabel(keywordCacheService.formatSavedAt(cached));
       setIsStale(keywordCacheService.isStale(cached));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Fetch latest vs previous SERP snapshot diff
+  const loadDiff = async () => {
+    try {
+      const res = await fetch(`${API}/api/serp-cache/diff`);
+      if (!res.ok) return;
+      const data: { diffs: Array<{ keyword: string; change: number | null }>; latestAt: string | null; previousAt: string | null } = await res.json();
+      const map: Record<string, number | null> = {};
+      for (const d of data.diffs) {
+        map[d.keyword.toLowerCase()] = d.change;
+      }
+      setSerpDiffMap(map);
+      setSerpDiffDates({ latestAt: data.latestAt, previousAt: data.previousAt });
+    } catch {
+      // Silent fail — arrows just won't appear if backend is offline
+    }
+  };
+
+  // Called once on mount, zero DataForSEO tokens
+  useEffect(() => {
+    loadDiff();
   }, []);
 
   // ── Refresh ALL tabs + SERP snapshot in parallel ──────────────────────────
@@ -200,14 +222,12 @@ const BrandComparisonPage: React.FC = () => {
       const newInfo = infoData.status === 'fulfilled' ? infoData.value.keywords || [] : infoKeywords;
       const newBuy = buyData.status === 'fulfilled' ? buyData.value.keywords || [] : buyingKeywords;
       const newComp = compData.status === 'fulfilled' ? compData.value : comparison;
-      const newSerpId = serpRes.status === 'fulfilled' && serpRes.value?.snapshot_id ? serpRes.value.snapshot_id : null;
 
       setRecommendations(newRec);
       setSummaryRec(newSummary);
       setInfoKeywords(newInfo);
       setBuyingKeywords(newBuy);
       if (newComp) setComparison(newComp);
-      if (newSerpId) setLatestSerpSnapshotId(newSerpId);
 
       const saved = keywordCacheService.save({
         recommendations: newRec,
@@ -215,11 +235,15 @@ const BrandComparisonPage: React.FC = () => {
         infoKeywords: newInfo,
         buyingKeywords: newBuy,
         comparison: { [competitorDomain]: newComp },
-        serpSnapshotId: newSerpId,
+        serpSnapshotId: null,
       });
 
       setCacheLabel(keywordCacheService.formatSavedAt(saved));
       setIsStale(false);
+      
+      // Re-fetch the SERP diff now that the new snapshot is created
+      await loadDiff();
+
       setRefreshStatus('success');
       setTimeout(() => setRefreshStatus(null), 5000);
     } catch (err: any) {
@@ -262,8 +286,6 @@ const BrandComparisonPage: React.FC = () => {
   // ── Switch tabs + fetch from API if this tab has no cached data ────────────
   const handleTabChange = async (tab: string) => {
     setActiveTab(tab);
-    // SERP Snapshots tab has its own internal data fetching
-    if (tab === 'serp-snapshots') return;
 
     // If we already have data for this tab (from cache or prior fetch), skip API call
     if (tab === 'recommendations' && recommendations.length > 0) return;
@@ -458,7 +480,7 @@ const BrandComparisonPage: React.FC = () => {
       ) : (
         <AnimatePresence mode="wait">
           <motion.div key={activeTab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-            {activeTab === 'recommendations' && <RecommendationsTab recommendations={recommendations} />}
+            {activeTab === 'recommendations' && <RecommendationsTab recommendations={recommendations} serpDiffMap={serpDiffMap} serpDiffDates={serpDiffDates} />}
             {activeTab === 'informational' && <InformationalTab keywords={infoKeywords} />}
             {activeTab === 'buying' && (
               <BuyingTab
@@ -480,9 +502,6 @@ const BrandComparisonPage: React.FC = () => {
             )}
             {activeTab === 'comparison' && comparison && (
               <ComparisonTab comparison={comparison} competitorDomain={competitorDomain} radarData={radarData} />
-            )}
-            {activeTab === 'serp-snapshots' && (
-              <SERPSnapshotTab latestSnapshotId={latestSerpSnapshotId} />
             )}
           </motion.div>
         </AnimatePresence>
@@ -517,18 +536,35 @@ const MetricCard: React.FC<{
   );
 };
 
-const RecommendationsTab: React.FC<{ recommendations: KeywordRow[] }> = ({ recommendations }) => (
+const RecommendationsTab: React.FC<{ recommendations: KeywordRow[], serpDiffMap: Record<string, number | null>, serpDiffDates: { latestAt: string | null; previousAt: string | null } }> = ({ recommendations, serpDiffMap, serpDiffDates }) => {
+  const fmt = (iso: string | null) => iso ? new Date(iso.endsWith('Z') ? iso : iso + 'Z').toLocaleString() : 'None';
+  return (
   <div className="space-y-4">
-    <div className="bg-indigo-50/50 border border-indigo-100 rounded-2xl p-6 flex items-start gap-4">
-      <div className="p-3 rounded-xl bg-indigo-100/60 text-indigo-700 flex-shrink-0">
-        <Target size={20} />
+    <div className="bg-indigo-50/50 border border-indigo-100 rounded-2xl p-6 flex flex-col gap-4">
+      <div className="flex items-start gap-4">
+        <div className="p-3 rounded-xl bg-indigo-100/60 text-indigo-700 flex-shrink-0">
+          <Target size={20} />
+        </div>
+        <div>
+          <h4 className="text-xs font-black uppercase tracking-wider text-indigo-900">High-Impact Target Recommendations</h4>
+          <p className="text-xs text-indigo-700/80 mt-1 font-medium leading-relaxed">
+            These are priority keywords calculated by merging search traffic, cost per click, and competitors' gaps. Target <strong>Quick Wins</strong> first to capture high volume with low ranking difficulty, and secure <strong>Protect Brand</strong> terms to block competitors from bid-hijacking your brand name.
+          </p>
+        </div>
       </div>
-      <div>
-        <h4 className="text-xs font-black uppercase tracking-wider text-indigo-900">High-Impact Target Recommendations</h4>
-        <p className="text-xs text-indigo-700/80 mt-1 font-medium leading-relaxed">
-          These are priority keywords calculated by merging search traffic, cost per click, and competitors' gaps. Target <strong>Quick Wins</strong> first to capture high volume with low ranking difficulty, and secure <strong>Protect Brand</strong> terms to block competitors from bid-hijacking your brand name.
-        </p>
-      </div>
+      {(serpDiffDates.latestAt || serpDiffDates.previousAt) && (
+        <div className="flex items-center gap-4 bg-white/50 px-4 py-2 rounded-xl border border-indigo-100 mt-2 w-fit">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-black uppercase tracking-wider text-indigo-400">Previous Snapshot:</span>
+            <span className="text-xs font-bold text-indigo-900">{fmt(serpDiffDates.previousAt)}</span>
+          </div>
+          <ArrowRight className="w-3 h-3 text-indigo-300" />
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-black uppercase tracking-wider text-indigo-400">Latest Snapshot:</span>
+            <span className="text-xs font-bold text-indigo-900">{fmt(serpDiffDates.latestAt)}</span>
+          </div>
+        </div>
+      )}
     </div>
 
     {recommendations.length === 0 ? (
@@ -544,7 +580,7 @@ const RecommendationsTab: React.FC<{ recommendations: KeywordRow[] }> = ({ recom
         <thead>
           <tr className="bg-gray-50/80 border-b border-gray-100">
             <th className="px-4 py-3 text-[9px] font-black uppercase tracking-[2px] text-gray-400 w-8">#</th>
-            <th className="px-4 py-3 text-[9px] font-black uppercase tracking-[2px] text-gray-400">Keyword</th>
+            <th className="px-4 py-3 text-[9px] font-black uppercase tracking-[2px] text-gray-400 w-full">Keyword</th>
             <th className="px-4 py-3 text-[9px] font-black uppercase tracking-[2px] text-gray-400 text-center whitespace-nowrap">Tier</th>
             <th className="px-4 py-3 text-[9px] font-black uppercase tracking-[2px] text-gray-400 text-right whitespace-nowrap">Volume</th>
             <th className="px-4 py-3 text-[9px] font-black uppercase tracking-[2px] text-gray-400 text-right whitespace-nowrap">CPC</th>
@@ -576,6 +612,33 @@ const RecommendationsTab: React.FC<{ recommendations: KeywordRow[] }> = ({ recom
               <td className="px-4 py-3.5 max-w-[260px]">
                 <div className="flex flex-wrap items-center gap-1.5 mb-0.5">
                   <span className="text-sm font-black text-gray-900">{rec.keyword}</span>
+                  {/* SERP position change indicator — compares latest vs previous snapshot */}
+                  {(() => {
+                    const change = serpDiffMap[rec.keyword.toLowerCase()];
+                    if (change === undefined || change === null) return null;
+                    return (
+                      <span
+                        title={
+                          change > 0
+                            ? `Rank improved by ${change} position${change > 1 ? 's' : ''} since last snapshot`
+                            : change < 0
+                            ? `Rank dropped by ${Math.abs(change)} position${Math.abs(change) > 1 ? 's' : ''} since last snapshot`
+                            : `Rank unchanged since last snapshot`
+                        }
+                        className={cn(
+                          'inline-flex items-center gap-0.5 text-[9px] font-black px-1.5 py-0.5 rounded-md ml-1.5',
+                          change > 0
+                            ? 'text-emerald-600 bg-emerald-50'
+                            : change < 0
+                            ? 'text-red-500 bg-red-50'
+                            : 'text-amber-500 bg-amber-50'
+                        )}
+                      >
+                        {change > 0 ? <ArrowUp className="w-2.5 h-2.5" /> : change < 0 ? <ArrowDown className="w-2.5 h-2.5" /> : <ArrowRight className="w-2.5 h-2.5" />}
+                        {Math.abs(change)}
+                      </span>
+                    );
+                  })()}
                   {rec.is_branded && (
                     <Badge className="bg-amber-50 text-amber-700 border-amber-200 text-[9px] px-1.5 py-0">Branded</Badge>
                   )}
@@ -647,6 +710,7 @@ const RecommendationsTab: React.FC<{ recommendations: KeywordRow[] }> = ({ recom
     )}
   </div>
 );
+}
 
 const InformationalTab: React.FC<{ keywords: KeywordRow[] }> = ({ keywords }) => (
   <div className="space-y-4">

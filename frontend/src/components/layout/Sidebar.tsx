@@ -14,7 +14,8 @@ import {
   Brain,
   Megaphone,
   Trophy,
-  Swords
+  Swords,
+  Edit
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -32,6 +33,7 @@ export const Sidebar: React.FC = () => {
     { id: 'competitors', label: 'Intel Analysis', icon: Brain, path: '/competitor-analysis' },
     { id: 'brand-vs-competitor', label: 'Brand vs Competitor', icon: Swords, path: '/brand-vs-competitor' },
     { id: 'scraper', label: 'Ad Scraper', icon: Zap, path: '/competitor-scraper' },
+    { id: 'product-editor', label: 'Product & Ad Editor', icon: Edit, path: '/product-editor' },
   ];
 
   const isActive = (path: string) => {
