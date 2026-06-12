@@ -18,7 +18,8 @@ import {
   Edit
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import logo from '@/cropped_favicon.png';
+// @ts-ignore
+import logo from '../../cropped_favicon.png';
 
 export const Sidebar: React.FC = () => {
   const [isHovered, setIsHovered] = useState(false);
