@@ -12,6 +12,7 @@ import random
 import aiohttp
 from datetime import datetime
 from playwright.async_api import async_playwright, Page, BrowserContext
+from playwright_stealth import Stealth
 
 # ── User agent rotation pool ──────────────────────────────────────────────
 USER_AGENTS = [
@@ -148,6 +149,7 @@ class PlaywrightScraper:
         os.makedirs(os.path.join(media_dir, "videos"), exist_ok=True)
 
         browser = None
+        context = None
         try:
             # Skip scrolling if: (a) checkpoint says extracting, OR (b) resumed session already has tiles collected
             has_tiles = resumed_state is not None and len(current_state.collected_hrefs) > 0
@@ -177,19 +179,26 @@ class PlaywrightScraper:
                         "--single-process"
                     ]
                 )
-                context = await browser.new_context(
-                    locale="en-IN",
-                    viewport={"width": random.randint(1280, 1920), "height": random.randint(800, 1080)},
-                    user_agent=ua,
-                    extra_http_headers={
+                context_args = {
+                    "locale": "en-IN",
+                    "viewport": {"width": random.randint(1280, 1920), "height": random.randint(800, 1080)},
+                    "user_agent": ua,
+                    "extra_http_headers": {
                         "Accept-Language": "en-IN,en;q=0.9",
                         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
                     }
-                )
+                }
+                
+                state_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "datasets", "browser_state.json"))
+                if os.path.exists(state_path):
+                    context = await browser.new_context(storage_state=state_path, **context_args)
+                else:
+                    context = await browser.new_context(**context_args)
 
                 if not skip_scrolling:
                     # ── Phase 1: Find advertiser ID ───────────────────────────
                     page = await context.new_page()
+                    await Stealth().apply_stealth_async(page)
                     advertiser_id = current_state.advertiser_id
                     
                     if not advertiser_id:
@@ -482,6 +491,7 @@ class PlaywrightScraper:
                         ads.append(ad)
                 else:
                     detail_page = await context.new_page()
+                    await Stealth().apply_stealth_async(detail_page)
 
                     for i, tile in enumerate(tile_list):
                         if session_store.get(session_id, {}).get("status") in ("paused", "stopped"):
@@ -614,6 +624,13 @@ class PlaywrightScraper:
             await self.checkpoint_mgr.save_checkpoint(current_state)
             await self.csv_writer.append_session(current_state.model_dump())
         finally:
+            if context:
+                try:
+                    state_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "datasets", "browser_state.json"))
+                    await context.storage_state(path=state_path)
+                except Exception as e:
+                    print(f"[Scraper] Could not save browser state: {e}")
+            
             if browser:
                 try:
                     await browser.close()

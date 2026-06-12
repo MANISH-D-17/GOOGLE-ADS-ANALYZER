@@ -18,6 +18,7 @@ import {
   Edit
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import logo from '@/cropped_favicon.png';
 
 export const Sidebar: React.FC = () => {
   const [isHovered, setIsHovered] = useState(false);
@@ -53,13 +54,13 @@ export const Sidebar: React.FC = () => {
     >
       <div className="flex flex-col h-full">
         {/* Logo Area */}
-        <div className="h-16 flex items-center px-4 border-b border-gray-50">
-          <div className="flex items-center justify-center flex-shrink-0 transition-all duration-500 hover:drop-shadow-[0_0_8px_rgba(59,130,246,0.8)] hover:scale-110 cursor-pointer text-blue-600">
-            <Activity size={24} strokeWidth={3} />
+        <div className="h-16 flex items-center px-3 border-b border-gray-50">
+          <div className="flex items-center justify-center flex-shrink-0 transition-all duration-500 hover:drop-shadow-[0_0_8px_rgba(59,130,246,0.8)] hover:scale-110 cursor-pointer w-10 h-10">
+            <img src={logo} alt="Logo" className="w-full h-full object-contain" />
           </div>
           {isHovered && (
-            <span className="ml-3 font-bold text-gray-900 truncate tracking-tight">
-              Kalai <span className="text-blue-600">Works</span>
+            <span className="ml-3 font-bold text-gray-900 truncate tracking-tight text-xl">
+              Twin <span className="text-blue-600">Birds</span>
             </span>
           )}
         </div>
