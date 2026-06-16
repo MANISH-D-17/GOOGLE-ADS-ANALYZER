@@ -813,9 +813,9 @@ class PlaywrightScraper:
 
                         async with session.get(url) as resp:
                             if resp.status == 200:
-                                content = await resp.read()
                                 async with aiofiles.open(filepath, "wb") as f:
-                                    await f.write(content)
+                                    async for chunk in resp.content.iter_chunked(65536):
+                                        await f.write(chunk)
                                 saved_paths.append(filepath)
                                 self.downloaded_media_urls.add(url)
                                 await self.csv_writer.append_download(url, "image", filepath, "success", creative_id)
@@ -855,9 +855,9 @@ class PlaywrightScraper:
 
                         async with session.get(url) as resp:
                             if resp.status == 200:
-                                content = await resp.read()
                                 async with aiofiles.open(filepath, "wb") as f:
-                                    await f.write(content)
+                                    async for chunk in resp.content.iter_chunked(65536):
+                                        await f.write(chunk)
                                 saved_paths.append(filepath)
                                 self.downloaded_media_urls.add(url)
                                 await self.csv_writer.append_download(url, "video", filepath, "success", creative_id)
