@@ -205,6 +205,17 @@ class PlaywrightScraper:
                     advertiser_id = current_state.advertiser_id
                     
                     if not advertiser_id:
+                        # Establish Google cookies first to prevent IP tarpitting
+                        try:
+                            print("[Scraper] Establishing trusted Google session...")
+                            await asyncio.wait_for(
+                                page.goto("https://www.google.com", wait_until="commit", timeout=10000),
+                                timeout=15.0
+                            )
+                            await human_delay(1, 2)
+                        except Exception:
+                            pass
+
                         domain_url = f"https://adstransparency.google.com/?region={region}&domain={domain}"
                         print(f"[Scraper] Navigating to domain URL: {domain_url}")
                         session_store[session_id]["progress"] = 5
@@ -630,6 +641,7 @@ class PlaywrightScraper:
             session_store[session_id].update({
                 "status": "error", "progress": 100,
                 "errorsCount": errors,
+                "blockReason": f"Fatal error: {str(e)}"
             })
             
             # Save fatal error state checkpoint
