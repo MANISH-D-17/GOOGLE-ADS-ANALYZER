@@ -84,6 +84,7 @@ async def get_status(session_id: str):
         "progress": s["progress"],
         "currentAd": s.get("currentAd"),
         "currentPhase": s.get("currentPhase", "init"),
+        "blockReason": s.get("blockReason"),
     }
 
 
