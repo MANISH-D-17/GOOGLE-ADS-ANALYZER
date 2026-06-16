@@ -94,12 +94,20 @@ class PlaywrightScraper:
                 await page_load_delay()
                 return
             except Exception as e:
+                err_msg = repr(e)
                 wait = (2 ** i) * 5 + random.uniform(0, 3)  # Exponential backoff
-                print(f"[Scraper] Navigation failed (attempt {i+1}): {e}. Retrying in {wait:.1f}s…")
+                print(f"[Scraper] Navigation failed (attempt {i+1}): {err_msg}. Retrying in {wait:.1f}s…")
+                try:
+                    debug_path = os.path.join(DATASETS_BASE, f"debug_goto_{i}.png")
+                    await page.screenshot(path=debug_path)
+                    print(f"[Scraper] Saved debug screenshot to {debug_path}")
+                except Exception as ss_err:
+                    print(f"[Scraper] Could not take debug screenshot: {ss_err}")
+                
                 if i < retries - 1:
                     await asyncio.sleep(wait)
                 else:
-                    raise e
+                    raise Exception(f"Navigation to {url} failed after {retries} attempts. Last error: {err_msg}")
 
     async def scrape(
         self, session_id: str, domain: str, region: str,
@@ -666,7 +674,7 @@ class PlaywrightScraper:
             session_store[session_id].update({
                 "status": "error", "progress": 100,
                 "errorsCount": errors,
-                "blockReason": f"Fatal error: {str(e)}"
+                "blockReason": f"Fatal error: {repr(e)}"
             })
             
             # Save fatal error state checkpoint
