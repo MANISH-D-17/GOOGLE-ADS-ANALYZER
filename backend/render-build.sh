@@ -11,5 +11,5 @@ export PLAYWRIGHT_BROWSERS_PATH=/opt/render/project/.playwright-browsers
 # Download all necessary Playwright binaries (including chromium_headless_shell)
 playwright install chromium
 
-# Install system dependencies
-playwright install-deps chromium
+# Playwright install-deps is removed because Render native environment pre-installs OS dependencies
+# and does not allow root/su access.
