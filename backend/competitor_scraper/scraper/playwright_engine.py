@@ -77,7 +77,10 @@ class PlaywrightScraper:
         for i in range(retries):
             try:
                 print(f"[Scraper] → {url} (attempt {i+1}/{retries})")
-                await page.goto(url, wait_until="domcontentloaded", timeout=base_timeout)
+                await asyncio.wait_for(
+                    page.goto(url, wait_until="commit", timeout=base_timeout),
+                    timeout=(base_timeout / 1000.0) + 5.0
+                )
                 await page_load_delay()
                 return
             except Exception as e:
@@ -210,13 +213,19 @@ class PlaywrightScraper:
 
                         try:
                             print(f"[Scraper] Waiting for creative-preview for domain {domain}...")
-                            await page.wait_for_selector("creative-preview", timeout=25000)
+                            await asyncio.wait_for(
+                                page.wait_for_selector("creative-preview", timeout=25000),
+                                timeout=30.0
+                            )
                         except Exception:
                             print("[Scraper] No creative-preview elements found on domain page")
 
                         # Expand "See all ads" if present
                         try:
-                            expand_btn = await page.query_selector("material-button.grid-expansion-button")
+                            expand_btn = await asyncio.wait_for(
+                                page.query_selector("material-button.grid-expansion-button"),
+                                timeout=10.0
+                            )
                             if expand_btn and await expand_btn.is_visible():
                                 await expand_btn.click()
                                 await human_delay(2, 4)
@@ -224,10 +233,10 @@ class PlaywrightScraper:
                             pass
 
                         # Extract advertiser ID
-                        initial_links = await page.evaluate("""() =>
+                        initial_links = await asyncio.wait_for(page.evaluate("""() =>
                             Array.from(document.querySelectorAll('creative-preview a[href*="/creative/"]'))
                                 .map(a => a.href)
-                        """)
+                        """), timeout=15.0)
 
                         for link in initial_links:
                             m = re.search(r'/advertiser/(AR\w+)/', link)
@@ -658,7 +667,10 @@ class PlaywrightScraper:
 
         if detail_url:
             try:
-                await page.goto(detail_url, wait_until="domcontentloaded", timeout=15000)
+                await asyncio.wait_for(
+                    page.goto(detail_url, wait_until="commit", timeout=15000),
+                    timeout=20.0
+                )
                 await human_delay(0.5, 1.2)
 
                 # Extract headline (h1 or largest heading)
