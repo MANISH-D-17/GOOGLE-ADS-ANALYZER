@@ -12,7 +12,7 @@ import random
 import aiohttp
 from datetime import datetime
 from playwright.async_api import async_playwright, Page, BrowserContext
-from playwright_stealth import Stealth
+import aiofiles
 
 # ── User agent rotation pool ──────────────────────────────────────────────
 USER_AGENTS = [
@@ -189,7 +189,7 @@ class PlaywrightScraper:
                     }
                 }
                 
-                state_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "datasets", "browser_state.json"))
+                state_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "datasets", f"browser_state_{session_id}.json"))
                 if os.path.exists(state_path):
                     context = await browser.new_context(storage_state=state_path, **context_args)
                 else:
@@ -198,7 +198,6 @@ class PlaywrightScraper:
                 if not skip_scrolling:
                     # ── Phase 1: Find advertiser ID ───────────────────────────
                     page = await context.new_page()
-                    await Stealth().apply_stealth_async(page)
                     advertiser_id = current_state.advertiser_id
                     
                     if not advertiser_id:
@@ -490,8 +489,6 @@ class PlaywrightScraper:
                         ad = self._build_ad_from_tile(tile, domain, session_id, brand_name, idx)
                         ads.append(ad)
                 else:
-                    detail_page = await context.new_page()
-                    await Stealth().apply_stealth_async(detail_page)
 
                     for i, tile in enumerate(tile_list):
                         if session_store.get(session_id, {}).get("status") in ("paused", "stopped"):
@@ -521,10 +518,16 @@ class PlaywrightScraper:
 
                         try:
                             if should_deep_extract:
-                                ad = await self._extract_detail_page(
-                                    detail_page, tile, domain, session_id, brand_name, i,
-                                    media_dir, download_media
-                                )
+                                detail_context = await browser.new_context(**context_args)
+                                detail_page = await detail_context.new_page()
+                                try:
+                                    ad = await self._extract_detail_page(
+                                        detail_page, tile, domain, session_id, brand_name, i,
+                                        media_dir, download_media
+                                    )
+                                finally:
+                                    await detail_page.close()
+                                    await detail_context.close()
                             else:
                                 ad = self._build_ad_from_tile(tile, domain, session_id, brand_name, i)
                             ads.append(ad)
@@ -573,7 +576,7 @@ class PlaywrightScraper:
                             print(f"[Scraper] Brief rate-limit pause: {pause:.1f}s after {i+1} ads")
                             await asyncio.sleep(pause)
 
-                    await detail_page.close()
+
 
                 # ── Phase 5: Save snapshot + persist ─────────────────────
                 await self._save_snapshot(session_id, domain, ads)
@@ -626,7 +629,7 @@ class PlaywrightScraper:
         finally:
             if context:
                 try:
-                    state_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "datasets", "browser_state.json"))
+                    state_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "datasets", f"browser_state_{session_id}.json"))
                     await context.storage_state(path=state_path)
                 except Exception as e:
                     print(f"[Scraper] Could not save browser state: {e}")
@@ -811,8 +814,8 @@ class PlaywrightScraper:
                         async with session.get(url) as resp:
                             if resp.status == 200:
                                 content = await resp.read()
-                                with open(filepath, "wb") as f:
-                                    f.write(content)
+                                async with aiofiles.open(filepath, "wb") as f:
+                                    await f.write(content)
                                 saved_paths.append(filepath)
                                 self.downloaded_media_urls.add(url)
                                 await self.csv_writer.append_download(url, "image", filepath, "success", creative_id)
@@ -853,8 +856,8 @@ class PlaywrightScraper:
                         async with session.get(url) as resp:
                             if resp.status == 200:
                                 content = await resp.read()
-                                with open(filepath, "wb") as f:
-                                    f.write(content)
+                                async with aiofiles.open(filepath, "wb") as f:
+                                    await f.write(content)
                                 saved_paths.append(filepath)
                                 self.downloaded_media_urls.add(url)
                                 await self.csv_writer.append_download(url, "video", filepath, "success", creative_id)
@@ -937,12 +940,13 @@ class PlaywrightScraper:
         snapshot_dir = os.path.join(os.path.dirname(__file__), "..", "datasets", "snapshots")
         os.makedirs(snapshot_dir, exist_ok=True)
         path = os.path.join(snapshot_dir, f"{session_id}.json")
-        with open(path, "w") as f:
-            json.dump({
+        async with aiofiles.open(path, "w") as f:
+            data = {
                 "sessionId": session_id, "domain": domain,
                 "capturedAt": datetime.utcnow().isoformat(),
                 "adsCount": len(ads), "ads": ads,
-            }, f, indent=2)
+            }
+            await f.write(json.dumps(data, indent=2))
         print(f"[Scraper] Snapshot saved: {path}")
 
     def _map_local_path_to_web_url(self, local_path: str) -> str:

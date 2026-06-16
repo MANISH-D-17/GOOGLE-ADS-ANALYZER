@@ -134,6 +134,8 @@ export function useScraperSession(): UseScraperSessionReturn {
 
     let pollCount = 0;
     let lastAdCount = 0;
+    let lastProgress = -1;
+    let stalePolls = 0;
 
     const poll = async () => {
       if (!isPollingRef.current) return;
@@ -145,6 +147,23 @@ export function useScraperSession(): UseScraperSessionReturn {
         setSession(sess);
         setStatus(sess.status);
         pollCount++;
+
+        // ── Staleness Check ──
+        if (sess.status === 'running') {
+          if (sess.progress === lastProgress && sess.adsExtracted === lastAdCount) {
+            stalePolls++;
+            if (stalePolls > 45) { // ~90 seconds with no changes
+               console.warn('Scraper appears stalled (no progress for 90s). Halting polling.');
+               setStatus('error');
+               setSession(prev => prev ? { ...prev, status: 'error', errorsCount: (prev.errorsCount || 0) + 1, blockReason: 'Backend worker stalled or crashed.' } : null);
+               stopPolling();
+               return;
+            }
+          } else {
+            stalePolls = 0;
+            lastProgress = sess.progress || 0;
+          }
+        }
 
         const phase = sess.currentPhase || 'init';
 
