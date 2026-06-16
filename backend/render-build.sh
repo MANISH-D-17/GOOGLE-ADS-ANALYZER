@@ -6,10 +6,10 @@ set -o errexit
 pip install -r requirements.txt
 
 # Store the browser binaries inside the project folder so they are carried to the runtime container
-export PLAYWRIGHT_BROWSERS_PATH=0
+export PLAYWRIGHT_BROWSERS_PATH=/opt/render/project/.playwright-browsers
 
 # Download all necessary Playwright binaries (including chromium_headless_shell)
-playwright install
+playwright install chromium
 
-# Playwright install-deps is removed because Render native environment pre-installs OS dependencies
-# and does not allow root/su access.
+# Install system dependencies
+playwright install-deps chromium

@@ -15,12 +15,18 @@ from playwright.async_api import async_playwright, Page, BrowserContext
 import aiofiles
 
 # ── User agent rotation pool ──────────────────────────────────────────────
+DATASETS_BASE = os.environ.get("SCRAPER_DATASETS_DIR", "/tmp/gads_datasets")
+MEDIA_BASE_URL = os.environ.get("SCRAPER_MEDIA_BASE_URL", "http://localhost:8001")
+
 USER_AGENTS = [
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.0",
 ]
 
 # ── Fashion category keyword map ──────────────────────────────────────────
@@ -66,7 +72,7 @@ class PlaywrightScraper:
         from state.resume_engine import ResumeEngine
         from state.recovery import RecoveryManager
         
-        datasets_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "datasets"))
+        datasets_dir = DATASETS_BASE
         self.checkpoint_mgr = CheckpointManager(datasets_dir)
         self.csv_writer = IncrementalCSVWriter(datasets_dir)
         self.resume_engine = ResumeEngine(self.checkpoint_mgr)
@@ -146,7 +152,7 @@ class PlaywrightScraper:
             await self.csv_writer.append_session(current_state.model_dump())
 
         # Create media output directory for this session
-        snapshot_dir = os.path.join(os.path.dirname(__file__), "..", "datasets", "snapshots")
+        snapshot_dir = os.path.join(DATASETS_BASE, "snapshots")
         media_dir = os.path.join(snapshot_dir, session_id, "media")
         os.makedirs(os.path.join(media_dir, "images"), exist_ok=True)
         os.makedirs(os.path.join(media_dir, "videos"), exist_ok=True)
@@ -176,9 +182,14 @@ class PlaywrightScraper:
                         "--disable-gpu",
                         "--disable-software-rasterizer",
                         "--disable-blink-features=AutomationControlled",
-                        "--js-flags='--max-old-space-size=150'",
+                        "--js-flags=--max-old-space-size=256",
                         "--disable-extensions",
-                        "--no-zygote"
+                        "--no-zygote",
+                        "--single-process",
+                        "--disable-background-timer-throttling",
+                        "--disable-backgrounding-occluded-windows",
+                        "--disable-renderer-backgrounding",
+                        "--memory-pressure-off"
                     ]
                 )
                 context_args = {
@@ -191,7 +202,7 @@ class PlaywrightScraper:
                     }
                 }
                 
-                state_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "datasets", f"browser_state_{session_id}.json"))
+                state_path = os.path.join(DATASETS_BASE, f"browser_state_{session_id}.json")
                 if os.path.exists(state_path):
                     context = await browser.new_context(storage_state=state_path, **context_args)
                 else:
@@ -297,89 +308,101 @@ class PlaywrightScraper:
                         if session_store.get(session_id, {}).get("status") in ("paused", "stopped"):
                             print(f"[Scraper] Stopped/Paused by user during Phase 3 (scrolling). Halted.")
                             break
-                        tiles = await page.evaluate("""() => {
-                            const previews = document.querySelectorAll('creative-preview');
-                            const results = [];
-                            previews.forEach(el => {
-                                const link = el.querySelector('a[href*="/creative/"]');
-                                const href = link ? link.href : '';
-                                // Secondary extraction: use data attributes if href-based ID is empty
-                                let creativeId = href.match(/creative\/(CR[\w-]+)/)?.[1] || '';
-                                if (!creativeId) {
-                                    const dataId = el.getAttribute('data-creative-id') ||
-                                                   el.querySelector('[data-creative-id]')?.getAttribute('data-creative-id') ||
-                                                   el.getAttribute('data-id') || '';
-                                    if (dataId) creativeId = dataId;
-                                }
-                                // Last resort: generate ID from href to avoid losing the tile
-                                if (!creativeId && href) {
-                                    creativeId = 'href_' + btoa(href).slice(0, 16).replace(/[^a-zA-Z0-9]/g, '');
-                                }
-                                const imgs = Array.from(el.querySelectorAll('img'))
-                                    .map(i => i.src || i.getAttribute('src') || i.getAttribute('data-src') || '')
-                                    .filter(s => {
-                                        if (!s || !s.startsWith('http')) return false;
-                                        if (s.includes('data:image')) return false;
-                                        if (s.endsWith('.svg') && s.includes('icon')) return false;
-                                        // Accept all Google-served and external creative images
-                                        return (
-                                            s.includes('googlesyndication') ||
-                                            s.includes('googleusercontent') ||
-                                            s.includes('googleapis.com') ||
-                                            s.includes('gstatic.com') ||
-                                            s.includes('ggpht.com') ||
-                                            s.includes('doubleclick') ||
-                                            s.includes('adwords-creative') ||
-                                            s.includes('google.com/ads') ||
-                                            (s.startsWith('https') && el.closest('creative-preview') !== null)
-                                        );
+                        try:
+                            tiles = await asyncio.wait_for(
+                                page.evaluate("""() => {
+                                    const previews = document.querySelectorAll('creative-preview');
+                                    const results = [];
+                                    previews.forEach(el => {
+                                        const link = el.querySelector('a[href*="/creative/"]');
+                                        const href = link ? link.href : '';
+                                        // Secondary extraction: use data attributes if href-based ID is empty
+                                        let creativeId = href.match(/creative\/(CR[\w-]+)/)?.[1] || '';
+                                        if (!creativeId) {
+                                            const dataId = el.getAttribute('data-creative-id') ||
+                                                           el.querySelector('[data-creative-id]')?.getAttribute('data-creative-id') ||
+                                                           el.getAttribute('data-id') || '';
+                                            if (dataId) creativeId = dataId;
+                                        }
+                                        // Last resort: generate ID from href to avoid losing the tile
+                                        if (!creativeId && href) {
+                                            creativeId = 'href_' + btoa(href).slice(0, 16).replace(/[^a-zA-Z0-9]/g, '');
+                                        }
+                                        const imgs = Array.from(el.querySelectorAll('img'))
+                                            .map(i => i.src || i.getAttribute('src') || i.getAttribute('data-src') || '')
+                                            .filter(s => {
+                                                if (!s || !s.startsWith('http')) return false;
+                                                if (s.includes('data:image')) return false;
+                                                if (s.endsWith('.svg') && s.includes('icon')) return false;
+                                                // Accept all Google-served and external creative images
+                                                return (
+                                                    s.includes('googlesyndication') ||
+                                                    s.includes('googleusercontent') ||
+                                                    s.includes('googleapis.com') ||
+                                                    s.includes('gstatic.com') ||
+                                                    s.includes('ggpht.com') ||
+                                                    s.includes('doubleclick') ||
+                                                    s.includes('adwords-creative') ||
+                                                    s.includes('google.com/ads') ||
+                                                    (s.startsWith('https') && el.closest('creative-preview') !== null)
+                                                );
+                                            });
+
+                                        // Also capture background-image CSS from any child element
+                                        const bgImgs = Array.from(el.querySelectorAll('[style*="background-image"]'))
+                                            .map(bgEl => {
+                                                const m = bgEl.style.backgroundImage.match(/url\(["']?([^"')]+)["']?\)/);
+                                                return m ? m[1] : '';
+                                            })
+                                            .filter(s => s && s.startsWith('http'));
+
+                                        const allImgs = [...new Set([...imgs, ...bgImgs])];
+                                        const textNodes = Array.from(el.querySelectorAll('div, span, p, [role="heading"]'))
+                                            .filter(e => {
+                                                const c = e.className || '';
+                                                return typeof c === 'string' && 
+                                                       !c.includes('material-icons') && 
+                                                       !c.includes('google-symbols') && 
+                                                       !c.includes('mat-icon') &&
+                                                       !c.includes('icon');
+                                            })
+                                            .map(e => (e.innerText || '').trim())
+                                            .filter(t => {
+                                                const low = t.toLowerCase();
+                                                return t.length > 5 && t.length < 500 &&
+                                                       low !== 'videocam' &&
+                                                       low !== 'keyboard_arrow_right' &&
+                                                       low !== 'play_arrow' &&
+                                                       low !== 'volume_up' &&
+                                                       low !== 'volume_off' &&
+                                                       !low.includes('material-icons') &&
+                                                       !low.includes('google-symbols');
+                                            })
+                                            .filter((t, i, arr) => arr.indexOf(t) === i);
+                                        
+                                        // Check if the ad contains a video element or play indicators on the tile itself
+                                        const hasVideo = el.querySelector('video') !== null || 
+                                                         el.querySelector('[class*="video"]') !== null ||
+                                                         el.querySelector('svg') !== null ||
+                                                         el.querySelector('button') !== null ||
+                                                         el.querySelector('[class*="play"]') !== null;
+                                        
+                                        if (creativeId) {
+                                            results.push({ creativeId, href, images: allImgs, textNodes, hasVideo });
+                                        }
                                     });
-
-                                // Also capture background-image CSS from any child element
-                                const bgImgs = Array.from(el.querySelectorAll('[style*="background-image"]'))
-                                    .map(bgEl => {
-                                        const m = bgEl.style.backgroundImage.match(/url\(["']?([^"')]+)["']?\)/);
-                                        return m ? m[1] : '';
-                                    })
-                                    .filter(s => s && s.startsWith('http'));
-
-                                const allImgs = [...new Set([...imgs, ...bgImgs])];
-                                const textNodes = Array.from(el.querySelectorAll('div, span, p, [role="heading"]'))
-                                    .filter(e => {
-                                        const c = e.className || '';
-                                        return typeof c === 'string' && 
-                                               !c.includes('material-icons') && 
-                                               !c.includes('google-symbols') && 
-                                               !c.includes('mat-icon') &&
-                                               !c.includes('icon');
-                                    })
-                                    .map(e => (e.innerText || '').trim())
-                                    .filter(t => {
-                                        const low = t.toLowerCase();
-                                        return t.length > 5 && t.length < 500 &&
-                                               low !== 'videocam' &&
-                                               low !== 'keyboard_arrow_right' &&
-                                               low !== 'play_arrow' &&
-                                               low !== 'volume_up' &&
-                                               low !== 'volume_off' &&
-                                               !low.includes('material-icons') &&
-                                               !low.includes('google-symbols');
-                                    })
-                                    .filter((t, i, arr) => arr.indexOf(t) === i);
-                                
-                                // Check if the ad contains a video element or play indicators on the tile itself
-                                const hasVideo = el.querySelector('video') !== null || 
-                                                 el.querySelector('[class*="video"]') !== null ||
-                                                 el.querySelector('svg') !== null ||
-                                                 el.querySelector('button') !== null ||
-                                                 el.querySelector('[class*="play"]') !== null;
-                                
-                                if (creativeId) {
-                                    results.push({ creativeId, href, images: allImgs, textNodes, hasVideo });
-                                }
-                            });
-                            return results;
-                        }""")
+                                    return results;
+                                }"""),
+                                timeout=30.0
+                            )
+                            if not tiles:
+                                print(f"[Scraper] evaluate() returned empty list — DOM may be unresponsive")
+                        except asyncio.TimeoutError:
+                            print(f"[Scraper] evaluate() timed out after 30s — Chromium IPC stall suspected")
+                            tiles = []
+                        except Exception as eval_err:
+                            print(f"[Scraper] evaluate() exception: {eval_err}")
+                            tiles = []
 
                         prev_count = len(collected_hrefs)
                         for tile in tiles:
@@ -647,12 +670,12 @@ class PlaywrightScraper:
             await self.checkpoint_mgr.save_checkpoint(current_state)
             await self.csv_writer.append_session(current_state.model_dump())
         finally:
-            if context:
-                try:
-                    state_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "datasets", f"browser_state_{session_id}.json"))
+            try:
+                if context:
+                    state_path = os.path.join(DATASETS_BASE, f"browser_state_{session_id}.json")
                     await context.storage_state(path=state_path)
-                except Exception as e:
-                    print(f"[Scraper] Could not save browser state: {e}")
+            except Exception as state_err:
+                print(f"[Scraper] Could not save browser state (non-fatal): {state_err}")
             
             if browser:
                 try:
@@ -822,7 +845,7 @@ class PlaywrightScraper:
         try:
             async with aiohttp.ClientSession(
                 headers={"User-Agent": random.choice(USER_AGENTS)},
-                timeout=aiohttp.ClientTimeout(total=20)
+                timeout=aiohttp.ClientTimeout(total=45, connect=10, sock_read=30)
             ) as session:
                 for i, url in enumerate(urls[:3]):  # Capped at 3 images per ad for performance
                     if url in self.downloaded_media_urls:
@@ -862,7 +885,7 @@ class PlaywrightScraper:
         try:
             async with aiohttp.ClientSession(
                 headers={"User-Agent": random.choice(USER_AGENTS)},
-                timeout=aiohttp.ClientTimeout(total=60)
+                timeout=aiohttp.ClientTimeout(total=120, connect=15, sock_read=90)
             ) as session:
                 for i, url in enumerate(urls[:1]):  # Capped at 1 video per ad for performance
                     if "youtube" in url or "youtu.be" in url:
@@ -960,7 +983,7 @@ class PlaywrightScraper:
         return [k for k, words in triggers.items() if any(w in text_lower for w in words)]
 
     async def _save_snapshot(self, session_id: str, domain: str, ads: list):
-        snapshot_dir = os.path.join(os.path.dirname(__file__), "..", "datasets", "snapshots")
+        snapshot_dir = os.path.join(DATASETS_BASE, "snapshots")
         os.makedirs(snapshot_dir, exist_ok=True)
         path = os.path.join(snapshot_dir, f"{session_id}.json")
         async with aiofiles.open(path, "w") as f:
@@ -981,9 +1004,9 @@ class PlaywrightScraper:
         if marker in local_path:
             parts = local_path.split(marker)
             relative_url = "/datasets" + parts[-1].replace("\\", "/")
-            return f"http://localhost:8001{relative_url}"
+            return f"{MEDIA_BASE_URL}{relative_url}"
         elif "datasets" in local_path:
             parts = local_path.split("datasets")
             relative_url = "/datasets" + parts[-1].replace("\\", "/")
-            return f"http://localhost:8001{relative_url}"
+            return f"{MEDIA_BASE_URL}{relative_url}"
         return local_path
