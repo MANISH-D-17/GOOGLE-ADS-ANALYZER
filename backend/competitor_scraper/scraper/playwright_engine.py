@@ -83,10 +83,17 @@ class PlaywrightScraper:
         self.resume_engine = ResumeEngine(self.checkpoint_mgr)
         self.recovery_mgr = RecoveryManager(datasets_dir)
 
-    async def _goto_with_retry(self, page: Page, url: str, retries: int = 4, base_timeout: int = 15000):
+    def _log(self, session_id: str, session_store: dict, msg: str):
+        print(msg)
+        if session_id and session_store and session_id in session_store:
+            if "logs" not in session_store[session_id]:
+                session_store[session_id]["logs"] = []
+            session_store[session_id]["logs"].append(f"[{datetime.utcnow().strftime('%H:%M:%S')}] {msg}")
+
+    async def _goto_with_retry(self, page: Page, url: str, session_id: str = None, session_store: dict = None, retries: int = 4, base_timeout: int = 15000):
         for i in range(retries):
             try:
-                print(f"[Scraper] → {url} (attempt {i+1}/{retries})")
+                self._log(session_id, session_store, f"[Scraper] → {url} (attempt {i+1}/{retries})")
                 await asyncio.wait_for(
                     page.goto(url, wait_until="commit", timeout=base_timeout),
                     timeout=(base_timeout / 1000.0) + 5.0
@@ -96,13 +103,13 @@ class PlaywrightScraper:
             except Exception as e:
                 err_msg = repr(e)
                 wait = (2 ** i) * 5 + random.uniform(0, 3)  # Exponential backoff
-                print(f"[Scraper] Navigation failed (attempt {i+1}): {err_msg}. Retrying in {wait:.1f}s…")
+                self._log(session_id, session_store, f"[Scraper] Navigation failed (attempt {i+1}): {err_msg}. Retrying in {wait:.1f}s…")
                 try:
                     debug_path = os.path.join(DATASETS_BASE, f"debug_goto_{i}.png")
                     await page.screenshot(path=debug_path)
-                    print(f"[Scraper] Saved debug screenshot to {debug_path}")
+                    self._log(session_id, session_store, f"[Scraper] Saved debug screenshot to {debug_path}")
                 except Exception as ss_err:
-                    print(f"[Scraper] Could not take debug screenshot: {ss_err}")
+                    self._log(session_id, session_store, f"[Scraper] Could not take debug screenshot: {ss_err}")
                 
                 if i < retries - 1:
                     await asyncio.sleep(wait)
@@ -229,29 +236,29 @@ class PlaywrightScraper:
                     if not advertiser_id:
                         # Establish Google cookies first to prevent IP tarpitting
                         try:
-                            print("[Scraper] Establishing trusted Google session...")
+                            self._log(session_id, session_store, "[Scraper] Establishing trusted Google session...")
                             await asyncio.wait_for(
                                 page.goto("https://www.google.com", wait_until="commit", timeout=10000),
                                 timeout=15.0
                             )
                             await human_delay(1, 2)
-                        except Exception:
-                            pass
+                        except Exception as warmup_err:
+                            self._log(session_id, session_store, f"[Scraper] Warmup failed (non-fatal): {repr(warmup_err)}")
 
                         domain_url = f"https://adstransparency.google.com/?region={region}&domain={domain}"
-                        print(f"[Scraper] Navigating to domain URL: {domain_url}")
+                        self._log(session_id, session_store, f"[Scraper] Navigating to domain URL: {domain_url}")
                         session_store[session_id]["progress"] = 5
-                        await self._goto_with_retry(page, domain_url)
+                        await self._goto_with_retry(page, domain_url, session_id, session_store)
                         await human_delay(2, 5)
 
                         try:
-                            print(f"[Scraper] Waiting for creative-preview for domain {domain}...")
+                            self._log(session_id, session_store, f"[Scraper] Waiting for creative-preview for domain {domain}...")
                             await asyncio.wait_for(
                                 page.wait_for_selector("creative-preview", timeout=25000),
                                 timeout=30.0
                             )
-                        except Exception:
-                            print("[Scraper] No creative-preview elements found on domain page")
+                        except Exception as ex:
+                            self._log(session_id, session_store, f"[Scraper] No creative-preview elements found on domain page: {repr(ex)}")
 
                         # Expand "See all ads" if present
                         try:
@@ -275,7 +282,7 @@ class PlaywrightScraper:
                             m = re.search(r'/advertiser/(AR\w+)/', link)
                             if m:
                                 advertiser_id = m.group(1)
-                                print(f"[Scraper] Advertiser ID: {advertiser_id}")
+                                self._log(session_id, session_store, f"[Scraper] Advertiser ID: {advertiser_id}")
                                 current_state.advertiser_id = advertiser_id
                                 current_state.current_phase = "advertiser_found"
                                 await self.checkpoint_mgr.save_checkpoint(current_state)
@@ -286,7 +293,8 @@ class PlaywrightScraper:
                         f"https://adstransparency.google.com/advertiser/{advertiser_id}?region={region}"
                         if advertiser_id else f"https://adstransparency.google.com/?region={region}&domain={domain}"
                     )
-                    await self._goto_with_retry(page, adv_url)
+                    self._log(session_id, session_store, f"[Scraper] Phase 2: Navigating to advertiser URL...")
+                    await self._goto_with_retry(page, adv_url, session_id, session_store)
                     await human_delay(2, 4)
 
                     # Wait for Google to render the first batch of ads (typically 20-40)

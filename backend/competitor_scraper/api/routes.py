@@ -41,6 +41,7 @@ async def start_scraping(req: StartRequest, background_tasks: BackgroundTasks):
         "errorsCount": 0,
         "progress": 0,
         "ads": [],
+        "logs": [],
     }
     background_tasks.add_task(
         scraper.scrape, session_id, req.domain, req.region, SESSION_STORE, req.maxAds, req.downloadMedia
@@ -85,6 +86,7 @@ async def get_status(session_id: str):
         "currentAd": s.get("currentAd"),
         "currentPhase": s.get("currentPhase", "init"),
         "blockReason": s.get("blockReason"),
+        "logs": s.get("logs", []),
     }
 
 
