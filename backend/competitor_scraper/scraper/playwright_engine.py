@@ -11,6 +11,11 @@ import os
 import random
 import aiohttp
 from datetime import datetime
+
+# Ensure Playwright can find the installed browser on Render even if env var is missing
+if os.environ.get("RENDER"):
+    os.environ["PLAYWRIGHT_BROWSERS_PATH"] = "/opt/render/project/.playwright-browsers"
+
 from playwright.async_api import async_playwright, Page, BrowserContext
 import aiofiles
 
