@@ -12,7 +12,6 @@ import random
 import aiohttp
 from datetime import datetime
 from playwright.async_api import async_playwright, Page, BrowserContext
-from playwright_stealth import Stealth
 import aiofiles
 
 # ── User agent rotation pool ──────────────────────────────────────────────
@@ -201,7 +200,6 @@ class PlaywrightScraper:
                 if not skip_scrolling:
                     # ── Phase 1: Find advertiser ID ───────────────────────────
                     page = await context.new_page()
-                    await Stealth().apply_stealth_async(page)
                     advertiser_id = current_state.advertiser_id
                     
                     if not advertiser_id:
@@ -541,7 +539,6 @@ class PlaywrightScraper:
                             if should_deep_extract:
                                 detail_context = await browser.new_context(**context_args)
                                 detail_page = await detail_context.new_page()
-                                await Stealth().apply_stealth_async(detail_page)
                                 try:
                                     ad = await self._extract_detail_page(
                                         detail_page, tile, domain, session_id, brand_name, i,
